@@ -1,0 +1,29 @@
+@charset "utf-8";
+/* Pretendard */
+@font-face { font-family: 'Pretendard-Regular'; src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'Pretendard-Thin'; src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraLight.woff') format('woff'); font-weight: 100; font-style: normal; }
+
+/*  GmarketSans  */
+@font-face {font-family: 'GmarketSans';src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');font-weight: 300;}/* Light */
+@font-face {font-family: 'GmarketSans';src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');font-weight: 500;}/* Medium */
+@font-face {font-family: 'GmarketSans';src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');font-weight: bold;} /* Bold */
+
+/*  Noto Sans - Serif Font  */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap');
+
+:root {
+    /* Font */
+    --mainfont:'Pretendard-Regular';
+    --mainThinFont:'Pretendard-Thin';
+    --pointfont:'GmarketSans';
+    --koSerif:'Noto Serif KR';
+  
+    /* Color */
+    --mainCommonColor: #042940;
+    --mainDeepColor: #011929;
+    --mainLightColor:#123D59;
+    --mainLightestColor:#285572;
+    --secondColor: #9FC131;
+    --secondDeepColor: #7F9E18;
+    --secondLightColor: #BAD955;
+}

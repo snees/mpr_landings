@@ -1,0 +1,5 @@
+ErrorDocument 402 /err/redirect.php
+ErrorDocument 403 /err/redirect.php
+ErrorDocument 404 /err/redirect.php
+ErrorDocument 405 /err/redirect.php
+ErrorDocument 500 /err/redirect.php

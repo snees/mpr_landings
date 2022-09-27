@@ -1,0 +1,67 @@
+/* ==================== 공통 Font Css (22.07.01 Ver) ==================== */
+
+/*  Noto Sans Font  */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap');
+
+/*  Noto Sans - Serif Font  */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap');
+
+/*  Lato  */
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+ /*  Poppins Font  */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+/*  Montserrat Font  */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+/*  Signika  */
+@import url('https://fonts.googleapis.com/css2?family=Signika:wght@300;400;500;600;700&display=swap');
+
+/*  GmarketSans  */
+@font-face {font-family: 'GmarketSans';src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');font-weight: 300;}/* Light */
+@font-face {font-family: 'GmarketSans';src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');font-weight: 500;}/* Medium */
+@font-face {font-family: 'GmarketSans';src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');font-weight: bold;} /* Bold */
+
+/*  google-font( icon + symbols)  */
+@font-face {font-family: 'Material Icons';font-style: normal;font-weight: 400;
+  src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),local('MaterialIcons-Regular'),
+    url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
+    url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
+    url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/sandbox/materialsymbolsoutlined/v7/kJF1BvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oDMzByHX9rA6RzaxHMPdY43zj-jCxv3fzvRNU22ZXGJpEpjC_1n-q_4MrImHCIJIZrDCvHOej.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/sandbox/materialsymbolsrounded/v7/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDB_Qb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOc7TOVpeRL2w5rwZu2rIelXxc.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Material Symbols Sharp';
+  font-style: normal;
+  font-weight: 100 700;
+  src: url(https://fonts.gstatic.com/s/sandbox/materialsymbolssharp/v7/gNMVW2J8Roq16WD5tFNRaeLQk6-SHQ_R00k4aWE.woff2) format('woff2');
+}
+
+.material-symbols-outlined ,
+.material-symbols-rounded,
+.material-symbols-rounded
+{
+    font-weight: normal;font-style: normal;font-size: 24px;line-height: 1;letter-spacing: normal;
+    text-transform: none;display: inline-block;white-space: nowrap;word-wrap: normal;direction: ltr;
+    -webkit-font-feature-settings: 'liga';-webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-outlined {font-family: 'Material Symbols Outlined';}
+.material-symbols-rounded {font-family: 'Material Symbols Rounded';}
+.material-symbols-Sharp {font-family: 'Material Symbols Sharp';}
+
+
+/* ================ (상단 내용은 수정 X) ================ */
