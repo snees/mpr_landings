@@ -446,4 +446,4 @@ class DB
 }
 
 //$DB = new DB(HOST, PORT, DB, NAME, PASS);
-$DB = new DB('localhost', 3306, 'fs_logManager', 'fs_logManager', 'ffive1235');
+$DB = new DB('localhost', 3306, 'fs_landings', 'landing_dev', 'mpr1235');
