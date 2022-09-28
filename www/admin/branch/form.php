@@ -44,12 +44,12 @@
                                             <div class="card-body">
                                                 <!-- 업체 이름 -->
                                                 <div class="form-group">
-                                                    <label for="exampleInputCompany1">업체 이름</label>
+                                                    <label for="exampleInputCompany1">업체 이름 *</label>
                                                     <input type="text" class="form-control" id="exampleInputCompany1" placeholder="업체명을 입력하세요" autocomplete='off'>
                                                 </div>
                                                 <!-- 업체 코드 -->
                                                 <div class="form-group">
-                                                    <label for="exampleInputCode1">업체 코드</label>
+                                                    <label for="exampleInputCode1">업체 코드 *</label>
                                                     <input type="text" class="form-control" id="exampleInputCode1" value="<?php echo $random_str;?>" readonly>
                                                 </div>
                                                 <!-- 주소 -->
@@ -79,24 +79,20 @@
                                                 </div>
                                                 <!-- 전화번호 -->
                                                 <div class="form-group">
-                                                    <label for="exampleInputCode1">전화번호</label>
-                                                    <input type="text" class="form-control" id="exampleInputCompany1" placeholder="전화번호를 입력하세요" autocomplete='off'>
+                                                    <label for="exampleInputTel1">전화번호</label>
+                                                    <input type="text" class="form-control" id="exampleInputTel1" placeholder="전화번호를 입력하세요." autocomplete='off'>
                                                 </div>
                                                 <!-- 이메일 -->
                                                 <div class="form-group">
                                                     <label for="exampleInputEmail1">이메일</label>
-                                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email" autocomplete='off'>
+                                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="이메일을 입력하세요." autocomplete='off'>
                                                 </div>
                                             </div>
                                     <!-- /.card-body -->
                                             <div class="card-footer">
-                                                <button type="submit" class="btn btn-info">Sign in</button>
                                                 <a href="/admin/branch/" class="btn btn-default float-right">취소</a>
+                                                <button type="submit" class="btn btn-info float-right" style="margin-right: 5px;">Sign in</button>
                                             </div>
-                                            <!-- <div class="card-footer">
-                                                <a href="/admin/branch/" class="btn btn-default float-right">취소</a>
-                                                <button type="submit" class="btn btn-primary float-right">Submit</button>
-                                            </div> -->
                                         </form>
                                     </div>
                                 </div>
