@@ -62,11 +62,11 @@ $(function () {
                                                 <td>
                                                     <div class="d-flex">
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="" id="is_sync_y" value="Y">
+                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_y" value="Y">
                                                             <label class="form-check-label" for="is_sync_y">사용</label>
                                                         </div>
                                                         <div class="form-check ml-3">
-                                                            <input class="form-check-input" type="radio" name="" id="is_sync_n" value="N" checked>
+                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_n" value="N" checked>
                                                             <label class="form-check-label" for="is_sync_n">미사용</label>
                                                         </div>
                                                     </div>
