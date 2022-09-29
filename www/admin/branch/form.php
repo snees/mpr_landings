@@ -11,130 +11,125 @@
     for( $i = 0; $i < $id_len ; $i++ ) {  
         $random_str= $random_str.$chars[ rand( 0, $var_size - 1 ) ];
     }
-        
 ?>
 <script>
     console.log('<?php echo $random_str;?>');
 </script>
 
-    <div class="content-wrapper">
+<div class="content-wrapper">
 
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>업체 등록</h1>
-                    </div>
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>업체 등록</h1>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="card card-primary">
-                                        <!-- /.card-header -->
-                                        <!-- form start -->
-                                            <form method="POST" id="branch-form">
-                                                <div class="card-body">
-                                                    <!-- 업체 이름 -->
-                                                    <div class="form-group">
-                                                        <label for="exampleInputCompany1">업체명 *</label>
-                                                        <input type="text" class="form-control" id="exampleInputCompany1" name="company_name" placeholder="업체명을 입력하세요" autocomplete='off'>
-                                                    </div>
-                                                    <!-- 업체 코드 -->
-                                                    <div class="form-group">
-                                                        <label for="exampleInputCode1">업체 코드 *</label>
-                                                        <input type="text" class="form-control" id="exampleInputCode1" name="company_code" value="<?php echo $random_str;?>" readonly>
-                                                    </div>
-                                                    <!-- 주소 -->
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <label for="event-form-table">주소</label>
-                                                            <div class="input-group col-3">
-                                                                <input type="text" class="form-control" id="zip_code" placeholder="우편 번호">
-                                                                <span class="input-group-append">
-                                                                    <button type="button" class="btn btn-block btn-info" onclick="address_search()">search</button>
-                                                                </span>
-                                                            </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card card-primary">
+                                    <!-- /.card-header -->
+                                    <!-- form start -->
+                                        <form method="POST" id="branch-form">
+                                            <div class="card-body">
+                                                <!-- 업체 이름 -->
+                                                <div class="form-group">
+                                                    <label for="exampleInputCompany1">업체명 *</label>
+                                                    <input type="text" class="form-control" id="exampleInputCompany1" name="br_name" placeholder="업체명을 입력하세요" autocomplete='off'>
+                                                </div>
+                                                <!-- 업체 코드 -->
+                                                <div class="form-group">
+                                                    <label for="exampleInputCode1">업체 코드 *</label>
+                                                    <input type="text" class="form-control" id="exampleInputCode1" name="br_code" value="<?php echo $random_str;?>" readonly>
+                                                </div>
+                                                <!-- 주소 -->
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <label for="event-form-table">주소</label>
+                                                        <div class="input-group col-3">
+                                                            <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="우편 번호">
+                                                            <span class="input-group-append">
+                                                                <button type="button" class="btn btn-block btn-info" onclick="address_search()">search</button>
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <input type="text" class="form-control" id="address" placeholder="주소">
-                                                            </div>
-                                                            <div class="col-5">
-                                                                <input type="text" class="form-control" id="detail_address" placeholder="상세 주소">
-                                                            </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col-4">
+                                                            <input type="text" class="form-control" id="address" name="address" placeholder="주소">
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control" id="detail_address" name="detail_address" placeholder="상세 주소">
                                                         </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" id="reference" placeholder="참고항목" autocomplete='off'>
-                                                    </div>
-                                                    <!-- 전화번호 -->
-                                                    <div class="form-group">
-                                                        <label for="exampleInputTel1">전화번호</label>
-                                                        <input type="text" class="form-control" name="br_tel" id="exampleInputTel1" oninput="autoHyphen(this)" maxlength="13" placeholder="전화번호를 입력하세요." autocomplete='off'>
-                                                    </div>
-                                                    <!-- 이메일 -->
-                                                    <div class="form-group">
-                                                        <label for="exampleInputEmail1">이메일 </label>
-                                                        <input type="email" class="form-control" name="user_email" id="exampleInputEmail1" placeholder="이메일을 입력하세요." autocomplete='off'>
-                                                    </div>
                                                 </div>
-                                        <!-- /.card-body -->
-                                                <div class="card-footer">
-                                                    <a href="/admin/branch/" class="btn btn-default float-right">취소</a>
-                                                    <button type="submit" class="btn btn-info float-right" name="sign_in_btn" style="margin-right: 5px;">Sign in</button>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="reference" placeholder="참고항목" autocomplete='off'>
                                                 </div>
-                                            </form>
-                                        </div>
+                                                <!-- 전화번호 -->
+                                                <div class="form-group">
+                                                    <label for="exampleInputTel1">전화번호</label>
+                                                    <input type="text" class="form-control" name="br_tel" id="exampleInputTel1" oninput="autoHyphen(this)" maxlength="13" placeholder="전화번호를 입력하세요." autocomplete='off'>
+                                                </div>
+                                                <!-- 이메일 -->
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1">이메일 </label>
+                                                    <input type="email" class="form-control" name="user_email" id="exampleInputEmail1" placeholder="이메일을 입력하세요." autocomplete='off'>
+                                                </div>
+                                            </div>
+                                    <!-- /.card-body -->
+                                            <div class="card-footer">
+                                                <a href="/admin/branch/" class="btn btn-default float-right">취소</a>
+                                                <button type="submit" class="btn btn-info float-right" name="sign_in_btn" style="margin-right: 5px;">Sign in</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
-                <button type="button" class="btn btn-default" id="modal_btn" data-toggle="modal" data-target="#modal-default" style="display:none;">
-                </button>
             </div>
 
-            <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Default Modal</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p id="alert_msg"></p>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+
+            <button type="button" class="btn btn-default" id="modal_btn" data-toggle="modal" data-target="#modal-default" style="display:none;">
+            </button>
+        </div>
+
+        <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Default Modal</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
                     </div>
-                    <!-- /.modal-content -->
+                    <div class="modal-body">
+                        <p id="alert_msg"></p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
                 </div>
-                <!-- /.modal-dialog -->
+                <!-- /.modal-content -->
             </div>
-        </section>
+            <!-- /.modal-dialog -->
+        </div>
+    </section>
     
-        
-
-        
-
-    </div>
+</div>
 
 
 
@@ -195,7 +190,7 @@
     const autoHyphen = (target) => {
         target.value = target.value.replace(/[^0-9]/g, '').replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
     }
-</script>
+</script>  
 
 <!-- 등록 버튼 눌렀을 때 -->
 
@@ -204,11 +199,18 @@
     $Phone = '/^(010|011|016|017|018|019)-[0-9]{3,4}-[0-9]{4}$/';
     $mail = '/^[a-zA-Z0-9]{1}[a-zA-Z0-9\-_]+@[a-z0-9]{1}[a-z0-9\-]+[a-z0-9]{1}\.(([a-z]{1}[a-z.]+[a-z]{1}[a-z]+)|([a-z]+))$/';
     $alert_msg = "";
-
-
+    
     if(array_key_exists('sign_in_btn',$_POST)){
+
+        if(trim($_POST['zip_code'])){
+            $addr = $_POST['address']." ".$_POST['detail_address'];
+            $SQL = "INSERT INTO mpr_branch (user_id, br_code, br_name, br_post, br_addr, br_addr_etc, br_tel, user_email, reg_date, chg_date, del_yn) VALUES ('snees', '{$_POST['br_code']}', '{$_POST['br_name']}', {$_POST['zip_code']}, '{$addr}', '{$_POST['reference']}', '{$_POST['br_tel']}' , '{$_POST['user_email']}', now(), now(), 'N');";
+        }else{
+            $SQL = "INSERT INTO mpr_branch (user_id, br_code, br_name, br_tel, user_email, reg_date, chg_date, del_yn) VALUES ('snees', '{$_POST['br_code']}', '{$_POST['br_name']}', '{$_POST['br_tel']}' ,'{$_POST['user_email']}', now(), now(), 'N');";
+        }
+
         // 업체명 조건
-        if( trim($_POST['company_name']) && strlen(trim($_POST['company_name'])) >= 3){
+        if( trim($_POST['br_name']) && strlen(trim($_POST['br_name'])) >= 3){
 
             // 전화번호 입력 여부 확인
             if( trim($_POST['br_tel']) ){
@@ -220,6 +222,7 @@
 
                         // 이메일 형식 확인
                         if( preg_match($mail, $_POST['user_email']) ){
+                            $statement = $DB->query($SQL);
                             echo '<script> alert("등록되었습니다.");</script>';
                             echo "<script>location.href='/admin/branch/index.php'</script>";
                         }else{
@@ -227,15 +230,18 @@
                         }
 
                     }else{
+                        $statement = $DB->query($SQL);
                         echo '<script> alert("등록되었습니다.");</script>';
                         echo "<script>location.href='/admin/branch/index.php'</script>";
                     }
 
                 }else{
+                    $statement = $DB->query($SQL);
                     $alert_msg = "tel_form_err";
                 }
 
             }else{
+                $statement = $DB->query($SQL);
                 echo '<script> alert("등록되었습니다.");</script>';
                 echo "<script>location.href='/admin/branch/index.php'</script>";
             }
@@ -246,6 +252,7 @@
     }
 ?>
 
+<!-- modal -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     var msg = "<?php echo $alert_msg?>";
