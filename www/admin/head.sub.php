@@ -34,6 +34,7 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/config.php";
     <script src="<?php echo INC_URL ?>/jquery-1.12.4.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?php echo INC_URL; ?>/bootstrap.bundle.min.js"></script>
     <!-- Summernote JS -->
     <script src="<?php echo INC_URL; ?>/summernote/summernote-lite.js"></script>
     <script src="<?php echo INC_URL; ?>/summernote/summernote-ko-KR.js"></script>
