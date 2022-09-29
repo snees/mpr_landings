@@ -35,7 +35,7 @@
                                         <tbody>
                                             <tr class="odd">
                                                 <td>5</td>
-                                                <td rowspan="3">업체 A (kekekekek)</td>
+                                                <td rowspan="3"><a href="#none" onclick="go(this)" style="color:black;">업체 A (kekekekek)</a></td>
                                                 <td>할인 이벤트</td>
                                             </tr>
                                             <tr class="even">
@@ -48,19 +48,19 @@
                                             </tr>
                                             <tr class="even">
                                                 <td>2</td>
-                                                <td>업체 B (rirjtijr)</td>
+                                                <td><a href="#none" onclick="go(this)" style="color:black;">업체 B (rirjtijr)</a></td>
                                                 <td>계절맞이 이벤트</td>
                                             </tr>
                                             <tr class="even">
                                                 <td>1</td>
-                                                <td>업체 C (fsd0935ds)</td>
+                                                <td><a href="#none" onclick="go(this)" style="color:black;">업체 C (fsd0935ds)</a></td>
                                                 <td>신 지점 개점 이벤트</td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
                                             <tr>
                                                 <td colspan="3">
-                                                    <a class="btn btn-sm btn-primary" href="/admin/branch/form.php">신규 등록</a>
+                                                    <a class="btn btn-sm btn-primary" href="/admin/branch/form.php?mode=register">신규 등록</a>
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -104,6 +104,17 @@
     </section>
     
 </div>
+
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    function go(ths){
+        var code = $(ths).text();
+        console.log(code);
+        code = code.split('(');
+        code = code[1].split(')')[0];
+        location.href = "/admin/branch/form.php?mode=update&code="+code;
+    }
+</script>
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/tail.php";
 ?>
