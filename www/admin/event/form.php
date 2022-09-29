@@ -12,6 +12,12 @@ $(function () {
 });
 
 </script>
+<!-- <script src="//code.jquery.com/jquery-3.3.1.min.js"></script> -->
+
+<?php
+    $S_SQL = "SELECT * FROM mpr_branch;";
+    $res = $DB -> query($S_SQL);
+?>
 
 <div class="content-wrapper">
 
@@ -34,7 +40,7 @@ $(function () {
 
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <form action="/" method="POST" id="event-form">
+                                    <form method="POST" id="event-form">
 
                                     <table id="event-form-table" class="table table-bordered">
                                         <tbody>
@@ -86,9 +92,13 @@ $(function () {
                                                 </th>
                                                 <td>
                                                     <select class="custom-select form-control-border" id="br_code" name="br_code">
-                                                        <option value="">Value 1</option>
-                                                        <option value="">Value 2</option>
-                                                        <option value="">Value 3</option>
+                                                        <?php
+                                                            foreach($res as $row){
+                                                        ?>
+                                                            <option value=<?php echo $row['br_code']?>><?php echo $row['br_name']?></option>
+                                                        <?php
+                                                            }
+                                                        ?>
                                                     </select>
                                                 </td>
                                             </tr>
@@ -246,8 +256,8 @@ $(function () {
                                                         <button type="button" class="btn btn-info">미리보기</button>
                                                     </div>
                                                     <div class="d-flex">
-                                                        <a href="/admin/event/" class="btn btn-danger">취소</a>
-                                                        <button type="button" class="btn btn-primary">저장</button>
+                                                        <a href="/admin/event/" class="btn btn-danger" style="margin-right:5px;">취소</a>
+                                                        <input type="submit" class="btn btn-primary" value="저장" name="save_btn">
                                                     </div>
                                                     </div>
                                                 </td>
@@ -267,6 +277,7 @@ $(function () {
     </section>
 
 </div>
+
 
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/tail.php";
