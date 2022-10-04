@@ -103,6 +103,21 @@
 
 // -----------------------------------------------------------------------------------------------------------
 
+$code = $_REQUEST['code'];
+
+$webFilePath = '/img_data/branch/'.trim($code)."/";
+$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/branch/'.trim($code);
+$uploads_dir = trim($boardEditor)."/";
+
+
+if ( !is_dir($boardEditor) ) {
+    @mkdir($boardEditor, 0777, true);
+    @chmod($boardEditor, 0777);
+ }
+ if ( !is_dir($uploads_dir) ) {
+    @mkdir($uploads_dir, 0777, true);
+    @chmod($uploads_dir, 0777);
+ }
 
 $error = $_FILES["files"]['error'];
 $orgFile = $_FILES["files"]['name'];
@@ -114,9 +129,8 @@ $filename = md5(time().$chagename).'.'.$extend;
 if ($_FILES['files']['name']) {
     if (!$_FILES['files']['error']) {
         $temp = explode(".", $_FILES["files"]["name"]);
-        $destinationFilePath = $_SERVER['DOCUMENT_ROOT'].'/img_data/'.$filename;
-        $webFilePath = '/img_data/'.$filename;
-        if (!move_uploaded_file($_FILES['files']['tmp_name'], $destinationFilePath)) {
+        
+        if (!move_uploaded_file($_FILES['files']['tmp_name'], "{$uploads_dir}/{$filename}")) {
             echo json_encode(array(
                 'uploaded'=>'0',
                 'error'=>array('message'=>'첨부파일에 문제가 발생하였습니다.')
@@ -132,6 +146,8 @@ if ($_FILES['files']['name']) {
                 exit;
                 
             }else{
+
+                $webFilePath = $webFilePath.$filename;
                 echo json_encode(array(
                     'uploaded'=>'1',
                     'fileName'=>$filename,

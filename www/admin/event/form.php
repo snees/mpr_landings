@@ -1,6 +1,8 @@
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.php";
     ob_start();
+
+    $now_timestamp = time();
 ?>
 
 <script>
@@ -13,14 +15,15 @@ $(function () {
             onImageUpload : function(files, editor, welEditable) {
                 for(var i = files.length-1; i >= 0; i--){
                     sendFile(files[i], this);
-                    // location.href='/admin/event/editor-upload.php';
                 }
             }
         }
     });
     function sendFile(file, el) {
         var formData = new FormData();
+        var br_code = <?php echo $now_timestamp?>;
         formData.append("files", file);
+        formData.append("code", br_code);
         $.ajax({
             data : formData,
             type : "POST",
@@ -41,8 +44,23 @@ $(function () {
 </script>
 
 <?php
-    $S_SQL = "SELECT * FROM mpr_branch;";
-    $res = $DB -> query($S_SQL);
+    $start_Date  =  $_POST["ev_start"];
+    $end_Date = $_POST["ev_end"];
+
+    //입력 받은 데이터 값이 null이 아닌 경우
+    if (!empty($start_Date)){
+        //입력 받은 데이터 값을 데이터 타입으로
+        $startDate = new DateTime($start_Date);
+        //형식을 Y년m월d일 형태로 표시
+        $start_date = $startDate ->format( "Y-m-d" );
+    }
+
+    if (!empty($end_Date)){
+        //입력 받은 데이터 값을 데이터 타입으로
+        $endDate = new DateTime($end_Date);
+        //형식을 Y년m월d일 형태로 표시
+        $end_date = $endDate ->format( "Y-m-d" );
+    }
 ?>
 
 <div class="content-wrapper">
@@ -119,6 +137,8 @@ $(function () {
                                                 <td>
                                                     <select class="custom-select form-control-border" id="br_code" name="br_code">
                                                         <?php
+                                                            $S_SQL = "SELECT * FROM mpr_branch;";
+                                                            $res = $DB -> query($S_SQL);
                                                             foreach($res as $row){
                                                         ?>
                                                             <option value=<?php echo $row['br_code']?>><?php echo $row['br_name']?></option>
@@ -236,7 +256,7 @@ $(function () {
                                                 <td colspan="3">
                                                     <div class="form-group">
                                                         <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_always">
+                                                            <input class="custom-control-input" type="checkbox" id="ev_always" name="ev_always">
                                                             <label for="ev_always" class="custom-control-label">상시 진행</label>
                                                         </div>
                                                     </div>
@@ -306,6 +326,8 @@ $(function () {
 
 <?php
 
+    $ev_subject = '/^[a-zA-Z가-힣 ]+$/';
+
     if(array_key_exists('save_btn', $_POST)){
 
         $name_check = isset($_POST['ev_name_yn']) ? "Y" : "N";
@@ -316,14 +338,24 @@ $(function () {
         $birth_check = isset($_POST['ev_birthday_yn']) ? "Y" : "N";
         $ev_rec_person_check = isset($_POST['ev_rec_person_yn']) ? "Y" : "N";
         $ev_counsel_time_check = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
+        $ev_always = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
 
 
         $url = 'landings.mprkorea.com/page/index?biz='.$_POST['br_code'].'&code='.$_POST['br_key'];
+?>
+<script>
 
+    console.log('<?php echo $url?>');
 
-        $SQL = "INSERT INTO mpr_event (br_code, br_key, ev_type, ev_url, ev_subject, ev_top_content_pc, ev_top_content_mo ,ev_name_yn, ev_tel, ev_tel_yn, ev_sex_yn, ev_age_yn, ev_comment_yn, ev_birthday_yn, ev_rec_person_yn, ev_counsel_time_yn, ev_bottom_content_pc , ev_bottom_content_mo ,ev_stat, reg_date, chg_date, del_yn) 
-        VALUES ('{$_POST['br_code']}', '{$_POST['br_key']}' , '{$_POST['ev_type']}', '{$url}' ,'{$_POST['ev_subject']}','{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', '010-3269-7977', '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}','{$_POST['ev_bottom_content_mo']}' , '{$_POST['ev_stat']}', now(), now(), 'N');";
-        $statement = $DB->query($SQL);
+</script>
+
+<?php
+        $SQL = "INSERT INTO mpr_event (br_code, br_key, ev_type, ev_url, ev_subject, ev_top_content_pc, ev_top_content_mo ,ev_name_yn, ev_tel, ev_tel_yn, ev_sex_yn, ev_age_yn, ev_comment_yn, ev_birthday_yn, ev_rec_person_yn, ev_counsel_time_yn, ev_bottom_content_pc , ev_bottom_content_mo , ev_start , ev_end , ev_stat, reg_date, chg_date, del_yn) 
+        VALUES ('{$_POST['br_code']}', '{$_POST['br_key']}' , '{$_POST['ev_type']}', '{$url}' ,'{$_POST['ev_subject']}','{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', '010-3269-7977', '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}','{$_POST['ev_bottom_content_mo']}' , '{$start_date}', '{$end_date}' , '{$_POST['ev_stat']}', now(), now(), 'N');";
+
+        if(preg_match($ev_subject, $_POST['ev_subject']) && strlen($_POST['ev_subject']) >= 3){
+            $statement = $DB->query($SQL);
+        }
 
 ?>
 
@@ -338,7 +370,6 @@ $(function () {
     // console.log('<?php echo $ev_counsel_time_check?>');
 
     console.log('<?php echo $_POST['ev_stat'] ?>');
-    console.log('<?php echo $SQL?>');
 
 </script>
 
