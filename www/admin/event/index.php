@@ -36,46 +36,38 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr class="odd">
-                                                <td>5</td>
-                                                <td>신규 제품 이벤트 (22092614)</td>
-                                                <td><a href="//">URL</a></td>
-                                                <td>업체 A</td>
-                                                <td>2022-09-26 ~ 10-25</td>
-                                                <td>진행중</td>
+                                            <?php
+                                                $S_SQL = "SELECT * FROM mpr_event ORDER BY idx DESC;";
+                                                $res = $DB -> query($S_SQL);
+                                                foreach($res as $row){
+                                                    $B_SQL = "SELECT br_name FROM mpr_branch WHERE br_code = '{$row['br_code']}';";
+                                                    $b_res = $DB -> row($B_SQL);
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $row['idx']?></td>
+                                                <td><?php echo $row['ev_subject']?> (<?php echo $row['reg_date']?>)</td>
+                                                <td><a href="#" onclick="go(this)" style="color: black;">URL</a></td>
+                                                <td><?php echo $b_res['br_name']?></td>
+                                                <td><?php echo $row['ev_start']?> ~ <?php echo $row['ev_end']?></td>
+                                                <td>
+                                                    <?php 
+                                                        switch($row['ev_stat']){
+                                                            case "W" :
+                                                                echo "진행 예정";
+                                                                break;
+                                                            case "Y" :
+                                                                echo "진행중";
+                                                                break;
+                                                            case "N" :
+                                                                echo "종료";
+                                                                break;
+                                                        }
+                                                    ?>
+                                                </td>
                                             </tr>
-                                            <tr class="even">
-                                                <td>4</td>
-                                                <td>신규 제품 이벤트 (22091411)</td>
-                                                <td><a href="//">URL</a></td>
-                                                <td>업체 B</td>
-                                                <td>2022-09-11 ~ 10-10</td>
-                                                <td>진행중</td>
-                                            </tr>
-                                            <tr class="odd">
-                                                <td>3</td>
-                                                <td>신규 제품 이벤트 (22100113)</td>
-                                                <td><a href="//">URL</a></td>
-                                                <td>업체 C</td>
-                                                <td>2022-10-01 ~ 10-31</td>
-                                                <td>진행예정</td>
-                                            </tr>
-                                            <tr class="even">
-                                                <td>2</td>
-                                                <td>신규 제품 이벤트 (22082520)</td>
-                                                <td><a href="//">URL</a></td>
-                                                <td>업체 F</td>
-                                                <td>2022-08-25 ~ 10-25</td>
-                                                <td>진행중</td>
-                                            </tr>
-                                            <tr class="odd">
-                                                <td>1</td>
-                                                <td>신규 제품 이벤트 (22080110)</td>
-                                                <td><a href="//">URL</a></td>
-                                                <td>업체 D</td>
-                                                <td>2022-08-01 ~ 08-31</td>
-                                                <td>종료</td>
-                                            </tr>
+                                            <?php
+                                                }
+                                            ?>
                                         </tbody>
                                         <tfoot>
                                             <tr>
