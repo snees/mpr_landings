@@ -104,29 +104,41 @@
 // -----------------------------------------------------------------------------------------------------------
 
 
-$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/';
+$error = $_FILES["files"]['error'];
+$orgFile = $_FILES["files"]['name'];
+$extend = strtolower(array_pop(explode('.', $orgFile)));
 
-$getBoard = trim($_REQUEST['b']);
-$webEditorUrl = '/data/'. trim($getBoard) .'/editor/';s
-?>
+$chagename = str_replace(".{$extend}", '', trim($orgFile));
+$filename = md5(time().$chagename).'.'.$extend;
 
-<script>
-    console.log('<?php echo $_FILES['files']['name']?>');
-    console.log('<?php echo $webEditorUrl?>');
-</script>
-
-<?php
 if ($_FILES['files']['name']) {
-    echo $_FILES['files']['name'];
     if (!$_FILES['files']['error']) {
         $temp = explode(".", $_FILES["files"]["name"]);
-        $newfilename = round(microtime(true)).'.'.end($temp);
-        $destinationFilePath = $_SERVER['DOCUMENT_ROOT'].'/img_data/'.$newfilename;
+        $destinationFilePath = $_SERVER['DOCUMENT_ROOT'].'/img_data/'.$filename;
+        $webFilePath = '/img_data/'.$filename;
         if (!move_uploaded_file($_FILES['files']['tmp_name'], $destinationFilePath)) {
-            echo $errorImgFile;
-        }
-        else{
-            echo $destinationFilePath;
+            echo json_encode(array(
+                'uploaded'=>'0',
+                'error'=>array('message'=>'첨부파일에 문제가 발생하였습니다.')
+            ));
+            exit;
+        }else{
+            $allowed_ext = array('jpg','jpeg','png','gif','bmp');
+            if( !in_array($extend, $allowed_ext) ) {
+                echo json_encode(array(
+                    'uploaded'=>'0',
+                    'error'=>array('message'=>'허용되지 않는 확장자입니다.')
+                ));
+                exit;
+                
+            }else{
+                echo json_encode(array(
+                    'uploaded'=>'1',
+                    'fileName'=>$filename,
+                    'url'=>$webFilePath
+                ));
+                exit;  
+            }
         }
     }
     else {

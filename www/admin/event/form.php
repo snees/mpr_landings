@@ -13,7 +13,7 @@ $(function () {
             onImageUpload : function(files, editor, welEditable) {
                 for(var i = files.length-1; i >= 0; i--){
                     sendFile(files[i], this);
-                    location.href='/admin/event/editor-upload.php';
+                    // location.href='/admin/event/editor-upload.php';
                 }
             }
         }
@@ -21,7 +21,6 @@ $(function () {
     function sendFile(file, el) {
         var formData = new FormData();
         formData.append("files", file);
-        formData.append("b", file);
         $.ajax({
             data : formData,
             type : "POST",
@@ -146,7 +145,7 @@ $(function () {
                                                     <label for="ev_top_content_pc">이벤트 PC 상단 이미지</label>
                                                 </th>
                                                 <td colspan="3">
-                                                    <textarea class="editor_textarea" id="event-pc-image-top" name="ev_top_content_pc"></textarea>
+                                                    <textarea class="editor_textarea" id="ev_top_content_pc" name="ev_top_content_pc"></textarea>
                                                 </td>
                                             </tr>
 
