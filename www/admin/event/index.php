@@ -42,11 +42,12 @@
                                                 foreach($res as $row){
                                                     $B_SQL = "SELECT br_name FROM mpr_branch WHERE br_code = '{$row['br_code']}';";
                                                     $b_res = $DB -> row($B_SQL);
+                                                    $date = date("ymdh",strtotime($row['reg_date']));
                                             ?>
                                             <tr>
                                                 <td><?php echo $row['idx']?></td>
-                                                <td><?php echo $row['ev_subject']?> (<?php echo $row['reg_date']?>)</td>
-                                                <td><a href="#" onclick="go(this)" style="color: black;">URL</a></td>
+                                                <td><?php echo $row['ev_subject']?> (<?php echo $date?>)</td>
+                                                <td><a href="#" onclick="go(this)">URL</a></td>
                                                 <td><?php echo $b_res['br_name']?></td>
                                                 <td><?php echo $row['ev_start']?> ~ <?php echo $row['ev_end']?></td>
                                                 <td>

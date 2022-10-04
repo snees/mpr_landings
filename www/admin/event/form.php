@@ -6,9 +6,7 @@
 ?>
 
 <script>
-
-$(function () {
-
+$(document).ready(function(){
     // summernote 구동
     $('.editor_textarea').summernote({
         callbacks :{
@@ -40,7 +38,6 @@ $(function () {
         });
     }
 });
-
 </script>
 
 <?php
@@ -319,6 +316,28 @@ $(function () {
                     </div>
                 </div>
             </div>
+            <button type="button" class="btn btn-default" id="modal_btn" data-toggle="modal" data-target="#modal-default" style="display:none;"></button>
+        </div>
+        <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Default Modal</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="alert_msg"></p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
         </div>
     </section>
 
@@ -327,6 +346,7 @@ $(function () {
 <?php
 
     $ev_subject = '/^[a-zA-Z가-힣 ]+$/';
+    $alert_msg = "";
 
     if(array_key_exists('save_btn', $_POST)){
 
@@ -340,44 +360,47 @@ $(function () {
         $ev_counsel_time_check = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
         $ev_always = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
 
+        $now = date("Y-m-d");
+        $str_now = strtotime($now);
+        $str_start = strtotime($start_Date);
+        $str_end = strtotime($end_Date);
+
+        if($str_start > $str_now){
+            $ev_stat = "W";
+        }else if($str_start <= $str_now && $str_now <= $str_end){
+            $ev_stat = "Y";
+        }else if($str_end < $str_now){
+            $ev_stat = "N";
+        }
+
 
         $url = 'landings.mprkorea.com/page/index?biz='.$_POST['br_code'].'&code='.$_POST['br_key'];
-?>
-<script>
 
-    console.log('<?php echo $url?>');
-
-</script>
-
-<?php
         $SQL = "INSERT INTO mpr_event (br_code, br_key, ev_type, ev_url, ev_subject, ev_top_content_pc, ev_top_content_mo ,ev_name_yn, ev_tel, ev_tel_yn, ev_sex_yn, ev_age_yn, ev_comment_yn, ev_birthday_yn, ev_rec_person_yn, ev_counsel_time_yn, ev_bottom_content_pc , ev_bottom_content_mo , ev_start , ev_end , ev_stat, reg_date, chg_date, del_yn) 
-        VALUES ('{$_POST['br_code']}', '{$_POST['br_key']}' , '{$_POST['ev_type']}', '{$url}' ,'{$_POST['ev_subject']}','{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', '010-3269-7977', '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}','{$_POST['ev_bottom_content_mo']}' , '{$start_date}', '{$end_date}' , '{$_POST['ev_stat']}', now(), now(), 'N');";
+        VALUES ('{$_POST['br_code']}', '{$_POST['br_key']}' , '{$_POST['ev_type']}', '{$url}' ,'{$_POST['ev_subject']}','{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', '010-3269-7977', '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}','{$_POST['ev_bottom_content_mo']}' , '{$start_date}', '{$end_date}' , '{$ev_stat}', now(), now(), 'N');";
 
         if(preg_match($ev_subject, $_POST['ev_subject']) && strlen($_POST['ev_subject']) >= 3){
             $statement = $DB->query($SQL);
+            echo '<script> alert("등록되었습니다.");</script>';
+            echo "<script>location.href='/admin/event/index.php'</script>";
+        }else{
+            $alert_msg = "ev_name_form_err";
         }
-
-?>
-
-<script>
-    // console.log('<?php echo $name_check?>');
-    // console.log('<?php echo $tel_check?>');
-    // console.log('<?php echo $sex_check?>');
-    // console.log('<?php echo $age_check?>');
-    // console.log('<?php echo $comment_check?>');
-    // console.log('<?php echo $birth_check?>');
-    // console.log('<?php echo $ev_rec_person_check?>');
-    // console.log('<?php echo $ev_counsel_time_check?>');
-
-    console.log('<?php echo $_POST['ev_stat'] ?>');
-
-</script>
-
-<?php
         
     }
 
 ?>
+
+<!-- 모달 -->
+<script>
+    var msg = "<?php echo $alert_msg?>";
+    if(msg != ""){
+        if(msg == "ev_name_form_err"){
+            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글 또는 영문으로만 입력가능합니다.");
+            document.getElementById('modal_btn').click();
+        }
+    }
+</script>
 
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/tail.php";
