@@ -36,14 +36,41 @@
                                             <?php
                                                 $S_SQL = "SELECT * FROM mpr_branch ORDER BY idx DESC;";
                                                 $res = $DB -> query($S_SQL);
+                                                $count = $DB -> single("SELECT count(*) FROM `mpr_branch` b LEFT JOIN `mpr_event` e ON b.br_code = e.br_code;");
                                                 foreach($res as $row){
+                                                    $E_SQL = "SELECT ev_subject FROM mpr_event WHERE br_code = '{$row['br_code']}';";
+                                                    $ev_res = $DB -> query($E_SQL);
+                                                    $ev_count = $DB -> single("SELECT count(*) FROM mpr_event WHERE br_code = '{$row['br_code']}';");
+                                                    $i = $ev_count;
+                                                    if($ev_count >= 1){
+                                                        foreach($ev_res as $ev_row){
+                                                            if($i == $ev_count){
                                             ?>
-                                            <tr>
-                                                <td><?php echo $row['idx']?></td>
-                                                <td><a href="#" onclick="go(this)" style="color: black;"><?php echo $row['br_name']?> (<?php echo $row['br_code']?>)</a></td>
-                                                <td></td>
-                                            </tr>
+                                                                <tr>
+                                                                    <td><?php echo $count--?></td>
+                                                                    <td rowspan="<?php echo $ev_count?>"><a href="#" onclick="go(this)" style="color: black;"><?php echo $row['br_name']?> (<?php echo $row['br_code']?>)</a></td>
+                                                                    <td><?php echo $ev_row['ev_subject']?></td>
+                                                                </tr>
                                             <?php
+                                                            }else{
+                                            ?>
+                                                                <tr>
+                                                                    <td><?php echo $count--?></td>
+                                                                    <td><?php echo $ev_row['ev_subject']?></td>
+                                                                </tr>
+                                            <?php                    
+                                                            }
+                                                            $i--;          
+                                                        }
+                                                }else{
+                                                    ?>
+                                                        <tr>
+                                                            <td><?php echo $count--?></td>
+                                                            <td><a href="#" onclick="go(this)" style="color: black;"><?php echo $row['br_name']?> (<?php echo $row['br_code']?>)</a></td>
+                                                            <td>-</td>
+                                                        </tr>
+                                            <?php
+                                                    }
                                                 }
                                             ?>
                                         </tbody>
