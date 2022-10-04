@@ -33,29 +33,19 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr class="odd">
-                                                <td>5</td>
-                                                <td rowspan="3"><a href="#none" onclick="go(this)" style="color:black;">업체 A (kekekekek)</a></td>
-                                                <td>할인 이벤트</td>
+                                            <?php
+                                                $S_SQL = "SELECT * FROM mpr_branch ORDER BY idx DESC;";
+                                                $res = $DB -> query($S_SQL);
+                                                foreach($res as $row){
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $row['idx']?></td>
+                                                <td><a href="#" onclick="go(this)" style="color: black;"><?php echo $row['br_name']?> (<?php echo $row['br_code']?>)</a></td>
+                                                <td></td>
                                             </tr>
-                                            <tr class="even">
-                                                <td>4</td>
-                                                <td>신규 제품 이벤트</td>
-                                            </tr>
-                                            <tr class="evodden">
-                                                <td>3</td>
-                                                <td>감사 이벤트</td>
-                                            </tr>
-                                            <tr class="even">
-                                                <td>2</td>
-                                                <td><a href="#none" onclick="go(this)" style="color:black;">업체 B (rirjtijr)</a></td>
-                                                <td>계절맞이 이벤트</td>
-                                            </tr>
-                                            <tr class="even">
-                                                <td>1</td>
-                                                <td><a href="#none" onclick="go(this)" style="color:black;">업체 C (fsd0935ds)</a></td>
-                                                <td>신 지점 개점 이벤트</td>
-                                            </tr>
+                                            <?php
+                                                }
+                                            ?>
                                         </tbody>
                                         <tfoot>
                                             <tr>
