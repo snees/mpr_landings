@@ -27,27 +27,22 @@
                                     <table id="client-list" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th colspan="3">
-                                                    <nav class="navbar navbar-expand navbar-white navbar-light" style="justify-content: right; height:35px;">
-                                                        <a class="nav-link" data-widget="navbar-search" data-target="#navbar-search2" href="#" role="button">
-                                                            <i class="fas fa-search"></i>
-                                                        </a>
-                                                        <div class="navbar-search-block" id="navbar-search2">
-                                                            <form class="form-inline" action="index.php?mode=search">
-                                                                <div class="input-group input-group-sm">
-                                                                    <input class="form-control form-control-navbar" type="search" placeholder="업체명을 입력하세요." aria-label="Search" name="input_search" autocomplete='off'>
-                                                                    <div class="input-group-append">
-                                                                    <button class="btn btn-navbar" type="submit">
-                                                                        <i class="fas fa-search"></i>
-                                                                    </button>
-                                                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                                                        <i class="fas fa-times"></i>
-                                                                    </button>
-                                                                    </div>
+                                                <th colspan="3" style="padding:0px;">
+                                                    <div class="navbar navbar-expand navbar-white navbar-light" id="navbar-search2" style="justify-content: right;">
+                                                        <form class="form-inline" action="index.php?mode=search">
+                                                            <div class="input-group input-group-sm" >
+                                                                <input class="form-control form-control-navbar" type="search" placeholder="업체명을 입력하세요." aria-label="Search" name="input_search" autocomplete='off'>
+                                                                <div class="input-group-append">
+                                                                <button class="btn btn-navbar" type="submit">
+                                                                    <i class="fas fa-search"></i>
+                                                                </button>
+                                                                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
                                                                 </div>
-                                                            </form>
-                                                        </div>
-                                                    </nav>
+                                                            </div>
+                                                        </form>
+                                                    </div>
                                                 </th>
                                             </tr>
                                             
@@ -116,7 +111,7 @@
                                                         echo "<tr>
                                                                     <td>".$count--."</td>
                                                                     <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']." (".$row['br_code'].")</a></td>
-                                                                    <td>진행예정:(".$e_res['W_count'].")  진행중:(".$e_res['Y_count'].")  종료:(".$e_res['N_count'].")</td>
+                                                                    <td><a href='#'>진행예정:(".$e_res['W_count'].")</a>&emsp;<a href='#'>진행중:(".$e_res['Y_count'].")</a>&emsp;<a href='#'>종료:(".$e_res['N_count'].")</a></td>
                                                                 </tr>";
                                                     }
                                                 }
