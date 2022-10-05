@@ -5,12 +5,42 @@
     $now_timestamp = time();
 ?>
 
+<!-- 등록 / 수정 구분 -->
+<?php
+$content = "";
+if ( trim($_GET['mode'])=='update' ) {
+    $strSQL = "SELECT * FROM mpr_event WHERE idx = {$_GET['idx']}; ";
+    $result = $DB -> row($strSQL);
+    $content = $result['ev_top_content_pc'];
+?>
+    <script>
+       
+       window.onload = function(){
+           
+           $('#br_key2').show();
+           $('#ev_subject2').show();
+           $('#ev_top_content_pc').val();
+           
+           $('#br_key').hide();
+           $('#ev_subject').hide();
+       }
+
+   </script>
+<?php
+}
+
+?>
+
+
 <script>
 $(document).ready(function(){
+    var type;
     // summernote 구동
     $('.editor_textarea').summernote({
+        placeholder : '<?php echo $content?>',
         callbacks :{
             onImageUpload : function(files, editor, welEditable) {
+                type = this.name;
                 for(var i = files.length-1; i >= 0; i--){
                     sendFile(files[i], this);
                 }
@@ -22,6 +52,7 @@ $(document).ready(function(){
         var br_code = <?php echo $now_timestamp?>;
         formData.append("files", file);
         formData.append("code", br_code);
+        formData.append("type", type);
         $.ajax({
             data : formData,
             type : "POST",
@@ -127,6 +158,7 @@ $(document).ready(function(){
                                                 </th>
                                                 <td>
                                                     <input type="text" class="form-control form-control-border" id="br_key" name="br_key" autocomplete="off" placeholder="이벤트 API KEY 입력...">
+                                                    <input type="text" class="form-control form-control-border" id="br_key2" name="br_key2" value="<?php echo $result['br_key']?>" autocomplete="off" placeholder="" style="display:none;">
                                                 </td>
                                                 <th>
                                                     <label for="br_code">업체 선택</label>
@@ -138,7 +170,7 @@ $(document).ready(function(){
                                                             $res = $DB -> query($S_SQL);
                                                             foreach($res as $row){
                                                         ?>
-                                                            <option value=<?php echo $row['br_code']?>><?php echo $row['br_name']?></option>
+                                                            <option value="<?php echo $row['br_code']?>"><?php echo $row['br_name']?></option>
                                                         <?php
                                                             }
                                                         ?>
@@ -153,6 +185,7 @@ $(document).ready(function(){
                                                 </th>
                                                 <td colspan="3">
                                                     <input type="text" class="form-control form-control-border" id="ev_subject" name="ev_subject" autocomplete="off" placeholder="이벤트 제목 입력...">
+                                                    <input type="text" class="form-control form-control-border" id="ev_subject2" name="ev_subject2" value="<?php echo $result['ev_subject']?>" autocomplete="off" placeholder="이벤트 제목 입력..." style="display:none;">
                                                 </td>
                                             </tr>
 
@@ -163,6 +196,8 @@ $(document).ready(function(){
                                                 </th>
                                                 <td colspan="3">
                                                     <textarea class="editor_textarea" id="ev_top_content_pc" name="ev_top_content_pc"></textarea>
+                                                    
+                                                    
                                                 </td>
                                             </tr>
 

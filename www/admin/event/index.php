@@ -72,7 +72,7 @@
                                             ?>
                                             <tr>
                                                 <td><?php echo $row['idx']?></td>
-                                                <td><?php echo $row['ev_subject']?> (<?php echo $date?>)</td>
+                                                <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?> (<?php echo $date?>)</a></td>
                                                 <td><a href="#" onclick="go(this)">URL</a></td>
                                                 <td><?php echo $b_res['br_name']?></td>
                                                 <td><?php echo $row['ev_start']?> ~ <?php echo $row['ev_end']?></td>
