@@ -104,7 +104,7 @@
                                             ?>
 
                                             <?php
-                                                    $B_SQL = "SELECT * FROM mpr_branch order by idx desc LIMIT {$start_num}, {$list} ";
+                                                    $B_SQL = "SELECT * FROM mpr_branch WHERE {$strWhere} order by idx desc LIMIT {$start_num}, {$list} ";
                                                     $res = $DB -> query($B_SQL);
                                                     foreach($res as $row){
                                                         $E_SQL = "SELECT 
