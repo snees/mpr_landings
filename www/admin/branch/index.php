@@ -39,16 +39,16 @@
                                                 } else {
                                                     $page = 1;
                                                 }
-
-                                                $row_num = $DB -> single("SELECT count(*) FROM `mpr_branch` b LEFT JOIN `mpr_event` e ON b.br_code = e.br_code;");
-
+                
+                                                $row_num = $DB -> single("SELECT count(*) FROM mpr_branch;");
+                
                                                 $list = 5;
-                                                $block_ct = 4;
-
+                                                $block_ct = 10;
+                
                                                 $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
                                                 $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
                                                 $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
-
+                
                                                 $total_page = ceil($row_num / $list);
                                                 if($block_end > $total_page) {
                                                     $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
@@ -56,74 +56,39 @@
                                                 $total_block = ceil($total_page/$block_ct); //블럭 총 개수
                                                 $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
                     
-                                                $first_num = $row_num-$list*($page-1);
-                    
-
-
-
-                                                $S_SQL = "SELECT * FROM mpr_branch ORDER BY idx DESC LIMIT {$start_num}, {$list};";
-                                                $res = $DB -> query($S_SQL);
-                                                $count = $DB -> single("SELECT count(*) FROM `mpr_branch` b LEFT JOIN `mpr_event` e ON b.br_code = e.br_code;");
-                                                foreach($res as $row){
-                                                    $E_SQL = "SELECT ev_subject FROM mpr_event WHERE br_code = '{$row['br_code']}';";
-                                                    $ev_res = $DB -> query($E_SQL);
-                                                    $ev_count = $DB -> single("SELECT count(*) FROM mpr_event WHERE br_code = '{$row['br_code']}';");
-                                                    $i = $ev_count;
-                                                    if($ev_count >= 1){
-                                                        foreach($ev_res as $ev_row){
-                                                            if($i == $ev_count){
-                                                                echo "<tr>
-                                                                            <td>".$count--."</td>
-                                                                            <td rowspan='".$ev_count."'><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']."( ".$row['br_code'].")</a></td>
-                                                                            <td>".$ev_row['ev_subject']."</td>
-                                                                        </tr>";
-                                                            }else{
-                                                                echo "<tr>
-                                                                            <td>".$count--."</td>
-                                                                            <td>".$ev_row['ev_subject']."</td>
-                                                                        </tr>";              
-                                                            }
-                                                            $i--;          
-                                                        }
-                                                }else{
-                                                    echo "<tr>
-                                                            <td>".$count--."</td>
-                                                            <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']."( ".$row['br_code'].")</a></td>
-                                                            <td>-</td>
-                                                        </tr>";
-                                                    }
-                                                }
+                                                $count = $row_num-$list*($page-1);
                                             ?>
 
-                                            <!-- <?php
-                                                $S_SQL = "SELECT b.br_name, b.br_code, e.ev_subject as subject FROM `mpr_branch` b LEFT JOIN `mpr_event` e ON b.br_code = e.br_code order by b.idx desc LIMIT {$start_num}, {$list};";
-                                                $res = $DB -> query($S_SQL);
-                                                $count = $DB -> single("SELECT count(*) FROM `mpr_branch` b LEFT JOIN `mpr_event` e ON b.br_code = e.br_code;");
-                                                $i = $list;
-                                                $start_num2 = 0;
+                                            <?php
+                                                $B_SQL = "SELECT * FROM mpr_branch order by idx desc LIMIT {$start_num}, {$list} ";
+                                                $res = $DB -> query($B_SQL);
+                                                // for($i=0; $i<; $i++){
+                                                //     $E_SQL = "SELECT 
+                                                //                     count(case when br_code='{$row['br_code']}' and ev_stat='W' then 1 end) as W_count,
+                                                //                     count(case when br_code='{$row['br_code']}' and ev_stat='Y' then 1 end) as Y_count,
+                                                //                     count(case when br_code='{$row['br_code']}' and ev_stat='N' then 1 end) as N_count
+                                                //                 FROM mpr_event";
+                                                //     $e_res = $DB -> row($E_SQL);
+                                                //     echo "<tr>
+                                                //                 <td>".$count--."</td>
+                                                //                 <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']." (".$row['br_code'].")</a></td>
+                                                //                 <td>진행예정:(".$e_res['W_count'].")  진행중:(".$e_res['Y_count'].")  종료:(".$e_res['N_count'].")</td>
+                                                //             </tr>";
+                                                // }
                                                 foreach($res as $row){
-                                                    // echo "<script> console.log('".$row['br_name']."');</script>";
-                                                    // $E_SQL = "SELECT ev_subject FROM mpr_event WHERE br_code = '{$row['br_code']}' order by b.idx desc LIMIT {$start_num2}, {$i};";
-                                                    // $ev_res = $DB -> query($E_SQL);
-                                                    $ev_count = $DB -> single("SELECT count(*) FROM mpr_event WHERE br_code = '{$row['br_code']}';");
-                                                    if($ev_count >= 1){
-                                                        echo "<tr>
-                                                                <td>".$count--."</td>
-                                                                <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']."( ".$row['br_code'].")</a></td>
-                                                                <td>".$row['subject']."</td>
-                                                            </tr>";
-                                                        $i--;
-                                                        echo $i;
-                                                }else{
+                                                    $E_SQL = "SELECT 
+                                                            count(case when br_code='{$row['br_code']}' and ev_stat='W' then 1 end) as W_count,
+                                                            count(case when br_code='{$row['br_code']}' and ev_stat='Y' then 1 end) as Y_count,
+                                                            count(case when br_code='{$row['br_code']}' and ev_stat='N' then 1 end) as N_count
+                                                        FROM mpr_event";
+                                                    $e_res = $DB -> row($E_SQL);
                                                     echo "<tr>
-                                                            <td>".$count--."</td>
-                                                            <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']."( ".$row['br_code'].")</a></td>
-                                                            <td>-</td>
-                                                        </tr>";
-                                                    }
+                                                                <td>".$count--."</td>
+                                                                <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']." (".$row['br_code'].")</a></td>
+                                                                <td>진행예정:(".$e_res['W_count'].")  진행중:(".$e_res['Y_count'].")  종료:(".$e_res['N_count'].")</td>
+                                                            </tr>";
                                                 }
-                                            
-                                            ?> -->
+                                            ?>
                                         </tbody>
                                         <tfoot>
                                             <tr>
@@ -137,52 +102,45 @@
                                 </div>
                             </div>
                             
-                            <?php 
-                                if(isset($_GET['page'])){
-                                    $page = $_GET['page'];
-                                } else {
-                                    $page = 1;
-                                }
-
-                                $row_num = $DB -> single("SELECT count(*) FROM `mpr_branch` b LEFT JOIN `mpr_event` e ON b.br_code = e.br_code;");
-
-                                $list = 5;
-                                $block_ct = 4;
-
-                                $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
-                                $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
-                                $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
-
-                                $total_page = ceil($row_num / $list);
-                            ?>
                             <div class="row">
                                 <div class="col-sm-12 col-md-5">
                                     <div class="dataTable-info" role="status">
-                                        Page : 1 / Total : <?php echo $total_page?>
+                                        Page : 1 / Total : <?php echo $block_end ?>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-7">
                                     <ul class="pagination">
-                                        <li class="paginate_button page-item previous disabled">
+                                        <!-- <li class="paginate_button page-item previous disabled">
                                             <a href="#" class="page-link">
                                                 이전
                                             </a>
-                                        </li>
-                                        <li class="paginate_button page-item active">
-                                            <a href="#" class="page-link">
-                                                1
-                                            </a>
-                                        </li>
-                                        <li class="paginate_button page-item disabled">
-                                            <a href="#" class="page-link">
-                                                2
-                                            </a>
-                                        </li>
-                                        <li class="paginate_button page-item next disabled">
+                                        </li> -->
+                                        <?php
+                                            if( ($page-1) > 0){
+                                                $prev = $page - 1;
+                                                echo "<li class='paginate_button page-item next'><a href='index.php?page={$prev}' class='page-link'>이전</a></li>";
+                                            }else{
+                                                echo "<li class='paginate_button page-item previous disabled'><a href='#' class='page-link'>이전</a></li>";
+                                            }
+                                            for($i=$block_start; $i<=$block_end; $i++){ 
+                                                if($page == $i){  
+                                                    echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>$i</a></li>";
+                                                }else{
+                                                    echo "<li class='paginate_button page-item'><a href='index.php?page={$i}' class='page-link'>$i</a></li>";
+                                                }
+                                            }
+                                            if( ($page+1) <= $block_end){
+                                                $next = $page + 1;
+                                                echo "<li class='paginate_button page-item next'><a href='index.php?page={$next}' class='page-link'>다음</a></li>";
+                                            }else{
+                                                echo "<li class='paginate_button page-item next disabled'><a href='#' class='page-link'>다음</a></li>";
+                                            }
+                                        ?>
+                                        <!-- <li class="paginate_button page-item next disabled">
                                             <a href="#" class="page-link">
                                                 다음
                                             </a>
-                                        </li>
+                                        </li> -->
                                     </ul>
                                 </div>
                             </div>
