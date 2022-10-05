@@ -37,7 +37,33 @@
                                         </thead>
                                         <tbody>
                                             <?php
-                                                $S_SQL = "SELECT * FROM mpr_event ORDER BY idx DESC;";
+
+                                                if(isset($_GET['page'])){
+                                                    $page = $_GET['page'];
+                                                } else {
+                                                    $page = 1;
+                                                }
+                                                
+                                                $row_num = $DB -> single("SELECT count(*) FROM mpr_event;");
+
+                                                $list = 5;
+                                                $block_ct = 10;
+                                                        
+                                                $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
+                                                $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
+                                                $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
+                                                
+                                                
+                                                $total_page = ceil($row_num / $list);
+                                                if($block_end > $total_page) {
+                                                    $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
+                                                }
+                                                $total_block = ceil($total_page/$block_ct); //블럭 총 개수
+                                                $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
+                    
+                                                $first_num = $row_num-$list*($page-1);
+
+                                                $S_SQL = "SELECT * FROM mpr_event ORDER BY idx DESC LIMIT {$start_num}, {$list};";
                                                 $res = $DB -> query($S_SQL);
                                                 foreach($res as $row){
                                                     $B_SQL = "SELECT br_name FROM mpr_branch WHERE br_code = '{$row['br_code']}';";
@@ -85,26 +111,32 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-5">
                                     <div class="dataTable-info" role="status">
-                                        Page : 1 / Total : 5
+                                        Page : 1 / Total : <?php echo $block_end ?>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-7">
                                     <ul class="pagination">
-                                        <li class="paginate_button page-item previous disabled">
-                                            <a href="#" class="page-link">
-                                                이전
-                                            </a>
-                                        </li>
-                                        <li class="paginate_button page-item active">
-                                            <a href="#" class="page-link">
-                                                1
-                                            </a>
-                                        </li>
-                                        <li class="paginate_button page-item next disabled">
-                                            <a href="#" class="page-link">
-                                                다음
-                                            </a>
-                                        </li>
+                                        <?php
+                                            if( ($page-1) > 0){
+                                                $prev = $page - 1;
+                                                echo "<li class='paginate_button page-item next'><a href='index.php?page={$prev}' class='page-link'>이전</a></li>";
+                                            }else{
+                                                echo "<li class='paginate_button page-item next disabled'><a href='#' class='page-link'>이전</a></li>";
+                                            }
+                                            for($i=$block_start; $i<=$block_end; $i++){ 
+                                                if($page == $i){  
+                                                    echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>$i</a></li>";
+                                                }else{
+                                                    echo "<li class='paginate_button page-item'><a href='index.php?page={$i}' class='page-link'>$i</a></li>";
+                                                }
+                                            }
+                                            if( ($page+1) <= $block_end){
+                                                $next = $page + 1;
+                                                echo "<li class='paginate_button page-item next'><a href='index.php?page={$next}' class='page-link'>다음</a></li>";
+                                            }else{
+                                                echo "<li class='paginate_button page-item next disabled'><a href='#' class='page-link'>다음</a></li>";
+                                            }
+                                        ?>
                                     </ul>
                                 </div>
                             </div>
