@@ -105,8 +105,8 @@
 
 $code = $_REQUEST['code'];
 
-$webFilePath = '/img_data/branch/'.trim($code)."/";
-$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/branch/'.trim($code);
+$webFilePath = '/img_data/event/'.trim($code)."/";
+$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/'.trim($code);
 $uploads_dir = trim($boardEditor)."/";
 
 
@@ -123,8 +123,12 @@ $error = $_FILES["files"]['error'];
 $orgFile = $_FILES["files"]['name'];
 $extend = strtolower(array_pop(explode('.', $orgFile)));
 
+
+
+$date = date("Ymd",time());
+
 $chagename = str_replace(".{$extend}", '', trim($orgFile));
-$filename = md5(time().$chagename).'.'.$extend;
+$filename = $date."_".md5(time().$chagename).'.'.$extend;
 
 if ($_FILES['files']['name']) {
     if (!$_FILES['files']['error']) {
