@@ -21,7 +21,12 @@ if ( trim($_GET['mode'])=='update' ) {
             $('#exampleInputTel2').show();
             $('#exampleInputEmail2').show();
             $('#update_btn_div').show();
-            
+            $('#ev_stat_a').show();
+
+
+            $('#register_div').css("width", "68%");
+            $('#register_div').css("float", "left");
+            $('#register_div').css("margin-right", "10px");
             $('#exampleInputCompany1').hide();
             $('#exampleInputCode1').hide();
             $('#zip_code1').hide();
@@ -73,7 +78,7 @@ if ( trim($_GET['mode'])=='update' ) {
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="card card-primary" style="width:68%; float:left; margin-right:10px;" >
+                                    <div class="card card-primary" id="register_div">
                                         <!-- /.card-header -->
                                         <!-- form start -->
                                         <form method="POST" id="branch-form">
@@ -143,7 +148,7 @@ if ( trim($_GET['mode'])=='update' ) {
                                         </form>
                                     </div>
 
-                                    <div class="card card-primary" style="width:30%;">
+                                    <div class="card card-primary" id="ev_stat_a" style="width:30%; display:none;">
                                         <!-- /.card-header -->
                                         <!-- form start -->
                                         <form method="POST" id="branch-form">
@@ -152,12 +157,12 @@ if ( trim($_GET['mode'])=='update' ) {
                                                     <label for="exampleInputEmail1">진행 예정</label>
                                                     <ul style="list-style:none;" style="overflow: auto;">
                                                         <?php
-                                                            $E_SQL = "SELECT ev_subject FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'W'";
+                                                            $E_SQL = "SELECT ev_subject, idx FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'W'";
                                                             $e_res = $DB -> query($E_SQL);
                                                             $count = $DB -> single("SELECT count(*) FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'W'");
                                                             if($count>0){
                                                                 for($i=0; $i<$count; $i++){
-                                                                    echo "<li style='float:left; margin-right:15px;'><a href='{$e_res[$i]['ev_url']}'>{$e_res[$i]['ev_subject']}</a></li>";
+                                                                    echo "<li style='float:left; margin-right:15px;'><a href='../event/form.php?mode=update&idx={$e_res[$i]['idx']}'>{$e_res[$i]['ev_subject']}</a></li>";
                                                                 }
                                                             }else{
                                                                 echo "-";
@@ -170,12 +175,12 @@ if ( trim($_GET['mode'])=='update' ) {
                                                     <label for="exampleInputEmail1">진행중</label>
                                                     <ul style="list-style:none;" style="overflow: auto;">
                                                         <?php
-                                                            $E_SQL = "SELECT ev_subject, ev_url FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'Y'";
+                                                            $E_SQL = "SELECT ev_subject, idx FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'Y'";
                                                             $e_res = $DB -> query($E_SQL);
                                                             $count = $DB -> single("SELECT count(*) FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'Y'");
                                                             if($count>0){
                                                                 for($i=0; $i<$count; $i++){
-                                                                    echo "<li style='float:left; margin-right:15px;'><a href='{$e_res[$i]['ev_url']}'>{$e_res[$i]['ev_subject']}</a></li>";
+                                                                    echo "<li style='float:left; margin-right:15px;'><a href='../event/form.php?mode=update&idx={$e_res[$i]['idx']}'>{$e_res[$i]['ev_subject']}</a></li>";
                                                                 }
                                                             }else{
                                                                 echo "-";
@@ -188,12 +193,12 @@ if ( trim($_GET['mode'])=='update' ) {
                                                     <label for="exampleInputEmail1">종료</label>
                                                     <ul style="list-style:none;" style="overflow: auto;">
                                                         <?php
-                                                            $E_SQL = "SELECT ev_subject FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'N'";
+                                                            $E_SQL = "SELECT ev_subject, idx FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'N'";
                                                             $e_res = $DB -> query($E_SQL);
                                                             $count = $DB -> single("SELECT count(*) FROM mpr_event WHERE br_code='{$_GET['code']}' AND ev_stat = 'N'");
                                                             if($count>0){
                                                                 for($i=0; $i<$count; $i++){
-                                                                    echo "<li style='float:left; margin-right:15px;'><a href='{$e_res[$i]['ev_url']}'>{$e_res[$i]['ev_subject']}</a></li>";
+                                                                    echo "<li style='float:left; margin-right:15px;'><a href='../event/form.php?mode=update&idx={$e_res[$i]['idx']}'>{$e_res[$i]['ev_subject']}</a></li>";
                                                                 }
                                                             }else{
                                                                 echo "-";
