@@ -103,10 +103,10 @@
 
 // -----------------------------------------------------------------------------------------------------------
 
-$code = $_REQUEST['code'];
+$API_KEY = $_REQUEST['API'];
 
-$webFilePath = '/img_data/event/'.trim($code)."/";
-$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/'.trim($code);
+$webFilePath = '/img_data/event/'.trim($API_KEY)."/";
+$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/'.trim($API_KEY);
 $uploads_dir = trim($boardEditor)."/";
 
 

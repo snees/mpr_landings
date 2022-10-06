@@ -111,7 +111,7 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-5">
                                     <div class="dataTable-info" role="status">
-                                        Page : 1 / Total : <?php echo $block_end ?>
+                                        Page : <?php echo $page?> / Total : <?php echo $block_end ?>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-7">
