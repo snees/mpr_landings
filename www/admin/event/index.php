@@ -1,5 +1,13 @@
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.php";
+
+    $strSearch = trim($_GET['search']);
+    $keyword = trim($_GET['input_search']);
+    if(!trim($_GET['stat'])){
+        $stat = "total";
+    }else{
+        $stat = $_GET['stat'];
+    }
 ?>
 
 <div class="content-wrapper">
@@ -27,6 +35,40 @@
                                     <table id="event-list" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
+                                                <th colspan="6" style="padding:0px;">
+                                                    
+                                                    <div class="navbar navbar-expand navbar-white navbar-light d-flex justify-content-between" id="navbar-search2" >
+                                                        <ul style="list-style:none; margin:0px; padding:0 10px;">
+                                                            <li style="float:left; margin-right:5px;"><a href="index.php?stat=total">전체</a></li>
+                                                            <li style="float:left; margin-right:5px;"><a href="index.php?stat=W">진행 예정</a></li>
+                                                            <li style="float:left; margin-right:5px;"><a href="index.php?stat=Y">진행중</a></li>
+                                                            <li style="float:left; margin-right:5px;"><a href="index.php?stat=N">종료</a></li>
+                                                        </ul>
+                                                        <form class="form-inline" action="index.php?stat=<?php echo $stat?>">
+                                                            <input type="hidden" value="<?php echo $stat?>" name="in_stat">
+                                                            <div class="form-group" style="width: 90px; justify-content:right;">
+                                                                <select class="form-control select2" name="search" style="width:100%; height:30px; font-size:small; margin-right: 5px;">
+                                                                    <option value="br_name" <?php echo trim($strSearch)=='br_name'?' selected ':'';?>>업체</option>
+                                                                    <option value="ev_subject" <?php echo trim($strSearch)=='ev_subject'?' selected ':'';?>>이벤트 제목</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="input-group input-group-sm" >
+                                                                <input class="form-control form-control-navbar" type="search" value="<?php echo trim($keyword);?>" placeholder="검색어를 입력하세요." aria-label="Search" name="input_search" autocomplete='off'>
+                                                                <div class="input-group-append">
+                                                                <button class="btn btn-navbar" type="submit">
+                                                                    <i class="fas fa-search"></i>
+                                                                </button>
+                                                                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                            <tr>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">번호</th>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">이벤트 제목</th>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">이벤트 URL</th>
@@ -37,44 +79,79 @@
                                         </thead>
                                         <tbody>
                                             <?php
+                                                $arryWhere = array();
 
+                                                // 검색 안했을때 테이블 가져오기
+                                                if($stat =="total"){
+                                                    $strWhere = '(1)';
+                                                }else{
+                                                    $strWhere = "ev_stat = '{$stat}'";
+                                                }
+                                                
+                                                // 검색했을때 테이블 가져오기
+                                                if ( trim($_GET['search']) && trim($_GET['input_search']) ) {
+                                                    $strWhere = '';
+                                                    if( trim($_GET['in_stat']) != "total"){
+                                                        $arryWhere[] = "ev_stat = '{$_GET['in_stat']}' and {$_GET['search']} like '%{$_GET['input_search']}%' ";
+                                                    }else{
+                                                        $arryWhere[] = "{$_GET['search']} like '%{$_GET['input_search']}%' ";
+                                                    }
+                                                    $strWhere.= implode(' and ', $arryWhere);//---- 배열로 만든다. explode('@', '문자열@문자열@문자열')
+                                                }
+                                                echo '<script>console.log("'.$strWhere.'");</script>';
                                                 if(isset($_GET['page'])){
                                                     $page = $_GET['page'];
                                                 } else {
                                                     $page = 1;
                                                 }
-                                                
-                                                $row_num = $DB -> single("SELECT count(*) FROM mpr_event;");
 
-                                                $list = 5;
-                                                $block_ct = 10;
-                                                        
-                                                $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
-                                                $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
-                                                $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
-                                                
-                                                
-                                                $total_page = ceil($row_num / $list);
-                                                if($block_end > $total_page) {
-                                                    $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
-                                                }
-                                                $total_block = ceil($total_page/$block_ct); //블럭 총 개수
-                                                $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
-                    
-                                                $first_num = $row_num-$list*($page-1);
+                                                $row_num = $DB -> single("SELECT count(*) FROM mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE {$strWhere};");
+                                                // echo $row_num;
 
-                                                $S_SQL = "SELECT * FROM mpr_event ORDER BY idx DESC LIMIT {$start_num}, {$list};";
-                                                $res = $DB -> query($S_SQL);
-                                                foreach($res as $row){
-                                                    $B_SQL = "SELECT br_name FROM mpr_branch WHERE br_code = '{$row['br_code']}';";
-                                                    $b_res = $DB -> row($B_SQL);
-                                                    $date = date("ymdh",strtotime($row['reg_date']));
+                                                if($row_num == 0){
+                                                    echo "<tr>
+                                                                <td>&nbsp;</td>
+                                                                <td colspan='5'>검색결과가 없습니다.</td>
+                                                            </tr>";
+                                                }else{
+
+                                                    $list = 5;
+                                                    $block_ct = 10;
+                                                            
+                                                    $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
+                                                    $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
+                                                    $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
+                                                    
+                                                    
+                                                    $total_page = ceil($row_num / $list);
+                                                    if($block_end > $total_page) {
+                                                        $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
+                                                    }
+                                                    $total_block = ceil($total_page/$block_ct); //블럭 총 개수
+                                                    $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
+                        
+                                                    $first_num = $row_num-$list*($page-1);
+
+                                                    $count = $row_num-$list*($page-1);
+
+                                                    $S_SQL = 
+                                                    "SELECT 
+                                                        e.idx, e.ev_subject, e.ev_url, e.ev_start, e.ev_end, e.ev_stat, br_name
+                                                    FROM 
+                                                        mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE {$strWhere}
+                                                    order by idx desc
+                                                    LIMIT {$start_num}, {$list}";
+
+                                                    // echo $S_SQL;
+                                                    $res = $DB -> query($S_SQL);
+                                                    foreach($res as $row){
+                                                        $date = date("ymdh",strtotime($row['reg_date']));
                                             ?>
                                             <tr>
-                                                <td><?php echo $row['idx']?></td>
+                                                <td><?php echo $count--;?></td>
                                                 <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?> (<?php echo $date?>)</a></td>
                                                 <td><a href="#" onclick="go(this)">URL</a></td>
-                                                <td><?php echo $b_res['br_name']?></td>
+                                                <td><?php echo $row['br_name']?></td>
                                                 <td><?php echo $row['ev_start']?> ~ <?php echo $row['ev_end']?></td>
                                                 <td>
                                                     <?php 
@@ -93,6 +170,7 @@
                                                 </td>
                                             </tr>
                                             <?php
+                                                    }
                                                 }
                                             ?>
                                         </tbody>
