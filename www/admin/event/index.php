@@ -51,30 +51,59 @@
 
 
     var stat = '<?php echo $stat?>';
-    console.log(stat);
     switch(stat){
         case "total" :
             $(function(){
-                $('#st_total').css("color", "#4374D9");
+                $('#st_total').css("color", "#050099");
             });
             break;
         case "W" :
             $(function(){
-                $('#st_w').css("color", "#4374D9");
+                $('#st_w').css("color", "#050099");
             });
             break;
         case "Y" :
             $(function(){
-                $('#st_y').css("color", "#4374D9");
+                $('#st_y').css("color", "#050099");
             });
             break;
         case "N" :
             $(function(){
-                $('#st_n').css("color", "#4374D9");
+                $('#st_n').css("color", "#050099");
             });
             break;
-
     }
+
+    $(document).ready(function(){
+        $(".a_link").hover(function(){
+            $(this).css("color", "#6B66FF");
+        }, function(){
+            switch(stat){
+                case "total" :
+                    $(function(){
+                        $('#st_total').css("color", "#050099");
+                    });
+                    break;
+                case "W" :
+                    $(function(){
+                        $('#st_w').css("color", "#050099");
+                    });
+                    break;
+                case "Y" :
+                    $(function(){
+                        $('#st_y').css("color", "#050099");
+                    });
+                    break;
+                case "N" :
+                    $(function(){
+                        $('#st_n').css("color", "#050099");
+                    });
+                    break;
+            }
+            $(this).css("color", "#BDBDBD");
+        });
+    })
+    
 </script>
 
 <div class="content-wrapper">
@@ -106,10 +135,10 @@
                                                     
                                                     <div class="navbar navbar-expand navbar-white navbar-light d-flex justify-content-between" id="navbar-search2" >
                                                         <ul class="nav navbar-nav" style="list-style:none; margin:0px; padding:0 10px;">
-                                                            <li style="float:left; margin-right:5px;"><a href="index.php?stat=total" id="st_total" style="color:#BDBDBD;">전체</a></li>
-                                                            <li style="float:left; margin-right:5px;"><a href="index.php?stat=W" id="st_w" style="color:#BDBDBD;">진행 예정</a></li>
-                                                            <li style="float:left; margin-right:5px;"><a href="index.php?stat=Y" id="st_y" style="color:#BDBDBD;">진행중</a></li>
-                                                            <li style="float:left; margin-right:5px;"><a href="index.php?stat=N" id="st_n" style="color:#BDBDBD;">종료</a></li>
+                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=total" id="st_total" style="color:#BDBDBD;">전체</a></li>
+                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=W" id="st_w" style="color:#BDBDBD;">진행 예정</a></li>
+                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=Y" id="st_y" style="color:#BDBDBD;">진행중</a></li>
+                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=N" id="st_n" style="color:#BDBDBD;">종료</a></li>
                                                         </ul>
                                                         
                                                         <form class="form-inline" action="index.php?stat=<?php echo $stat?>">
