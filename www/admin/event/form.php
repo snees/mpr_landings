@@ -459,8 +459,8 @@
                         <p id="alert_msg"></p>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-default" onclick="del()">확인</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -615,14 +615,26 @@
         
     }
 
-    // 이벤트 삭제 버튼
+    // 이벤트 삭제 버튼 -> 모달
     if(array_key_exists('delete_btn', $_POST)){
-        $DEL_SQL = "UPDATE mpr_event SET del_yn = 'Y' WHERE idx = {$_GET['idx']};";
-        $statement = $DB->query($DEL_SQL);
-        echo '<script> alert("삭제되었습니다.");</script>';
-        echo "<script>location.href='/admin/event/index.php'</script>";
+        $alert_msg = "del_msg";
+        // $DEL_SQL = "UPDATE mpr_event SET del_yn = 'Y' WHERE idx = {$_GET['idx']};";
+        // $statement = $DB->query($DEL_SQL);
+        // echo '<script> alert("삭제되었습니다.");</script>';
+        // echo "<script>location.href='/admin/event/index.php'</script>";
     }
 ?>
+
+<script>
+    function del(){
+        <?php
+            $DEL_SQL = "UPDATE mpr_event SET del_yn = 'Y' WHERE idx = {$_GET['idx']};";
+            $statement = $DB->query($DEL_SQL);
+        ?>
+        alert("삭제되었습니다.");
+        location.href='/admin/event/index.php';
+    }
+</script>
 
 <!-- 모달 -->
 <script>
@@ -630,6 +642,9 @@
     if(msg != ""){
         if(msg == "ev_name_form_err"){
             $("#alert_msg").text("이벤트 제목은 3자 이상의 한글 또는 영문으로만 입력가능합니다.");
+            document.getElementById('modal_btn').click();
+        }else if(msg == "del_msg"){
+            $("#alert_msg").text("삭제하시겠습니까?");
             document.getElementById('modal_btn').click();
         }
     }
