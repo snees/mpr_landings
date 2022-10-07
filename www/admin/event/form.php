@@ -5,17 +5,11 @@
     $now_timestamp = time();
 
     $today = date("Y-m-d", time());
-    $endDays = strtotime("$today +7 days");
-    $endDays = date("Y-m-d", $endDays);
+    $endDay = strtotime("$today +7 days");
+    $endDay = date("Y-m-d", $endDay);
 
-    if(trim($_POST['reservation'])){
-        $start_Date  =  explode(" ", $_POST["reservation"])[0];
-        $end_Date = explode(" ", $_POST["reservation"])[2];
-    }else{
-        $start_Date  =  $today;
-        $end_Date = $endDays;
-    }
-
+    $start_Date = $today;
+    $end_Date = $endDay;
 ?>
 
 <!-- API 코드 랜덤 발급 -->
@@ -42,9 +36,6 @@
     $is_tel_checked = "checked";
     $w_stat = "checked";
 
-    $start_date = date("Y-m-d", time());
-    $timestamp = strtotime("$start_date +7days");
-    $end_date = date("Y-m-d", $timestamp);
     $API = $random_str;
 
 
@@ -58,8 +49,8 @@
         $bottom_pc_content = $result['ev_bottom_content_pc'];
         $bottom_mo_content = $result['ev_bottom_content_mo'];
         $company = "br_code='{$result['br_code']}'";
-        $start_date = $result['ev_start'];
-        $end_date = $result['ev_end'];
+        $start_Date = $result['ev_start'];
+        $end_Date = $result['ev_end'];
 
         if($result['ev_name_yn'] == "Y") $is_name_checked = "checked";
         else $is_name_checked = "";
@@ -90,6 +81,7 @@
            $('#ev_subject2').show();
            $('#update_btn').show();
            $('#ev_top_content_pc').val();
+           $('#delete_btn').show()
            
            $('#br_key').hide();
            $('#ev_subject').hide();
@@ -98,11 +90,13 @@
            if($("#ev_always").is(":checked")){
                 $( "#reservation2" ).show()
                 $( "#reservation" ).hide()
-                <?php $end_date = ""; ?>
+                
             }else{
                 $( "#reservation" ).show()
                 $( "#reservation2" ).hide()
+                
             }
+            console.log('<?php echo $ev_always_stat?>');
        }
 
    </script>
@@ -158,16 +152,22 @@
 
         $("#ev_always").change(function(){
             if($("#ev_always").is(":checked")){
-                $( "#reservation2" ).show()
-                $( "#reservation" ).hide()
-                <?php $end_date = ""; ?>
+                $( "#reservation2" ).show();
+                $( "#reservation" ).hide();
+                
             }else{
-                $( "#reservation" ).show()
-                $( "#reservation2" ).hide()
+                
+                $( "#reservation" ).show();
+                $( "#reservation2" ).hide();
             }
         });
         // 상시진행 - x
         $( "#reservation" ).daterangepicker({
+            <?php 
+                if($end_Date == "0000-00-00"){
+                    $end_Date = date("Y-m-d", strtotime("$start_Date +7 days"));
+                }
+            ?>
             locale:{ 
                 format:'YYYY-MM-DD', //일시노출포맷
                 applyLabel :"선택",
@@ -177,8 +177,8 @@
                 daysOfWeek:["일","월","화","수","목","금","토"],
                 monthNames:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
                 },
-                startDate: "<?php echo $today ?>",
-                endDate: "<?php echo $endDays ?>",
+                startDate: "<?php echo $start_Date ?>",
+                endDate: "<?php echo $end_Date ?>",
                 drops: "auto"
         });
 
@@ -193,7 +193,7 @@
                 daysOfWeek:["일","월","화","수","목","금","토"],
                 monthNames:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
                 },
-                startDate: "<?php echo $today ?>",
+                startDate: "<?php echo $start_Date ?>",
                 drops: "auto",
                 singleDatePicker: true 
         });
@@ -425,9 +425,10 @@
                                                         <button type="button" class="btn btn-info">미리보기</button>
                                                     </div>
                                                     <div class="d-flex">
-                                                        <a href="/admin/event/" class="btn btn-danger" style="margin-right:5px;">취소</a>
-                                                        <input type="submit" class="btn btn-primary" value="저장" id="save_btn" name="save_btn">
-                                                        <input type="submit" class="btn btn-primary" value="저장" id="update_btn" name="update_btn" style="display:none;">
+                                                        <a href="/admin/event/" class="btn btn-default" style="margin-right:5px;">취소</a>
+                                                        <input type="submit" class="btn btn-info" value="저장" id="save_btn" name="save_btn">
+                                                        <input type="submit" class="btn btn-info" value="저장" id="update_btn" name="update_btn" style="display:none; margin-right:5px;">
+                                                        <input type="submit" class="btn btn-danger" value="삭제" id="delete_btn" name="delete_btn" style="display:none;">
                                                     </div>
                                                     </div>
                                                 </td>
@@ -488,6 +489,14 @@
         $ev_counsel_time_check = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
         $ev_always_check = isset($_POST['ev_always']) ? "Y" : "N";
 
+        if($ev_always_check == "Y"){
+            $start_Date  =  $_POST["reservation2"];
+            $end_Date = "";
+        }else{
+            $start_Date  =  explode(" ", $_POST["reservation"])[0];
+            $end_Date = explode(" ", $_POST["reservation"])[2];
+        }
+        
         $now = date("Y-m-d");
         $str_now = strtotime($now);
         $str_start = strtotime($start_Date);
@@ -500,6 +509,7 @@
         }else if($str_end < $str_now){
             $ev_stat = "N";
         }
+
 
 
         $url = 'landings.mprkorea.com/page/index?biz='.$_POST['br_code'].'&code='.$_POST['br_key'];
@@ -517,7 +527,7 @@
             '{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', '010-3269-7977', 
             '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', 
             '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}',
-            '{$_POST['ev_bottom_content_mo']}' , '{$ev_always_check}' , '{$start_date}', '{$end_date}' , '{$ev_stat}', now(), now(), 'N');";
+            '{$_POST['ev_bottom_content_mo']}' , '{$ev_always_check}' , '{$start_Date}', '{$end_Date}' , '{$ev_stat}', now(), now(), 'N');";
 
         if(preg_match($ev_subject, $_POST['ev_subject']) && strlen($_POST['ev_subject']) >= 3){
             $statement = $DB->query($SQL);
@@ -542,6 +552,14 @@
         $ev_counsel_time_check = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
         $ev_always_check = isset($_POST['ev_always']) ? "Y" : "N";
 
+        if($ev_always_check == "Y"){
+            $start_Date  =  $_POST["reservation2"];
+            $end_Date = "";
+        }else{
+            $start_Date  =  explode(" ", $_POST["reservation"])[0];
+            $end_Date = explode(" ", $_POST["reservation"])[2];
+        }
+
         $now = date("Y-m-d");
         $str_now = strtotime($now);
         $str_start = strtotime($start_Date);
@@ -554,6 +572,7 @@
         }else if($str_end < $str_now){
             $ev_stat = "N";
         }
+        
 
 
         $url = 'landings.mprkorea.com/page/index?biz='.$_POST['br_code'].'&code='.$_POST['br_key2'];
@@ -580,8 +599,8 @@
             ev_bottom_content_pc =  '{$_POST['ev_bottom_content_pc']}', 
             ev_bottom_content_mo = '{$_POST['ev_bottom_content_mo']}',
             ev_always = '{$ev_always_check}',
-            ev_start = '{$start_date}', 
-            ev_end = '{$end_date}', 
+            ev_start = '{$start_Date}', 
+            ev_end = '{$end_Date}', 
             ev_stat = '{$ev_stat}', 
             chg_date = now()
         WHERE
