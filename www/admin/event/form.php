@@ -3,6 +3,19 @@
     ob_start();
 
     $now_timestamp = time();
+
+    $today = date("Y-m-d", time());
+    $endDays = strtotime("$today +7 days");
+    $endDays = date("Y-m-d", $endDays);
+
+    if(trim($_POST['reservation'])){
+        $start_Date  =  explode(" ", $_POST["reservation"])[0];
+        $end_Date = explode(" ", $_POST["reservation"])[2];
+    }else{
+        $start_Date  =  $today;
+        $end_Date = $endDays;
+    }
+
 ?>
 
 <!-- API 코드 랜덤 발급 -->
@@ -18,55 +31,56 @@
 
 <!-- 등록 / 수정 구분 -->
 <?php
-$top_pc_content = "";
-$top_mo_content = "";
-$bottom_pc_content = "";
-$bottom_mo_content = "";
+    $top_pc_content = "";
+    $top_mo_content = "";
+    $bottom_pc_content = "";
+    $bottom_mo_content = "";
 
-$company = "(1)";
+    $company = "(1) order by (CASE WHEN SUBSTRING(br_name,1,1) RLIKE '[ㄱ-ㅎ가-힣]' THEN 1 WHEN SUBSTRING(br_name,1,1) RLIKE '[a-zA-Z]' THEN 2 ELSE 3 END), br_name";
 
-$is_name_checked = "checked";
-$is_tel_checked = "checked";
-$w_stat = "checked";
+    $is_name_checked = "checked";
+    $is_tel_checked = "checked";
+    $w_stat = "checked";
 
-$start_date = date("Y-m-d", time());
-$timestamp = strtotime("$start_date +7days");
-$end_date = date("Y-m-d", $timestamp);
-$API = $random_str;
+    $start_date = date("Y-m-d", time());
+    $timestamp = strtotime("$start_date +7days");
+    $end_date = date("Y-m-d", $timestamp);
+    $API = $random_str;
 
 
-if ( trim($_GET['mode'])=='update' ) {
-    $strSQL = "SELECT * FROM mpr_event WHERE idx = {$_GET['idx']}; ";
-    $result = $DB -> row($strSQL);
+    if ( trim($_GET['mode'])=='update' ) {
+        $strSQL = "SELECT * FROM mpr_event WHERE idx = {$_GET['idx']}; ";
+        $result = $DB -> row($strSQL);
 
-    $API = $result['br_key'];
-    $top_pc_content = $result['ev_top_content_pc'];
-    $top_mo_content = $result['ev_top_content_mo'];
-    $bottom_pc_content = $result['ev_bottom_content_pc'];
-    $bottom_mo_content = $result['ev_bottom_content_mo'];
-    $company = "br_code='{$result['br_code']}'";
-    $start_date = $result['ev_start'];
-    $end_date = $result['ev_end'];
+        $API = $result['br_key'];
+        $top_pc_content = $result['ev_top_content_pc'];
+        $top_mo_content = $result['ev_top_content_mo'];
+        $bottom_pc_content = $result['ev_bottom_content_pc'];
+        $bottom_mo_content = $result['ev_bottom_content_mo'];
+        $company = "br_code='{$result['br_code']}'";
+        $start_date = $result['ev_start'];
+        $end_date = $result['ev_end'];
 
-    if($result['ev_name_yn'] == "Y") $is_name_checked = "checked";
-    else $is_name_checked = "";
-    if($result['ev_tel_yn'] == "Y") $is_tel_checked = "checked";
-    else $is_tel_checked = "";
-    if($result['ev_sex_yn'] == "Y") $is_sex_checked = "checked";
-    if($result['ev_age_yn'] == "Y") $is_age_checked = "checked";
-    if($result['ev_comment_yn'] == "Y") $is_comment_checked = "checked";
-    if($result['ev_birthday_yn'] == "Y") $is_birth_checked = "checked";
-    if($result['ev_rec_person_yn'] == "Y") $is_ev_rec_person_checked = "checked";
-    if($result['ev_counsel_time_yn'] == "Y") $is_counsel_time_checked = "checked";
-    if($result['ev_stat'] == "W"){
-        $w_stat = "checked";  
-    } else if($result['ev_stat'] == "Y"){
-        $w_stat = "";
-        $y_stat = "checked";
-    } else{
-        $w_stat = "";
-        $n_stat = "checked";
-    }
+        if($result['ev_name_yn'] == "Y") $is_name_checked = "checked";
+        else $is_name_checked = "";
+        if($result['ev_tel_yn'] == "Y") $is_tel_checked = "checked";
+        else $is_tel_checked = "";
+        if($result['ev_sex_yn'] == "Y") $is_sex_checked = "checked";
+        if($result['ev_age_yn'] == "Y") $is_age_checked = "checked";
+        if($result['ev_comment_yn'] == "Y") $is_comment_checked = "checked";
+        if($result['ev_birthday_yn'] == "Y") $is_birth_checked = "checked";
+        if($result['ev_rec_person_yn'] == "Y") $is_ev_rec_person_checked = "checked";
+        if($result['ev_counsel_time_yn'] == "Y") $is_counsel_time_checked = "checked";
+        if($result['ev_always'] == "Y") $is_ev_always_checked = "checked";
+        if($result['ev_stat'] == "W"){
+            $w_stat = "checked";  
+        } else if($result['ev_stat'] == "Y"){
+            $w_stat = "";
+            $y_stat = "checked";
+        } else{
+            $w_stat = "";
+            $n_stat = "checked";
+        }
 ?>
     <script>
        
@@ -80,6 +94,15 @@ if ( trim($_GET['mode'])=='update' ) {
            $('#br_key').hide();
            $('#ev_subject').hide();
            $('#save_btn').hide();
+
+           if($("#ev_always").is(":checked")){
+                $( "#reservation2" ).show()
+                $( "#reservation" ).hide()
+                <?php $end_date = ""; ?>
+            }else{
+                $( "#reservation" ).show()
+                $( "#reservation2" ).hide()
+            }
        }
 
    </script>
@@ -87,65 +110,95 @@ if ( trim($_GET['mode'])=='update' ) {
 }
 ?>
 
-
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script>
-$(document).ready(function(){
-    var type;
-    // summernote 구동
-    $('.editor_textarea').summernote({
-        height: 300,
-        callbacks :{
-            onImageUpload : function(files, editor, welEditable) {
-                type = this.name;
-                for(var i = files.length-1; i >= 0; i--){
-                    sendFile(files[i], this);
+    $(document).ready(function(){
+        var type;
+        // summernote 구동
+        $('.editor_textarea').summernote({
+            height: 300,
+            callbacks :{
+                onImageUpload : function(files, editor, welEditable) {
+                    type = this.name;
+                    for(var i = files.length-1; i >= 0; i--){
+                        sendFile(files[i], this);
+                    }
                 }
             }
+        });
+        function sendFile(file, el) {
+            var formData = new FormData();
+            var key = '<?php echo $API ?>';
+            formData.append("files", file);
+            formData.append("type", type);
+            formData.append("API", key);
+            $.ajax({
+                data : formData,
+                type : "POST",
+                url: "/admin/event/editor-upload.php",
+                dataType : 'json',
+                cache: false,
+                contentType : false,
+                enctype : 'multipart/form-data',
+                processData : false,
+                success : function(data) {
+                    $(el).summernote('editor.insertImage', data.url);
+                    
+                }
+            });
         }
     });
-    function sendFile(file, el) {
-        var formData = new FormData();
-        var key = '<?php echo $API ?>';
-        formData.append("files", file);
-        formData.append("type", type);
-        formData.append("API", key);
-        $.ajax({
-            data : formData,
-            type : "POST",
-            url: "/admin/event/editor-upload.php",
-            dataType : 'json',
-            cache: false,
-            contentType : false,
-            enctype : 'multipart/form-data',
-            processData : false,
-            success : function(data) {
-                $(el).summernote('editor.insertImage', data.url);
-                
+
+
+
+    // daterangepicker
+    $( function() {
+
+        $("#ev_always").change(function(){
+            if($("#ev_always").is(":checked")){
+                $( "#reservation2" ).show()
+                $( "#reservation" ).hide()
+                <?php $end_date = ""; ?>
+            }else{
+                $( "#reservation" ).show()
+                $( "#reservation2" ).hide()
             }
         });
-    }
-});
+        // 상시진행 - x
+        $( "#reservation" ).daterangepicker({
+            locale:{ 
+                format:'YYYY-MM-DD', //일시노출포맷
+                applyLabel :"선택",
+                cancelLabel:"취소",
+                fromLabel: "From",
+                toLabel: "To",
+                daysOfWeek:["일","월","화","수","목","금","토"],
+                monthNames:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
+                },
+                startDate: "<?php echo $today ?>",
+                endDate: "<?php echo $endDays ?>",
+                drops: "auto"
+        });
+
+        // 상시진행
+        $( "#reservation2" ).daterangepicker({
+            locale:{ 
+                format:'YYYY-MM-DD', //일시노출포맷
+                applyLabel :"선택",
+                cancelLabel:"취소",
+                fromLabel: "From",
+                toLabel: "To",
+                daysOfWeek:["일","월","화","수","목","금","토"],
+                monthNames:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
+                },
+                startDate: "<?php echo $today ?>",
+                drops: "auto",
+                singleDatePicker: true 
+        });
+    });
 </script>
-
-<?php
-    $start_Date  =  $_POST["ev_start"];
-    $end_Date = $_POST["ev_end"];
-
-    //입력 받은 데이터 값이 null이 아닌 경우
-    if (!empty($start_Date)){
-        //입력 받은 데이터 값을 데이터 타입으로
-        $startDate = new DateTime($start_Date);
-        //형식을 Y년m월d일 형태로 표시
-        $start_date = $startDate ->format( "Y-m-d" );
-    }
-
-    if (!empty($end_Date)){
-        //입력 받은 데이터 값을 데이터 타입으로
-        $endDate = new DateTime($end_Date);
-        //형식을 Y년m월d일 형태로 표시
-        $end_date = $endDate ->format( "Y-m-d" );
-    }
-?>
 
 <div class="content-wrapper">
 
@@ -223,6 +276,7 @@ $(document).ready(function(){
                                                     <select class="custom-select form-control-border" id="br_code" name="br_code">
                                                         <?php
                                                             $S_SQL = "SELECT * FROM mpr_branch WHERE $company;";
+                                                            echo '<script>console.log("'.$S_SQL.'")</script>';
                                                             $res = $DB -> query($S_SQL);
                                                             foreach($res as $row){
                                                         ?>
@@ -344,40 +398,21 @@ $(document).ready(function(){
                                                 <td colspan="3">
                                                     <div class="form-group">
                                                         <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_always" name="ev_always">
+                                                            <input class="custom-control-input" type="checkbox" id="ev_always" name="ev_always" <?php echo $is_ev_always_checked ?>>
                                                             <label for="ev_always" class="custom-control-label">상시 진행</label>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label for="ev_start">시작일</label>
-                                                        <input type="date" class="form-control" name="ev_start" id="ev_start" value="<?php echo $start_date?>">
-                                                    </div>
-                                                    <div class="form-group">
-                                                    <label for="ev_end">종료일</label>
-                                                            <input type="date" class="form-control" name="ev_end" id="ev_end" value="<?php echo $end_date?>">
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <!-- 10 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="ev_stat">상태</label>
-                                                </th>
-                                                <td colspan="3">
-                                                    <div class="d-flex">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="ev_stat" id="ev_stat_w" value="W" <?php echo $w_stat?>>
-                                                            <label class="form-check-label" for="ev_stat_w">진행 예정</label>
+                                                    <div class="form-group" >
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="far fa-calendar-alt"></i>
+                                                            </span>
+                                                            </div>
+                                                            <input type="text" class="form-control float-right" id="reservation" name="reservation" style="height:30px; width:220px; margin-right:5px;">
+                                                            <input type="text" class="form-control float-right" id="reservation2" name="reservation2" style="height:30px; width:220px; margin-right:5px; display:none;">
                                                         </div>
-                                                        <div class="form-check ml-3">
-                                                            <input class="form-check-input" type="radio" name="ev_stat" id="ev_stat_y" value="Y" <?php echo $y_stat?>>
-                                                            <label class="form-check-label" for="ev_stat_y">진행중</label>
-                                                        </div>
-                                                        <div class="form-check ml-3">
-                                                            <input class="form-check-input" type="radio" name="ev_stat" id="ev_stat_n" value="N" <?php echo $n_stat?>>
-                                                            <label class="form-check-label" for="ev_stat_n">종료</label>
-                                                        </div>
+                                                        <!-- /.input group -->
                                                     </div>
                                                 </td>
                                             </tr>
@@ -451,7 +486,7 @@ $(document).ready(function(){
         $birth_check = isset($_POST['ev_birthday_yn']) ? "Y" : "N";
         $ev_rec_person_check = isset($_POST['ev_rec_person_yn']) ? "Y" : "N";
         $ev_counsel_time_check = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
-        $ev_always = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
+        $ev_always_check = isset($_POST['ev_always']) ? "Y" : "N";
 
         $now = date("Y-m-d");
         $str_now = strtotime($now);
@@ -469,8 +504,20 @@ $(document).ready(function(){
 
         $url = 'landings.mprkorea.com/page/index?biz='.$_POST['br_code'].'&code='.$_POST['br_key'];
 
-        $SQL = "INSERT INTO mpr_event (br_code, br_key, ev_type, ev_url, ev_subject, ev_top_content_pc, ev_top_content_mo ,ev_name_yn, ev_tel, ev_tel_yn, ev_sex_yn, ev_age_yn, ev_comment_yn, ev_birthday_yn, ev_rec_person_yn, ev_counsel_time_yn, ev_bottom_content_pc , ev_bottom_content_mo , ev_start , ev_end , ev_stat, reg_date, chg_date, del_yn) 
-        VALUES ('{$_POST['br_code']}', '{$_POST['br_key']}' , '{$_POST['ev_type']}', '{$url}' ,'{$_POST['ev_subject']}','{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', '010-3269-7977', '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}','{$_POST['ev_bottom_content_mo']}' , '{$start_date}', '{$end_date}' , '{$ev_stat}', now(), now(), 'N');";
+        $SQL = 
+        "INSERT INTO 
+            mpr_event
+            (br_code, br_key, ev_type, ev_url, ev_subject, 
+            ev_top_content_pc, ev_top_content_mo ,ev_name_yn, ev_tel, 
+            ev_tel_yn, ev_sex_yn, ev_age_yn, ev_comment_yn, ev_birthday_yn, 
+            ev_rec_person_yn, ev_counsel_time_yn, ev_bottom_content_pc , 
+            ev_bottom_content_mo , ev_always , ev_start , ev_end , ev_stat, reg_date, chg_date, del_yn) 
+        VALUES 
+            ('{$_POST['br_code']}', '{$_POST['br_key']}' , '{$_POST['ev_type']}', '{$url}' ,'{$_POST['ev_subject']}',
+            '{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', '010-3269-7977', 
+            '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', 
+            '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}',
+            '{$_POST['ev_bottom_content_mo']}' , '{$ev_always_check}' , '{$start_date}', '{$end_date}' , '{$ev_stat}', now(), now(), 'N');";
 
         if(preg_match($ev_subject, $_POST['ev_subject']) && strlen($_POST['ev_subject']) >= 3){
             $statement = $DB->query($SQL);
@@ -493,7 +540,7 @@ $(document).ready(function(){
         $birth_check = isset($_POST['ev_birthday_yn']) ? "Y" : "N";
         $ev_rec_person_check = isset($_POST['ev_rec_person_yn']) ? "Y" : "N";
         $ev_counsel_time_check = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
-        $ev_always = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
+        $ev_always_check = isset($_POST['ev_always']) ? "Y" : "N";
 
         $now = date("Y-m-d");
         $str_now = strtotime($now);
@@ -532,6 +579,7 @@ $(document).ready(function(){
             ev_counsel_time_yn = '{$ev_counsel_time_check}', 
             ev_bottom_content_pc =  '{$_POST['ev_bottom_content_pc']}', 
             ev_bottom_content_mo = '{$_POST['ev_bottom_content_mo']}',
+            ev_always = '{$ev_always_check}',
             ev_start = '{$start_date}', 
             ev_end = '{$end_date}', 
             ev_stat = '{$ev_stat}', 
