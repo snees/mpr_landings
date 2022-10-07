@@ -20,7 +20,8 @@ if ( trim($_GET['mode'])=='update' ) {
             $('#reference2').show();
             $('#exampleInputTel2').show();
             $('#exampleInputEmail2').show();
-            $('#update_btn_div').show();
+            $('#update_btn').show();
+            $('#delete_btn').show();
             $('#ev_stat_a').show();
 
 
@@ -34,7 +35,7 @@ if ( trim($_GET['mode'])=='update' ) {
             $('#reference1').hide();
             $('#exampleInputTel1').hide();
             $('#exampleInputEmail1').hide();
-            $('#sign_btn_div').hide();
+            $('#sign_in_btn').hide();
         }
 
 
@@ -137,13 +138,11 @@ if ( trim($_GET['mode'])=='update' ) {
                                                 </div>
                                             </div>
                                         <!-- /.card-body -->
-                                            <div class="card-footer" id="sign_btn_div">
-                                                <a href="/admin/branch/" class="btn btn-default float-right">취소</a>
-                                                <button type="submit" class="btn btn-info float-right" name="sign_in_btn" style="margin-right: 5px;">Sign in</button>
-                                            </div>
-                                            <div class="card-footer" id="update_btn_div" style="display:none;">
-                                                <a href="/admin/branch/" class="btn btn-default float-right">취소</a>
-                                                <button type="submit" class="btn btn-info float-right" name="update_btn" style="margin-right: 5px;">Update</button>
+                                            <div class="card-footer d-flex" style="display:flex; justify-content:right;">
+                                                <a href="/admin/branch/" class="btn btn-default" style="margin-right: 5px;">취소</a>
+                                                <button type="submit" class="btn btn-info" name="sign_in_btn" id="sign_in_btn">저장</button>
+                                                <button type="submit" class="btn btn-info" name="update_btn" id="update_btn" style="display:none; margin-right: 5px;">수정</button>
+                                                <button type="submit" class="btn btn-danger" name="delete_btn" id="delete_btn" style="display:none;">삭제</button>
                                             </div>
                                         </form>
                                     </div>
@@ -373,24 +372,41 @@ if ( trim($_GET['mode'])=='update' ) {
             $alert_msg = "c_name_input_err";
         }
     }
-?>
 
-<!-- 수정 버튼 눌렀을때 -->
-
-<?php 
+    // 수정 버튼 눌렀을때
     if(array_key_exists('update_btn', $_POST)){
         
         if(trim($_POST['zip_code2'])){
             $addr = $_POST['address2']." ".$_POST['detail_address'];
 
-            $Up_SQL = "UPDATE mpr_branch SET user_id = 'snees', br_code = '{$_POST['br_code2']}', br_name = '{$_POST['br_name2']}', br_post = {$_POST['zip_code2']}, br_addr = '{$addr}' , br_addr_etc = '{$_POST['reference2']}' , br_tel = '{$_POST['br_tel2']}', user_email = '{$_POST['user_email2']}', chg_date = now();";
-?> 
-<script>
-    console.log('<?php echo $Up_SQL?>');
-</script>
-<?php
+            $Up_SQL = 
+            "UPDATE 
+                mpr_branch 
+            SET 
+                user_id = 'snees', 
+                br_code = '{$_POST['br_code2']}', 
+                br_name = '{$_POST['br_name2']}', 
+                br_post = {$_POST['zip_code2']}, 
+                br_addr = '{$addr}' , 
+                br_addr_etc = '{$_POST['reference2']}' , 
+                br_tel = '{$_POST['br_tel2']}', 
+                user_email = '{$_POST['user_email2']}', 
+                chg_date = now()
+            WHERE 
+                br_code = '{$_GET['code']}'";
         }else{
-            $Up_SQL = "UPDATE mpr_branch SET user_id = 'snees', br_code = '{$_POST['br_code2']}', br_name = '{$_POST['br_name2']}' , br_tel = '{$_POST['br_tel2']}', user_email = '{$_POST['user_email2']}', chg_date = now();";
+            $Up_SQL = 
+            "UPDATE 
+                mpr_branch 
+            SET 
+                user_id = 'snees',
+                br_code = '{$_POST['br_code2']}', 
+                br_name = '{$_POST['br_name2']}' , 
+                br_tel = '{$_POST['br_tel2']}', 
+                user_email = '{$_POST['user_email2']}', 
+                chg_date = now()
+            WHERE 
+                br_code = '{$_GET['code']}'";
         }
 
         // 업체명 입력 여부 확인
@@ -439,6 +455,14 @@ if ( trim($_GET['mode'])=='update' ) {
         }else{
             $alert_msg = "c_name_input_err";
         }
+    }
+
+    // 삭제 버튼 눌렀을때
+    if(array_key_exists('delete_btn', $_POST)){
+        $DEL_SQL = "UPDATE mpr_branch SET del_yn='Y' WHERE br_code = '{$_GET['code']}'";
+        $statement = $DB->query($DEL_SQL);
+        echo '<script> alert("삭제되었습니다.");</script>';
+        echo "<script>location.href='/admin/branch/index.php'</script>";
     }
 ?>
 

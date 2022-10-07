@@ -58,10 +58,10 @@
 
                                                 $arryWhere = array();
                                                 $strQueryString= "";
-                                                $strWhere = '(1)';
+                                                $strWhere = "del_yn = 'N'";
 
                                                 if (trim($_GET['input_search']) ) {
-                                                    $strWhere = '';
+                                                    $strWhere = "del_yn = 'N' AND ";
                                                     $arryWhere[] = "br_name like '%{$_GET['input_search']}%' ";
                                                     $strWhere.= implode(' and ', $arryWhere);//---- 배열로 만든다. explode('@', '문자열@문자열@문자열')
                                                     $strQueryString.= "&search={$keyword}";
@@ -79,6 +79,7 @@
                                                                 <td>&nbsp;</td>
                                                                 <td colspan='2'>검색결과가 없습니다.</td>
                                                             </tr>";
+                                                    $total_page=0;
                                                 }else{
                 
                                                     $list = 5;
@@ -111,7 +112,7 @@
                                                         echo "<tr>
                                                                     <td>".$count--."</td>
                                                                     <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']." (".$row['br_code'].")</a></td>
-                                                                    <td><a href='#'>진행예정:(".$e_res['W_count'].")</a>&emsp;<a href='#'>진행중:(".$e_res['Y_count'].")</a>&emsp;<a href='#'>종료:(".$e_res['N_count'].")</a></td>
+                                                                    <td style='color : #4374D9;'>진행예정:(".$e_res['W_count'].")&emsp;진행중:(".$e_res['Y_count'].")&emsp;종료:(".$e_res['N_count'].")</td>
                                                                 </tr>";
                                                     }
                                                 }
@@ -132,7 +133,7 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-5">
                                     <div class="dataTable-info" role="status">
-                                        Page : <?php echo $page?> / Total : <?php echo $block_end ?>
+                                        Page : <?php echo $page?> / Total : <?php echo $total_page ?>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-7">
@@ -145,10 +146,14 @@
                                                 echo "<li class='paginate_button page-item previous disabled'><a href='#' class='page-link'>이전</a></li>";
                                             }
                                             for($i=$block_start; $i<=$block_end; $i++){ 
-                                                if($page == $i){  
-                                                    echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>$i</a></li>";
+                                                if($total_page !=0){
+                                                    if($page == $i){  
+                                                        echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>$i</a></li>";
+                                                    }else{
+                                                        echo "<li class='paginate_button page-item'><a href='index.php?page={$i}' class='page-link'>$i</a></li>";
+                                                    }
                                                 }else{
-                                                    echo "<li class='paginate_button page-item'><a href='index.php?page={$i}' class='page-link'>$i</a></li>";
+                                                    echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>1</a></li>";
                                                 }
                                             }
                                             if( ($page+1) <= $block_end){
