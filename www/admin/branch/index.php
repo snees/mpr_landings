@@ -111,7 +111,7 @@
                                                         echo "<tr>
                                                                     <td>".$count--."</td>
                                                                     <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']." (".$row['br_code'].")</a></td>
-                                                                    <td><a href='#'>진행예정:(".$e_res['W_count'].")</a>&emsp;<a href='#'>진행중:(".$e_res['Y_count'].")</a>&emsp;<a href='#'>종료:(".$e_res['N_count'].")</a></td>
+                                                                    <td style='color : #4374D9;'>진행예정:(".$e_res['W_count'].")&emsp;진행중:(".$e_res['Y_count'].")&emsp;종료:(".$e_res['N_count'].")</td>
                                                                 </tr>";
                                                     }
                                                 }
