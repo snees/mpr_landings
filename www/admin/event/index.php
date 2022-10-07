@@ -191,13 +191,13 @@
 
                                                 // 검색 안했을때 테이블 가져오기
                                                 if($stat =="total"){
-                                                    $strWhere = "e.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
+                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
                                                 }else{
-                                                    $strWhere = "e.del_yn='N' AND ev_stat = '{$stat}'";
+                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_stat = '{$stat}'";
                                                 }
                                                 // 검색했을때 테이블 가져오기
                                                 if ( trim($_GET['search']) && trim($_GET['input_search']) ) {
-                                                    $strWhere = "e.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
+                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
                                                     if( trim($_GET['in_stat']) != "total"){
                                                         $arryWhere[] = "ev_stat = '{$_GET['in_stat']}' and {$_GET['search']} like '%{$_GET['input_search']}%' ";
                                                     }else{
@@ -222,6 +222,7 @@
                                                                 <td>&nbsp;</td>
                                                                 <td colspan='5'>검색결과가 없습니다.</td>
                                                             </tr>";
+                                                    $total_page = 0;
                                                 }else{
 
                                                     $list = 5;
@@ -305,7 +306,7 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-5">
                                     <div class="dataTable-info" role="status">
-                                        Page : <?php echo $page?> / Total : <?php echo $block_end ?>
+                                        Page : <?php echo $page?> / Total : <?php echo $total_page ?>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-7">
@@ -318,10 +319,14 @@
                                                 echo "<li class='paginate_button page-item next disabled'><a href='#' class='page-link'>이전</a></li>";
                                             }
                                             for($i=$block_start; $i<=$block_end; $i++){ 
-                                                if($page == $i){  
-                                                    echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>$i</a></li>";
+                                                if($total_page !=0 ){
+                                                    if($page == $i){  
+                                                        echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>$i</a></li>";
+                                                    }else{
+                                                        echo "<li class='paginate_button page-item'><a href='index.php?page={$i}' class='page-link'>$i</a></li>";
+                                                    }
                                                 }else{
-                                                    echo "<li class='paginate_button page-item'><a href='index.php?page={$i}' class='page-link'>$i</a></li>";
+                                                    echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>1</a></li>";
                                                 }
                                             }
                                             if( ($page+1) <= $block_end){
