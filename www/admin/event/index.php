@@ -191,19 +191,20 @@
 
                                                 // 검색 안했을때 테이블 가져오기
                                                 if($stat =="total"){
-                                                    $strWhere = "ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
+                                                    $strWhere = "e.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
                                                 }else{
-                                                    $strWhere = "ev_stat = '{$stat}'";
+                                                    $strWhere = "e.del_yn='N' AND ev_stat = '{$stat}'";
                                                 }
                                                 // 검색했을때 테이블 가져오기
                                                 if ( trim($_GET['search']) && trim($_GET['input_search']) ) {
-                                                    $strWhere = "ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
+                                                    $strWhere = "e.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
                                                     if( trim($_GET['in_stat']) != "total"){
                                                         $arryWhere[] = "ev_stat = '{$_GET['in_stat']}' and {$_GET['search']} like '%{$_GET['input_search']}%' ";
                                                     }else{
                                                         $arryWhere[] = "{$_GET['search']} like '%{$_GET['input_search']}%' ";
                                                     }
                                                     $strWhere.= implode(' and ', $arryWhere);//---- 배열로 만든다. explode('@', '문자열@문자열@문자열')
+                                                    
                                                     
                                                 }
                                                 echo '<script>console.log("'.$strWhere.'");</script>';

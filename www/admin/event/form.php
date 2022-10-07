@@ -614,6 +614,14 @@
         }
         
     }
+
+    // 이벤트 삭제 버튼
+    if(array_key_exists('delete_btn', $_POST)){
+        $DEL_SQL = "UPDATE mpr_event SET del_yn = 'Y' WHERE idx = {$_GET['idx']};";
+        $statement = $DB->query($DEL_SQL);
+        echo '<script> alert("삭제되었습니다.");</script>';
+        echo "<script>location.href='/admin/event/index.php'</script>";
+    }
 ?>
 
 <!-- 모달 -->
