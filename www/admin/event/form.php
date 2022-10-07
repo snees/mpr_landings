@@ -437,7 +437,7 @@ $(document).ready(function(){
 
 <?php
 
-    $ev_subject = '/^[a-zA-Z가-힣 ]+$/';
+    $ev_subject = '/^[a-zA-Z가-힣0-9 ]+$/';
     $alert_msg = "";
 
     // 이벤트 신규 등록 버튼
