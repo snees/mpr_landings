@@ -459,10 +459,18 @@ if ( trim($_GET['mode'])=='update' ) {
 
     // 삭제 버튼 눌렀을때
     if(array_key_exists('delete_btn', $_POST)){
-        $DEL_SQL = "UPDATE mpr_branch SET del_yn='Y' WHERE br_code = '{$_GET['code']}'";
-        $statement = $DB->query($DEL_SQL);
-        echo '<script> alert("삭제되었습니다.");</script>';
-        echo "<script>location.href='/admin/branch/index.php'</script>";
+?>
+        <script>
+            var question = confirm("삭제하시겠습니까?");
+            if(question == true){
+                var code = "<?php echo $_GET['code']?>";
+                $.post("https://landings.mprkorea.com/admin/branch/branch_delete.php", {"code":code}, function(data){
+                    alert("삭제되었습니다.");
+                    location.href='/admin/branch/index.php';
+                });
+            }
+        </script>
+<?php
     }
 ?>
 
