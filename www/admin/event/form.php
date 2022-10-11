@@ -429,7 +429,7 @@
                                                         <input type="submit" class="btn btn-info" value="저장" id="save_btn" name="save_btn">
                                                         <input type="submit" class="btn btn-info" value="저장" id="update_btn" name="update_btn" style="display:none; margin-right:5px;">
                                                         <input type="submit" class="btn btn-danger" value="삭제" id="delete_btn" name="delete_btn" style="display:none;">
-                                                    </div>
+                                                        
                                                     </div>
                                                 </td>
                                             </tr>
@@ -460,7 +460,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-                        <button type="button" class="btn btn-default" onclick="del()">확인</button>
+                        <button type="button" class="btn btn-default">확인</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -615,26 +615,23 @@
         
     }
 
-    // 이벤트 삭제 버튼 -> 모달
-    if(array_key_exists('delete_btn', $_POST)){
-        $alert_msg = "del_msg";
-        // $DEL_SQL = "UPDATE mpr_event SET del_yn = 'Y' WHERE idx = {$_GET['idx']};";
-        // $statement = $DB->query($DEL_SQL);
-        // echo '<script> alert("삭제되었습니다.");</script>';
-        // echo "<script>location.href='/admin/event/index.php'</script>";
+    if(array_key_exists("delete_btn", $_POST)){
+?>
+        <script>
+            var question = confirm("삭제하시겠습니까?");
+            if(question == true){
+                idx = <?php echo $_GET['idx']?>;
+                $.post("https://landings.mprkorea.com/admin/event/event_delete.php", {"idx":idx}, function(data){
+                    alert("삭제되었습니다.");
+                    location.href='/admin/event/index.php';
+                });
+            }
+        </script>
+<?php
     }
+        
 ?>
 
-<script>
-    function del(){
-        <?php
-            $DEL_SQL = "UPDATE mpr_event SET del_yn = 'Y' WHERE idx = {$_GET['idx']};";
-            $statement = $DB->query($DEL_SQL);
-        ?>
-        alert("삭제되었습니다.");
-        location.href='/admin/event/index.php';
-    }
-</script>
 
 <!-- 모달 -->
 <script>
@@ -642,9 +639,6 @@
     if(msg != ""){
         if(msg == "ev_name_form_err"){
             $("#alert_msg").text("이벤트 제목은 3자 이상의 한글 또는 영문으로만 입력가능합니다.");
-            document.getElementById('modal_btn').click();
-        }else if(msg == "del_msg"){
-            $("#alert_msg").text("삭제하시겠습니까?");
             document.getElementById('modal_btn').click();
         }
     }
