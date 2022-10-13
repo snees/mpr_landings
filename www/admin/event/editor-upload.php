@@ -104,20 +104,39 @@
 // -----------------------------------------------------------------------------------------------------------
 
 $API_KEY = $_REQUEST['API'];
+$code = $_REQUEST['code'];
 
-$webFilePath = '/img_data/event/'.trim($API_KEY)."/";
-$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/'.trim($API_KEY);
+$webFilePath = '/img_data/event/tmp/'.trim($code)."/";
+$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/tmp/'.trim($code);
 $uploads_dir = trim($boardEditor)."/";
-
 
 if ( !is_dir($boardEditor) ) {
     @mkdir($boardEditor, 0777, true);
     @chmod($boardEditor, 0777);
- }
- if ( !is_dir($uploads_dir) ) {
+    
+    $webFilePath = '/img_data/event/tmp/'.trim($code)."/".trim($API_KEY)."/";
+    $boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/tmp/'.trim($code)."/".trim($API_KEY);
+    $uploads_dir = trim($boardEditor)."/";
+
+    if ( !is_dir($boardEditor) ) {
+        @mkdir($boardEditor, 0777, true);
+        @chmod($boardEditor, 0777);
+    }
+}
+if ( !is_dir($uploads_dir) ) {
     @mkdir($uploads_dir, 0777, true);
     @chmod($uploads_dir, 0777);
- }
+
+    $boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/tmp/'.trim($code)."/".trim($API_KEY);
+    $uploads_dir = trim($boardEditor)."/";
+
+    if ( !is_dir($uploads_dir) ) {
+        @mkdir($uploads_dir, 0777, true);
+        @chmod($uploads_dir, 0777);
+    }
+    
+}
+
 
 $error = $_FILES["files"]['error'];
 $orgFile = $_FILES["files"]['name'];
