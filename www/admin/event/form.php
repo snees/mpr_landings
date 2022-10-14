@@ -53,6 +53,7 @@
         $company = "br_code='{$result['br_code']}'";
         $start_Date = $result['ev_start'];
         $end_Date = $result['ev_end'];
+        $event_cd = $result['ev_code'];
 
         if($result['ev_name_yn'] == "Y") $is_name_checked = "checked";
         else $is_name_checked = "";
@@ -170,13 +171,12 @@
                     $('.ev_key').val('');
                     $("input[name='ev_key']").attr("readonly",false);
                     $(".vendor").empty();
-                    var tags = "<input type='text' class='form-control form-control-border' id='br_name' name='br_name' value=''>";
-                    $(".vendor").append("<input type='text' class='form-control form-control-border' id='br_name' name='br_name' value=''>");
-                    $(".vendor").append("<input type='hidden' class='form-control form-control-border' id='br_code' name='br_code' value=''>");
+                    /* var tags = "<input type='text' class='form-control form-control-border' id='br_name' name='br_name' value=''>"; */
+                    $(".vendor").append("<input type='text' class='form-control form-control-border' id='br_name' name='br_name' value='' readonly>");
+                    $(".vendor").append("<input type='hidden' class='form-control form-control-border' id='br_code' name='br_code' value='' readonly>");
                     // $("#reservation").daterangepicker("option","disabled", true);
                     $("#reservation").attr('disabled', true);
                     $("#reservation2").attr('disabled', true);
-                    $("#br_name").attr('readonly', true);
                 }else{
                     $('#ev_key').val("<?php echo  $API ?>");
                     $("input[name='ev_key']").attr("readonly",true);$(".vendor").empty();
@@ -308,7 +308,7 @@
                 monthNames:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
                 },
                 startDate: "<?php echo $start_Date ?>",
-                endDate: "<?php echo $end_Date ?>",
+                end_Date: "<?php echo $end_Date ?>",
                 drops: "auto"
         });
 
@@ -586,8 +586,8 @@
                                                     </div>
                                                     <div class="d-flex">
                                                         <a href="/admin/event/" class="btn btn-default" style="margin-right:5px;">취소</a>
-                                                        <input type="submit" class="btn btn-info" value="저장" id="<?php echo $btn_value; ?>" name="<?php echo $btn_value; ?>">                                                        
-                                                        <input type="submit" class="btn btn-danger" value="삭제" id="delete_btn" name="delete_btn" style="display:none;">                                                        
+                                                        <input type="button" class="btn btn-info" value="저장" id="<?php echo $btn_value; ?>" name="<?php echo $btn_value; ?>" style="margin-right:5px;">                                                        
+                                                        <input type="button" class="btn btn-danger" value="삭제" id="delete_btn" name="delete_btn" style="display:none;">                                                        
                                                     </div>
                                                 </td>
                                             </tr>
@@ -601,23 +601,19 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-default" id="modal_btn" data-toggle="modal" data-target="#modal-default" style="display:none;"></button>
+            
         </div>
         <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Default Modal</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">x</span>
-                        </button>
-                    </div>
+                    <button type="button" class="close" aria-label="Close" style="text-align:right;" onclick="modal_close()">
+                        <span aria-hidden="true" style="margin:10px;">x</span>
+                    </button>
                     <div class="modal-body">
                         <p id="alert_msg"></p>
                     </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-                        <button type="button" class="btn btn-default">확인</button>
+                    <div class="modal-footer justify-content-right">
+                        <button type="button" class="btn btn-info" onclick="modal_close();">Close</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -628,203 +624,19 @@
 
 </div>
 
-<?php
-
-    $ev_subject = '/^[a-zA-Z가-힣0-9 ]+$/';
-    $alert_msg = "";
-
-    // 이벤트 신규 등록 버튼
-    if(array_key_exists('save_btn', $_POST)){
-
-        $name_check = isset($_POST['ev_name_yn']) ? "Y" : "N";
-        $tel_check = isset($_POST['ev_tel_yn']) ? "Y" : "N";
-        $sex_check = isset($_POST['ev_sex_yn']) ? "Y" : "N";
-        $age_check = isset($_POST['ev_age_yn']) ? "Y" : "N";
-        $comment_check = isset($_POST['ev_comment_yn']) ? "Y" : "N";
-        $birth_check = isset($_POST['ev_birthday_yn']) ? "Y" : "N";
-        $ev_rec_person_check = isset($_POST['ev_rec_person_yn']) ? "Y" : "N";
-        $ev_counsel_time_check = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
-        $ev_always_check = isset($_POST['ev_always']) ? "Y" : "N";
-
-        if($ev_always_check == "Y"){
-            $start_Date  =  $_POST["reservation2"];
-            $end_Date = "";
-        }else{
-            $start_Date  =  explode(" ", $_POST["reservation"])[0];
-            $end_Date = explode(" ", $_POST["reservation"])[2];
-        }
-        
-        $now = date("Y-m-d");
-        $str_now = strtotime($now);
-        $str_start = strtotime($start_Date);
-        $str_end = strtotime($end_Date);
-
-        if($str_start > $str_now){
-            $ev_stat = "W";
-        }else if($str_start <= $str_now && $str_now <= $str_end){
-            $ev_stat = "Y";
-        }else if($str_end < $str_now){
-            $ev_stat = "N";
-        }
-
-        if($start_Date == ""){
-            $start_Date = $today;
-        }
-
-        $url = 'landings.mprkorea.com/page/?biz='.$_POST['br_code'].'&code='.$_POST['ev_key'];
-
-        $SQL = 
-        "INSERT INTO 
-            mpr_event
-            (br_code, ev_code, ev_key, ev_type, ev_url, ev_subject, 
-            ev_top_content_pc, ev_top_content_mo ,ev_name_yn, ev_tel_req, 
-            ev_tel_yn, ev_sex_yn, ev_age_yn, ev_comment_yn, ev_birthday_yn, 
-            ev_rec_person_yn, ev_counsel_time_yn, ev_bottom_content_pc , 
-            ev_bottom_content_mo , ev_always , ev_start , ev_end , ev_stat, reg_id, reg_date, chg_date, del_yn) 
-        VALUES 
-            ('{$_POST['br_code']}', '{$_POST['ev_code']}', '{$_POST['ev_key']}' , '{$_POST['ev_type']}', '{$url}' ,'{$_POST['ev_subject']}',
-            '{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', 'Y', 
-            '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', 
-            '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}',
-            '{$_POST['ev_bottom_content_mo']}' , '{$ev_always_check}' , '{$start_Date}', '{$end_Date}', '{$ev_stat}', '{$_SESSION['userId']}', now(), now(), 'N');";
-
-        if(preg_match($ev_subject, $_POST['ev_subject']) && strlen($_POST['ev_subject']) >= 3){
-                        
-            $statement = $DB->query($SQL);
-            if($statement){
-                $strSQL = " update mpr_seq set code_seq	= code_seq + 1 ";
-                $seq = $DB->query($strSQL);
-
-                echo '<script> callApi("insert", "'.$_POST['ev_key'].'",
-                    "'.$_POST['br_name'].'", "'.$_POST['ev_subject'].'",
-                    "'.$_POST['ev_code'].'", "'.$start_Date.'",
-                    "'.$end_Date.'", "'.$ev_always_check.'",
-                    "'.$_POST['br_code'].'",
-                    "'.$url.'");</script>';            
-                echo '<script> alert("등록되었습니다.");</script>';
-                echo "<script>location.href='/admin/event/index.php'</script>";
-            }
-        }else{
-            $alert_msg = "ev_name_form_err";
-        }
-        
-    }
-
-    // 기존 이벤트 수정 버튼
-    if(array_key_exists('update_btn', $_POST)){
-
-        $name_check = isset($_POST['ev_name_yn']) ? "Y" : "N";
-        $tel_check = isset($_POST['ev_tel_yn']) ? "Y" : "N";
-        $sex_check = isset($_POST['ev_sex_yn']) ? "Y" : "N";
-        $age_check = isset($_POST['ev_age_yn']) ? "Y" : "N";
-        $comment_check = isset($_POST['ev_comment_yn']) ? "Y" : "N";
-        $birth_check = isset($_POST['ev_birthday_yn']) ? "Y" : "N";
-        $ev_rec_person_check = isset($_POST['ev_rec_person_yn']) ? "Y" : "N";
-        $ev_counsel_time_check = isset($_POST['ev_counsel_time_yn']) ? "Y" : "N";
-        $ev_always_check = isset($_POST['ev_always']) ? "Y" : "N";
-
-        if($ev_always_check == "Y"){
-            $start_Date  =  $_POST["reservation2"];
-            $end_Date = "";
-        }else{
-            $start_Date  =  explode(" ", $_POST["reservation"])[0];
-            $end_Date = explode(" ", $_POST["reservation"])[2];
-        }
-
-        $now = date("Y-m-d");
-        $str_now = strtotime($now);
-        $str_start = strtotime($start_Date);
-        $str_end = strtotime($end_Date);
-
-        if($str_start > $str_now){
-            $ev_stat = "W";
-        }else if($str_start <= $str_now && $str_now <= $str_end){
-            $ev_stat = "Y";
-        }else if($str_end < $str_now){
-            $ev_stat = "N";
-        }
-        
-
-
-        $url = 'landings.mprkorea.com/page/index?biz='.$_POST['br_code'].'&code='.$_POST['ev_key2'];
-
-        $UP_SQL = 
-        "UPDATE 
-            mpr_event 
-        SET 
-            br_code = '{$_POST['br_code']}',
-            ev_code = '{$_POST['ev_code']}', 
-            ev_key = '{$_POST['ev_key']}', 
-            ev_type = '{$_POST['ev_type']}', 
-            ev_url = '{$url}', 
-            ev_subject = '{$_POST['ev_subject']}', 
-            ev_top_content_pc = '{$_POST['ev_top_content_pc']}', 
-            ev_top_content_mo = '{$_POST['ev_top_content_mo']}' ,
-            ev_name_yn = '{$name_check}', 
-            ev_tel_yn = '{$tel_check}', 
-            ev_sex_yn = '{$sex_check}', 
-            ev_age_yn = '{$age_check}', 
-            ev_comment_yn = '{$comment_check}', 
-            ev_birthday_yn = '{$birth_check}', 
-            ev_rec_person_yn = '{$ev_rec_person_check}', 
-            ev_counsel_time_yn = '{$ev_counsel_time_check}', 
-            ev_bottom_content_pc =  '{$_POST['ev_bottom_content_pc']}', 
-            ev_bottom_content_mo = '{$_POST['ev_bottom_content_mo']}',
-            ev_always = '{$ev_always_check}',
-            ev_start = '{$start_Date}', 
-            ev_end = '{$end_Date}', 
-            ev_stat = '{$ev_stat}', 
-            chg_id = '{$_SESSION['userId']}', 
-            chg_date = now()
-        WHERE
-            idx = {$_GET['idx']};";
-        if(preg_match($ev_subject, $_POST['ev_subject']) && strlen($_POST['ev_subject']) >= 3){
-            $statement = $DB->query($UP_SQL);
-            echo '<script> callApi("update", "'.$_POST['ev_key'].'",
-                 "'.$_POST['br_name'].'", "'.$_POST['ev_subject'].'",
-                 "'.$_POST['ev_code'].'", "'.$start_Date.'",
-                 "'.$end_Date.'", "'.$ev_always_check.'",
-                 "'.$_POST['br_code'].'",
-                 "'.$url.'");</script>';
-            echo '<script> alert("수정되었습니다.");</script>';
-            echo "<script>location.href='/admin/event/index.php'</script>";
-        }else{
-            $alert_msg = "ev_name_form_err";
-        }
-        
-    }
-
-    if(array_key_exists("delete_btn", $_POST)){
-?>
-        <script>
-            var question = confirm("삭제하시겠습니까?");
-            if(question == true){
-                idx = <?php echo $_GET['idx']?>;
-                console.log(idx);
-                $.post("https://landings.mprkorea.com/admin/event/event_delete.php", {"idx":idx}, function(data){                    
-                    callApi("delete", $('#ev_key').val());
-                    setTimeout(() => alert("삭제되었습니다."), 300);                    
-                    location.href='/admin/event/index.php';
-                });
-            }
-        </script>
-<?php
-    }
-        
-?>
-
 
 <script>
-    //  모달 
-    var msg = "<?php echo $alert_msg?>";
-    if(msg != ""){
-        if(msg == "ev_name_form_err"){
-            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글 또는 영문으로만 입력가능합니다.");
-            document.getElementById('modal_btn').click();
-        }
+    /* 모달 */ 
+    function alertMsg(){
+        $("#modal-default").modal("show");
+        return false;
+    }
+    function modal_close(){
+        $("#modal-default").modal("hide");
+        return false;
     }
 
-    // 미리보기 팝업
+    /* 미리보기 팝업 */
     function popup_Open(){
         var url = "/admin/event/preview.php";
         var name = "show_preview";
@@ -834,6 +646,253 @@
         return false;
     }
     
+</script>
+
+<script>
+
+    var subject_regex = /^[a-zA-Z가-힣0-9 ]+$/;
+
+    /* 이벤트 등록 버튼 */
+    $("#save_btn").on("click", function(){
+        var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
+        var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
+        var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
+        var age_Check = $("#ev_age_yn").is(":checked") ? "Y" : "N";
+        var comment_Check = $("#ev_comment_yn").is(":checked") ? "Y" : "N";
+        var birth_Check = $("#ev_birthday_yn").is(":checked") ? "Y" : "N";
+        var ev_rec_percon_Check = $("#ev_rec_person_yn").is(":checked") ? "Y" : "N";
+        var ev_counsel_time_Check = $("#ev_counsel_time_yn").is(":checked") ? "Y" : "N";
+        var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
+
+        var evType = $("#ev_type_f").is(":checked") ? "F" : "M";
+
+        var isok = true;
+        var evStat = "";
+        var today = new Date();
+        today = today.toJSON().substr(0,10);
+        
+
+        if(ev_always_Check == "Y"){
+            var start_Date  =  $("#reservation2").val();
+            var end_Date = "";
+            
+            
+            if(start_Date > today){
+                evStat = "W";
+            }else if(start_Date <= today){
+                evStat = "Y";
+            }
+
+        }else{
+            var start_Date = $("#reservation").val().split(" ")[0];
+            var end_Date = $("#reservation").val().split(" ")[2];
+
+            if(start_Date > today){
+                evStat = "W";
+            }else if((start_Date <= today) && (today <= end_Date)){
+                evStat = "Y";
+            }else if(end_Date < today){
+                evStat = "N";
+            } 
+
+        }
+    
+        if(start_Date == ""){
+            start_Date = today;
+        }
+
+        var evURL = 'landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
+
+        var evSubject = $("#ev_subject").val();
+        if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
+            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글, 영문, 숫자로만 입력가능합니다.");
+            alertMsg();
+            isok=false;
+        }
+
+        var brCode = $("#br_code").val();
+        var evCode = $("#ev_code").val();
+        var evKey = $("#ev_key").val();
+        var ev_top_contetnt_pc = $("#ev_top_content_pc").val();
+        var ev_top_contetnt_mo = $("#ev_top_contetnt_mo").val();
+        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
+        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
+        var regID = '<?php echo $_SESSION['userId']?>';
+
+        if(isok){
+            $.post("/admin/event/event_DB.php", {
+                mode : 'register',
+                brCode : brCode, 
+                evCode : evCode, 
+                evKey : evKey, 
+                evType : evType,
+                evURL : evURL,
+                evSubject : evSubject, 
+                ev_top_contetnt_pc : ev_top_contetnt_pc,
+                ev_top_contetnt_mo : ev_top_contetnt_mo,
+                evName_yn : name_Check, 
+                evTel_yn : tel_Check, 
+                evSex_yn : sex_Check, 
+                evAge_yn : age_Check, 
+                evComment_yn : comment_Check, 
+                evBrith_yn : birth_Check, 
+                evRec_person_yn : ev_rec_percon_Check, 
+                evCounsel_time_yn : ev_counsel_time_Check, 
+                ev_bottom_content_pc : ev_bottom_content_pc,
+                ev_bottom_content_mo : ev_bottom_content_mo,
+                evAlways : ev_always_Check,
+                evStart : start_Date,
+                evEnd : end_Date,
+                evStat : evStat,
+                regID : regID
+            }, function(data){
+                if ($.trim(data)=='OK') {
+                    var brName = $("#br_name").val();
+                    callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL);
+                    alert("등록되었습니다.");
+                    location.href='/admin/event/index.php';
+                } else {
+                    alert("저장하지 못하였습니다.");
+                }
+            });
+        }
+        
+    });
+
+
+    <?php if($_GET['idx']){?>
+    /* 수정 버튼 */
+    $("#update_btn").on("click", function(){
+        var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
+        var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
+        var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
+        var age_Check = $("#ev_age_yn").is(":checked") ? "Y" : "N";
+        var comment_Check = $("#ev_comment_yn").is(":checked") ? "Y" : "N";
+        var birth_Check = $("#ev_birthday_yn").is(":checked") ? "Y" : "N";
+        var ev_rec_percon_Check = $("#ev_rec_person_yn").is(":checked") ? "Y" : "N";
+        var ev_counsel_time_Check = $("#ev_counsel_time_yn").is(":checked") ? "Y" : "N";
+        var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
+
+        var evType = $("#ev_type_f").is(":checked") ? "F" : "M";
+
+        var isok = true;
+        var evStat = "";
+        var today = new Date();
+        today = today.toJSON().substr(0,10);
+        
+
+        if(ev_always_Check == "Y"){
+            var start_Date  =  $("#reservation2").val();
+            var end_Date = "";
+            
+            
+            if(start_Date > today){
+                evStat = "W";
+            }else if(start_Date <= today){
+                evStat = "Y";
+            }
+
+        }else{
+            var start_Date = $("#reservation").val().split(" ")[0];
+            var end_Date = $("#reservation").val().split(" ")[2];
+
+            if(start_Date > today){
+                evStat = "W";
+            }else if((start_Date <= today) && (today <= end_Date)){
+                evStat = "Y";
+            }else if(end_Date < today){
+                evStat = "N";
+            } 
+
+        }
+    
+        if(start_Date == ""){
+            start_Date = today;
+        }
+
+        var evURL = 'landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
+
+        var evSubject = $("#ev_subject").val();
+        if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
+            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글, 영문, 숫자로만 입력가능합니다.");
+            alertMsg();
+            isok=false;
+        }
+
+        var brCode = $("#br_code").val();
+        var evCode = $("#ev_code").val();
+        var evKey = $("#ev_key").val();
+        var ev_top_contetnt_pc = $("#ev_top_content_pc").val();
+        var ev_top_contetnt_mo = $("#ev_top_contetnt_mo").val();
+        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
+        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
+        var regID = '<?php echo $_SESSION['userId']?>';
+
+        if(isok){
+            var idx = <?php echo $_GET['idx']?>;
+            $.post("/admin/event/event_DB.php", {
+                mode : 'update',                
+                brCode : brCode, 
+                evCode : evCode, 
+                evKey : evKey, 
+                evType : evType,
+                evURL : evURL,
+                evSubject : evSubject, 
+                ev_top_contetnt_pc : ev_top_contetnt_pc,
+                ev_top_contetnt_mo : ev_top_contetnt_mo,
+                evName_yn : name_Check, 
+                evTel_yn : tel_Check, 
+                evSex_yn : sex_Check, 
+                evAge_yn : age_Check, 
+                evComment_yn : comment_Check, 
+                evBrith_yn : birth_Check, 
+                evRec_person_yn : ev_rec_percon_Check, 
+                evCounsel_time_yn : ev_counsel_time_Check, 
+                ev_bottom_content_pc : ev_bottom_content_pc,
+                ev_bottom_content_mo : ev_bottom_content_mo,
+                evAlways : ev_always_Check,
+                evStart : start_Date,
+                evEnd : end_Date,
+                evStat : evStat,
+                regID : regID,
+                idx : idx
+            }, function(data){
+                if ($.trim(data)=='OK') {
+                    var brName = $("#br_name").val();
+                    callApi("update", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );
+                    alert("수정되었습니다.");
+                    location.href='/admin/event/index.php';
+                } else {
+                    alert("수정하지 못하였습니다.");
+                }
+            });
+        }
+
+    });
+    <?php } ?>
+
+
+    /* 삭제 버튼 */
+    $("#delete_btn").on("click", function(){
+
+        if(confirm("삭제하시겠습니까?")){
+            <?php if($_GET['idx']){?>
+            var idx = <?php echo $_GET['idx']?>;
+            <?php } ?>
+            $.post("/admin/event/event_DB.php", {
+                mode : 'delete',
+                idx : idx
+            }, function(data){
+                if ($.trim(data)=='OK') {
+                    callApi("delete", $('#ev_key').val());
+                    alert("삭제되었습니다.");
+                    location.href='/admin/event/index.php';
+                } else {
+                    alert("삭제하지 못하였습니다.");
+                }
+            });
+        }
+    });
 </script>
 
 <?php
