@@ -63,7 +63,7 @@
         
         //ConnectM 데이터 입력
         $.ajax({
-            url: "http://mprclients.mprkorea.com/event/api/apicall.php",
+            url: "https://mprclients.mprkorea.com/event/api/apicall.php",
             type : "POST",
             dataType : "JSON",
             data : {

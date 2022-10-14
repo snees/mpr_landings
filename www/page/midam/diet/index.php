@@ -12,15 +12,15 @@
   <meta name="title" content="미담한의원"/>
   <meta name="description" content="" />
   <meta name="keywords" content="" />
-  <meta name="url" content="http://landings.mprkorea.com/page/midam/diet/">
+  <meta name="url" content="http://landing.midam-foru.com/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="미담한의원">
   <meta property="og:site_name" content="미담한의원" />
   <meta property="og:description" content="">
   <meta property="og:keywords" content="">
   <meta property="og:image" content="./img/og_img.png">
-  <meta property="og:url" content="http://landings.mprkorea.com/page/midam/diet/">
-  <link rel="canonical" href="http://landings.mprkorea.com/page/midam/diet/">
+  <meta property="og:url" content="http://landing.midam-foru.com/">
+  <link rel="canonical" href="http://landing.midam-foru.com/">
   <link rel="apple-touch-icon" sizes="180x180" href="./img/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon/favicon-16x16.png">
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="./css/common.css?v=220823">
   <link rel="stylesheet" href="./css/style.css?v=220823">
 
-  <meta name="facebook-domain-verification" content="fo5rqx0o5zdz9oxudc4s1u4e4ez2jc" />
+  <meta name="facebook-domain-verification" content="afsb8abqrg5g2cbxk05then9gba5sx" />
 </head>
 
 <body>
