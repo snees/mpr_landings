@@ -1,10 +1,9 @@
 <?php 
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.sub.php";
 ?>
-<link rel="stylesheet" href="https://landings.mprkorea.com/page/inc/page.css">
 
 <style>
-    #img_div {
+    #top_img_div, #bottom_img_div {
         margin: auto;
         width: 90%;
         display: flex;
@@ -34,7 +33,7 @@
         $mobile_agent = "/(iPod|iPhone|Android|BlackBerry|SymbianOS|SCH-M\d+|Opera Mini|Windows CE|Nokia|SonyEricsson|webOS|PalmOS)/";
         if(preg_match($mobile_agent, $_SERVER['HTTP_USER_AGENT'])){
 
-            // 모바일
+            /* 모바일 */
     ?> 
 
             // top
@@ -61,30 +60,26 @@
 
 
             $(document).ready(function(){
+                
+                /* Mobile 상단 이미지 */
                 for(var i=0; i<top_count_mo; i++){
                     top_img_url[i] = top_content_mo.split("src=\"")[i+1].split("\"")[0];
-                    // img_width[i] = top_content_pc.split("style=\"width:")[i+1].split(";")[0];
-                    // console.log(img_width[i]);
-                    // console.log(img_url[i]);
 
                     top_img[i] = document.createElement('img'); 
                     top_img[i].src = "https://landings.mprkorea.com/"+top_img_url[i];
-                    // document.body.appendChild(img[i]);
-                    console.log(top_img[i]);
-                    $("#img_div").append(top_img[i]);
-                
+                    $("#top_img_div").append(top_img[i]);
+
+                    
                 }
-                for(var i=0; i<bottom_count_mo; i++){
-                    top_img_url[i] = top_content_mo.split("src=\"")[i+1].split("\"")[0];
-                    // img_width[i] = top_content_pc.split("style=\"width:")[i+1].split(";")[0];
-                    // console.log(img_width[i]);
-                    // console.log(img_url[i]);
 
-                    top_img[i] = document.createElement('img'); 
-                    top_img[i].src = "https://landings.mprkorea.com/"+top_img_url[i];
-                    // document.body.appendChild(img[i]);
-                    console.log(top_img[i]);
-                    $("#img_div").append(top_img[i]);
+                /* Mobile 하단 이미지 */
+                for(var i=0; i<bottom_count_mo; i++){
+                    bottom_img_url[i] = top_content_mo.split("src=\"")[i+1].split("\"")[0];
+
+                    bottom_img[i] = document.createElement('img'); 
+                    bottom_img[i].src = "https://landings.mprkorea.com/"+bottom_img_url[i];
+                    
+                    $("#bottom_img_div").append(bottom_img[i]);
                 
                 }
             })
@@ -102,25 +97,38 @@
                 bottom_content_pc = opener.document.getElementById("ev_bottom_content_mo").value;
             }
             
-            var bottom_count = top_content_pc.split("src=\"").length-1;
+            var top_count_pc = top_content_pc.split("src=\"").length-1;
+            var bottom_count_pc = bottom_content_pc.split("src=\"").length-1;
+
+            var top_img_url = [];
+            var top_img = [];
 
             var bottom_img_url = [];
-            var bottom_img_width = [];
             var bottom_img = [];
 
 
             $(document).ready(function(){
-                for(var i=0; i<bottom_count; i++){
-                    bottom_img_url[i] = top_content_pc.split("src=\"")[i+1].split("\"")[0];
-                    // img_width[i] = top_content_pc.split("style=\"width:")[i+1].split(";")[0];
-                    // console.log(img_width[i]);
-                    // console.log(img_url[i]);
+
+                /* PC 상단 이미지 */
+                for(var i=0; i<top_count_pc; i++){
+                    top_img_url[i] = top_content_pc.split("src=\"")[i+1].split("\"")[0];
+                    
+
+                    top_img[i] = document.createElement('img'); 
+                    top_img[i].src = "https://landings.mprkorea.com/"+top_img_url[i];
+                    
+                    $("#top_img_div").append(top_img[i]);
+                }
+
+                /* PC 하단 이미지 */
+                for(var i=0; i<bottom_count_pc; i++){
+                    bottom_img_url[i] = bottom_content_pc.split("src=\"")[i+1].split("\"")[0];
+                    
 
                     bottom_img[i] = document.createElement('img'); 
                     bottom_img[i].src = "https://landings.mprkorea.com/"+bottom_img_url[i];
-                    // document.body.appendChild(img[i]);
-                    console.log(bottom_img[i]);
-                    $("#img_div").append(bottom_img[i]);
+                    
+                    $("#bottom_img_div").append(bottom_img[i]);
                 }
             })
     <?php
@@ -185,10 +193,10 @@
 </script>
 
 
-
+<link rel="stylesheet" href="https://landings.mprkorea.com/page/inc/page.css">
 <div class="full-wrapper" style="max-width:1920px; margin:auto;">
     <div id="input_form">
-        <div id="img_div"></div>
+        <div id="top_img_div"></div>
     
         <form id="landing">
             <!-- 이벤트 기간 -->
@@ -268,75 +276,7 @@
                 </div>
             </div>
         </form>
+
+        <div id="bottom_img_div"></div>
     </div>
 </div>
-
-
-<!-- <div>
-        <form id="landing">
-            <table>
-                <thead>
-                    <tr>
-                        <th colspan="2"><div id="ev_term" style="text-align:center; margin: 2%;"></div></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr id="name_input_div">
-                        <th><label for="name_input">이름</label></th>
-                        <td><input type="text" name="name_input" disabled /></td>
-                    </tr>
-
-                    <tr id="tel_input_div">
-                        <th><label for="tel_input">연락처</label></th>
-                        <td><input type="text" id="tel_input" disabled /></td>
-                    </tr>
-
-                    <tr id="sex_input_div">
-                        <th><label for="exampleInputCode1" >성별</label></th>
-                        <td>
-                            <div class="d-flex" >
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="sex_type" id="sex_type_M" value="M">
-                                    <label class="form-check-label" for="sex_type_M" >남성</label>
-                                </div>
-                                <div class="form-check ml-3">
-                                    <input class="form-check-input" type="radio" name="sex_type" id="sex_type_F" value="F">
-                                    <label class="form-check-label" for="sex_type_F" >여성</label>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr id="age_input_div">
-                        <th><label for="exampleInputCode1">나이</label></th>
-                        <td><input type="text" disabled /></td>
-                    </tr>
-
-                    <tr id="birth_input_div">
-                        <th><label for="exampleInputCode1">생년월일</label></th>
-                        <td><input type="text" disabled /></td>
-                    </tr>
-
-                    <tr id="rec_person_input_div">
-                        <th><label for="exampleInputCode1">추천인</label></th>
-                        <td><input type="text" disabled /></td>
-                    </tr>
-
-                    <tr id="counsel_time_input_div">
-                        <th><label for="counsel_time_input_div">상담시간</label></th>
-                        <td><select class="custom-select form-control-border" id="counsel_time_input_div" name="counsel_time_input_div">
-                            <option value="" disabled selected>상담 가능 시간 선택</option>
-                            <option value="9to11">오전 9시 ~ 11시</option>
-                            <option value="11to1">오전 11시 ~ 1시</option>
-                            <option value="3to5">오전 3시 ~ 5시</option>
-                            <option value="5to7">오전 5시 ~ 7시</option>
-                        </select></td>
-                    </tr>
-
-                    <tr  id="comment_input">
-                        <td><textarea placeholder="문의사항 입력" style="width:100%;" disabled ></textarea></td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div> -->
