@@ -106,11 +106,10 @@
         for( $i = 0; $i < $id_len ; $i++ ) {  
             $random_str= $random_str.$chars[ rand( 0, $var_size - 1 ) ];
         }   */  
-        $strSQL = "select max(code_seq) +1 as seq from mpr_seq";
+        $strSQL = " select max(code_seq) +1 as seq from mpr_seq";
         $seq = $DB->single($strSQL);
         $event_cd = "L".substr(str_pad($seq, 6, 0, STR_PAD_LEFT),-6);    
-        $API = $DB->hexAesEncrypt($random_str);
-
+        $API = $DB->hexAesEncrypt($event_cd);       
     }
 ?>
 
@@ -121,6 +120,10 @@
     $(document).ready(function(){
 
         $('.vendor').append("<?php echo $options; ?>");
+        if('<?php echo trim($_GET['mode']); ?>'=='update' ) {
+            $("#br_code").val("<?php echo $result['br_code']; ?>").prop("selected", true); 
+        }        
+        $("#br_name").val($("#br_code option:checked").text());
 
         var type;
         // summernote 구동
@@ -254,10 +257,13 @@
               //alert("Handler for .keyup() called.");
         });
 
-    });
+        $("#br_code").change(function() {
+            $("#br_name").val($("#br_code option:checked").text()); 
+            console.log($("#br_name").val());
+        });
 
-    
-                     
+
+    });
 
 
     // daterangepicker
@@ -321,7 +327,46 @@
                 drops: "auto",
                 singleDatePicker: true 
         });
-    });
+    });    
+
+    //ConnectM 이벤트 등록
+    function callApi(type, ev_key, br_name, ev_subject, ev_code, start_Date, end_Date, is_always, br_code, url){        
+        var command =''
+        if(type=='insert'){
+            command = "<?php echo $DB->hexAesEncrypt('INSERT_EVENT'); ?>";
+        }else if(type=='update'){
+            command = "<?php echo $DB->hexAesEncrypt('UPDATE_EVENT'); ?>";
+        }else{            
+            command = "<?php echo $DB->hexAesEncrypt('DELETE_EVENT'); ?>";
+        }
+        $.ajax({
+            url: "https://mprclients.mprkorea.com/event/api/apicall_new.php",
+            type : "POST",
+            dataType : "JSON",
+            data : {
+                type          : command,
+                event_key     : ev_key,      //이벤트키
+                br_code       : br_code,   //업체코드
+                cust_nm       : br_name,   //업체이름
+                event_nm      : ev_subject, //이벤트제목
+                event_cd      : ev_code,    //이벤트 코드
+                expose_from   : start_Date, //시작일
+                expose_to     : end_Date,   //종료일
+                expose_always : is_always,   //상시체크
+                event_url     : url,      //이벤트키
+                reg_id        : '<?php echo $_SESSION['userId']; ?>'
+            }
+        }).done(function(rs){	
+            if(rs.result){                
+                console.log(rs.result +' : '+rs.message);
+            }else{  
+                alert(rs.result +' : '+rs.message)
+            }
+        }).fail(function(rs){
+            alert(rs.message); 
+            return false;
+        }); 
+    }
 </script>
 
 <div class="content-wrapper">
@@ -347,6 +392,7 @@
                                 <div class="col-sm-12">
                                     <form method="POST" id="event-form">
                                     <input type="hidden" name="ev_code" id="ev_code" value="<?php echo $event_cd;?>">
+                                    <input type="hidden" name="br_name" id="br_name" value="">
                                     <table id="event-form-table" class="table table-bordered">
                                         <tbody>
 
@@ -358,11 +404,11 @@
                                                 <td>
                                                     <div class="d-flex">
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="ev_type" id="ev_type_f" value="F" checked>
+                                                            <input class="form-check-input" type="radio" name="ev_type" id="ev_type_f" value="F" checked <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
                                                             <label class="form-check-label" for="ev_type_f">기본형</label>
                                                         </div>
                                                         <div class="form-check ml-3">
-                                                            <input class="form-check-input" type="radio" name="ev_type" id="ev_type_m" value="M">
+                                                            <input class="form-check-input" type="radio" name="ev_type" id="ev_type_m" value="M" <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
                                                             <label class="form-check-label" for="ev_type_m">사용자 지정</label>
                                                         </div>
                                                     </div>
@@ -373,11 +419,11 @@
                                                 <td>
                                                     <div class="d-flex">
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_y" value="Y">
+                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_y" value="Y" <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
                                                             <label class="form-check-label" for="is_sync_y">사용</label>
                                                         </div>
                                                         <div class="form-check ml-3">
-                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_n" value="N" checked>
+                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_n" value="N" checked <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
                                                             <label class="form-check-label" for="is_sync_n">미사용</label>
                                                         </div>
                                                     </div>
@@ -634,18 +680,30 @@
             ev_top_content_pc, ev_top_content_mo ,ev_name_yn, ev_tel_req, 
             ev_tel_yn, ev_sex_yn, ev_age_yn, ev_comment_yn, ev_birthday_yn, 
             ev_rec_person_yn, ev_counsel_time_yn, ev_bottom_content_pc , 
-            ev_bottom_content_mo , ev_always , ev_start , ev_end , ev_stat, reg_date, chg_date, del_yn) 
+            ev_bottom_content_mo , ev_always , ev_start , ev_end , ev_stat, reg_id, reg_date, chg_date, del_yn) 
         VALUES 
             ('{$_POST['br_code']}', '{$_POST['ev_code']}', '{$_POST['ev_key']}' , '{$_POST['ev_type']}', '{$url}' ,'{$_POST['ev_subject']}',
-            '{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', '010-3269-7977', 
+            '{$_POST['ev_top_content_pc']}','{$_POST['ev_top_content_mo']}' ,'{$name_check}', 'Y', 
             '{$tel_check}', '{$sex_check}', '{$age_check}', '{$comment_check}', '{$birth_check}', 
             '{$ev_rec_person_check}', '{$ev_counsel_time_check}', '{$_POST['ev_bottom_content_pc']}',
-            '{$_POST['ev_bottom_content_mo']}' , '{$ev_always_check}' , '{$start_Date}', '{$end_Date}' , '{$ev_stat}', now(), now(), 'N');";
+            '{$_POST['ev_bottom_content_mo']}' , '{$ev_always_check}' , '{$start_Date}', '{$end_Date}', '{$ev_stat}', '{$_SESSION['userId']}', now(), now(), 'N');";
 
         if(preg_match($ev_subject, $_POST['ev_subject']) && strlen($_POST['ev_subject']) >= 3){
+                        
             $statement = $DB->query($SQL);
-            echo '<script> alert("등록되었습니다.");</script>';
-            echo "<script>location.href='/admin/event/index.php'</script>";
+            if($statement){
+                $strSQL = " update mpr_seq set code_seq	= code_seq + 1 ";
+                $seq = $DB->query($strSQL);
+
+                echo '<script> callApi("insert", "'.$_POST['ev_key'].'",
+                    "'.$_POST['br_name'].'", "'.$_POST['ev_subject'].'",
+                    "'.$_POST['ev_code'].'", "'.$start_Date.'",
+                    "'.$end_Date.'", "'.$ev_always_check.'",
+                    "'.$_POST['br_code'].'",
+                    "'.$url.'");</script>';            
+                echo '<script> alert("등록되었습니다.");</script>';
+                echo "<script>location.href='/admin/event/index.php'</script>";
+            }
         }else{
             $alert_msg = "ev_name_form_err";
         }
@@ -653,7 +711,7 @@
     }
 
     // 기존 이벤트 수정 버튼
-    if(array_key_exists('update_btn', $_POST)){        
+    if(array_key_exists('update_btn', $_POST)){
 
         $name_check = isset($_POST['ev_name_yn']) ? "Y" : "N";
         $tel_check = isset($_POST['ev_tel_yn']) ? "Y" : "N";
@@ -694,7 +752,8 @@
         "UPDATE 
             mpr_event 
         SET 
-            br_code = '{$_POST['br_code']}', 
+            br_code = '{$_POST['br_code']}',
+            ev_code = '{$_POST['ev_code']}', 
             ev_key = '{$_POST['ev_key']}', 
             ev_type = '{$_POST['ev_type']}', 
             ev_url = '{$url}', 
@@ -715,11 +774,18 @@
             ev_start = '{$start_Date}', 
             ev_end = '{$end_Date}', 
             ev_stat = '{$ev_stat}', 
+            chg_id = '{$_SESSION['userId']}', 
             chg_date = now()
         WHERE
             idx = {$_GET['idx']};";
         if(preg_match($ev_subject, $_POST['ev_subject']) && strlen($_POST['ev_subject']) >= 3){
             $statement = $DB->query($UP_SQL);
+            echo '<script> callApi("update", "'.$_POST['ev_key'].'",
+                 "'.$_POST['br_name'].'", "'.$_POST['ev_subject'].'",
+                 "'.$_POST['ev_code'].'", "'.$start_Date.'",
+                 "'.$end_Date.'", "'.$ev_always_check.'",
+                 "'.$_POST['br_code'].'",
+                 "'.$url.'");</script>';
             echo '<script> alert("수정되었습니다.");</script>';
             echo "<script>location.href='/admin/event/index.php'</script>";
         }else{
@@ -734,8 +800,10 @@
             var question = confirm("삭제하시겠습니까?");
             if(question == true){
                 idx = <?php echo $_GET['idx']?>;
-                $.post("https://landings.mprkorea.com/admin/event/event_delete.php", {"idx":idx}, function(data){
-                    alert("삭제되었습니다.");
+                console.log(idx);
+                $.post("https://landings.mprkorea.com/admin/event/event_delete.php", {"idx":idx}, function(data){                    
+                    callApi("delete", $('#ev_key').val());
+                    setTimeout(() => alert("삭제되었습니다."), 300);                    
                     location.href='/admin/event/index.php';
                 });
             }
@@ -765,6 +833,7 @@
 
         return false;
     }
+    
 </script>
 
 <?php

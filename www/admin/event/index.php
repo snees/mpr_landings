@@ -260,7 +260,7 @@
                                             <tr>
                                                 <td><?php echo $count--;?></td>
                                                 <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?> (<?php echo $date?>)</a></td>
-                                                <td><a href="#" onclick="go(this)">URL</a></td>
+                                                <td><a href="<?php echo $row['ev_url']?>">URL</a></td>
                                                 <td><?php echo $row['br_name']?></td>
                                                 <?php 
                                                     if($row['ev_end'] == "0000-00-00"){
