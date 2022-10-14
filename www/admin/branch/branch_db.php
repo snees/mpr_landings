@@ -13,6 +13,7 @@
     $nowPageCode = $_REQUEST['nowPageCode'];
     
 
+    /* 신규 등록 */
     if($mode == "register"){
         if(trim($brPost)){
             $SQL = 
@@ -28,9 +29,16 @@
                 ('snees', '{$brCode}', '{$brName}', '{$brTel}' ,'{$brMail}', now(), now(), 'N');";
         }
 
-        $statement = $DB -> query($SQL);
+        if ( $DB -> query($SQL) ) {
+            echo 'OK';
+        } else {
+            echo 'NO';
+        }
+        exit;
 
-    }else if($mode == "update"){
+    }
+    /* 수정 */
+    else if($mode == "update"){
         if(trim($brPost)){
 
             $Up_SQL = 
@@ -63,7 +71,24 @@
                 br_code = '{$nowPageCode}'";
         }
 
-        $statement = $DB -> query($Up_SQL);
+        if ( $DB -> query($Up_SQL) ) {
+            echo 'OK';
+        } else {
+            echo 'NO';
+        }
+        exit;
+
+    } 
+    /* 삭제 */
+    else if($mode == "delete"){
+        $DEL_SQL = "UPDATE mpr_branch SET del_yn='Y' WHERE br_code = '{$nowPageCode}'"; 
+        //echo $DEL_SQL;
+        if ( $DB -> query($DEL_SQL) ) {
+            echo 'OK';
+        } else {
+            echo 'NO';
+        }
+        exit;
     }
 
     if($alert_msg == ""){

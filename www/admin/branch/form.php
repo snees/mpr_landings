@@ -357,9 +357,12 @@
             $.post("/admin/branch/branch_db.php", {
                 "mode" : 'register', "brName" : brName, "brCode" : brCode, "brPost" : brPost, "brAddr" : brAddr, "brRef" : brRef, "brTel" : brTel, "brMail" : brMail
             }, function(data){
-                alert("저장 되었습니다.");
-                location.href='/admin/branch/index.php';
-                
+                if ($.trim(data)=='OK') {
+                    alert("저장 되었습니다.");
+                    location.href='/admin/branch/index.php';
+                } else {
+                    alert("삭제하지 못하였습니다.");
+                }
             });
         }
     });
@@ -423,21 +426,26 @@
             $.post("/admin/branch/branch_db.php", {
                 "mode" : 'update', "brName" : brName, "brCode" : brCode, "brPost" : brPost, "brAddr" : brAddr, "brRef" : brRef, "brTel" : brTel, "brMail" : brMail, "nowPageCode" : nowPageCode
             }, function(data){
-                alert("수정되었습니다.");
-                location.href='/admin/branch/index.php';
-                
+                if ($.trim(data)=='OK') {
+                    alert("수정되었습니다.");
+                    location.href='/admin/branch/index.php';
+                } else {
+                    alert("삭제하지 못하였습니다.");
+                }
             });
         }
     });
 
 
     $("#delete_btn").on("click", function(){
+
         var question = confirm("삭제하시겠습니까?");
-        var mode = "delete";
         if(question){
-            var code = "<?php echo $_GET['code']?>";
-            $.post("/admin/branch/branch_delete.php", {
-                code : code
+
+            var nowPageCode = "<?php echo $_GET['code']?>";
+
+            $.post("/admin/branch/branch_db.php", {
+                "mode" : 'delete', nowPageCode : nowPageCode
             }, function(data){
                 if ($.trim(data)=='OK') {
                     alert("삭제되었습니다.");
