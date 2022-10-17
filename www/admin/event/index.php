@@ -189,15 +189,17 @@
                                             <?php
                                                 $arryWhere = array();
 
-                                                // 검색 안했을때 테이블 가져오기
-                                                if($stat =="total"){
-                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
-                                                }else{
-                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_stat = '{$stat}'";
+
+                                                $lv_SQL = "SELECT user_lv FROM mpr_member WHERE user_id = '{$_SESSION['userId']}'";
+                                                $user_lv = $DB -> row($lv_SQL);
+
+                                                if(trim($user_lv['user_lv']) == 100){
+                                                    $strWhere = "b.user_id = '{$_SESSION['userId']}' AND ";
                                                 }
+
                                                 // 검색했을때 테이블 가져오기
                                                 if ( trim($_GET['search']) && trim($_GET['input_search']) ) {
-                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
+                                                    $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
                                                     if( trim($_GET['in_stat']) != "total"){
                                                         $arryWhere[] = "ev_stat = '{$_GET['in_stat']}' and {$_GET['search']} like '%{$_GET['input_search']}%' ";
                                                     }else{
@@ -205,8 +207,17 @@
                                                     }
                                                     $strWhere.= implode(' and ', $arryWhere);//---- 배열로 만든다. explode('@', '문자열@문자열@문자열')
                                                     
-                                                    
+                                                }else{
+                                                    // 검색 안했을때 테이블 가져오기
+                                                    if($stat =="total"){
+                                                        $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
+                                                    }else{
+                                                        $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_stat = '{$stat}'";
+                                                    }
                                                 }
+
+
+                                                
                                                 echo '<script>console.log("'.$strWhere.'");</script>';
                                                 if(isset($_GET['page'])){
                                                     $page = $_GET['page'];
