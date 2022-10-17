@@ -15,14 +15,14 @@
 
     // $name = "mp_".$now3.substr(rand(),0,4);
     // $filename = $name.'.'.$ext;
-    // $destination = $_SERVER['DOCUMENT_ROOT'].'/img_data/'.$filename;
+    // $destination = $_SERVER['DOCUMENT_ROOT'].'/img_tmp/'.$filename;
     // $location =  $_FILES["files"]["tmp_name"];
 
     // move_uploaded_file($location,$destination);
 
 // -----------------------------------------------------------------------------------------------------------
 
-// $boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/';
+// $boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_tmp/';
 
 // $error = $_FILES["files"]['error'];
 // $orgFile = $_FILES["files"]['name'];
@@ -106,35 +106,32 @@
 $API_KEY = $_REQUEST['API'];
 $code = $_REQUEST['code'];
 
-$webFilePath = '/img_data/event/tmp/'.trim($code)."/";
-$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/tmp/'.trim($code);
+$webFilePath = '/img_tmp/event/'.trim($code)."/";
+$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_tmp/event/'.trim($code);
 $uploads_dir = trim($boardEditor)."/";
 
 if ( !is_dir($boardEditor) ) {
     @mkdir($boardEditor, 0777, true);
     @chmod($boardEditor, 0777);
     
-    $webFilePath = '/img_data/event/tmp/'.trim($code)."/".trim($API_KEY)."/";
-    $boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/tmp/'.trim($code)."/".trim($API_KEY);
-    $uploads_dir = trim($boardEditor)."/";
-
-    if ( !is_dir($boardEditor) ) {
-        @mkdir($boardEditor, 0777, true);
-        @chmod($boardEditor, 0777);
-    }
 }
 if ( !is_dir($uploads_dir) ) {
     @mkdir($uploads_dir, 0777, true);
     @chmod($uploads_dir, 0777);
-
-    $boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/tmp/'.trim($code)."/".trim($API_KEY);
-    $uploads_dir = trim($boardEditor)."/";
-
-    if ( !is_dir($uploads_dir) ) {
-        @mkdir($uploads_dir, 0777, true);
-        @chmod($uploads_dir, 0777);
-    }
     
+}
+
+$webFilePath = '/img_tmp/event/'.trim($code)."/".trim($API_KEY)."/";
+$boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_tmp/event/'.trim($code)."/".trim($API_KEY);
+$uploads_dir = trim($boardEditor)."/";
+
+if ( !is_dir($boardEditor) ) {
+    @mkdir($boardEditor, 0777, true);
+    @chmod($boardEditor, 0777);
+}
+if ( !is_dir($uploads_dir) ) {
+    @mkdir($uploads_dir, 0777, true);
+    @chmod($uploads_dir, 0777);
 }
 
 
@@ -196,7 +193,7 @@ if ($_FILES['files']['name']) {
 //         $fileName = iconv("UTF-8", "EUC-KR",$_FILES['files']['name']);
 
 //         //파일 저장 경로 - document_root //파일 다운 경로 - server_name  다운로드는 url로 가야함
-//         $upload_folder =$_SERVER['DOCUMENT_ROOT'].'/img_data/';
+//         $upload_folder =$_SERVER['DOCUMENT_ROOT'].'/img_tmp/';
         
 //         move_uploaded_file($file_tmp_name, $upload_folder.$file_name);
         

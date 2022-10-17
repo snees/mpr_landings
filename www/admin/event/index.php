@@ -246,7 +246,7 @@
 
                                                     $S_SQL = 
                                                     "SELECT 
-                                                        e.idx, e.ev_subject, e.ev_url, e.ev_start, e.ev_end, e.ev_stat, br_name
+                                                        e.idx, e.ev_subject, e.ev_url, e.ev_start, e.ev_end, e.ev_stat, e.ev_always, br_name
                                                     FROM 
                                                         mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE {$strWhere}
                                                     order by idx desc
@@ -260,16 +260,17 @@
                                             <tr>
                                                 <td><?php echo $count--;?></td>
                                                 <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?> (<?php echo $date?>)</a></td>
-                                                <td><a href="#" onclick="go(this)">URL</a></td>
+                                                
+                                                <!-- <?php $URL = "https://".$row['ev_url']; ?> -->
+                                                <td><a href="<?php echo $row['ev_url']?>">URL</a></td>
                                                 <td><?php echo $row['br_name']?></td>
                                                 <?php 
-                                                    if($row['ev_end'] == "0000-00-00"){
-                                                        $end = "";
+                                                    if($row['ev_always'] == "Y"){
+                                                        echo '<td>상시</td>';
                                                     }else{
-                                                        $end = $row['ev_end'];
+                                                        echo '<td>'.$row['ev_start']."~".$row['ev_end'].'</td>';
                                                     }
                                                 ?>
-                                                <td><?php echo $row['ev_start']?> ~ <?php echo $end?></td>
                                                 <td>
                                                     <?php 
                                                         switch($row['ev_stat']){
