@@ -10,8 +10,8 @@
     $evType = $_REQUEST['evType'];
     $evURL = $_REQUEST['evURL'];
     $evSubject = $_REQUEST['evSubject'];
-    $ev_top_contetnt_pc = $_REQUEST['ev_top_contetnt_pc'];
-    $ev_top_contetnt_mo = $_REQUEST['ev_top_contetnt_mo'];
+    $ev_top_content_pc = $_REQUEST['ev_top_content_pc'];
+    $ev_top_content_mo = $_REQUEST['ev_top_content_mo'];
     $evName_yn = $_REQUEST['evName_yn'];
     $evTel_yn = $_REQUEST['evTel_yn'];
     $evSex_yn = $_REQUEST['evSex_yn'];
@@ -29,6 +29,39 @@
     $regID = $_REQUEST['regID'];
     $idx = $_REQUEST['idx'];
 
+    /* 이미지 저장 경로 */
+    $tmp_dir = '/home/fs_landings/www/img_tmp/event/'.trim($brCode)."/".trim($evKey);
+
+    if( trim($ev_top_content_pc) || trim($ev_top_content_pc) || trim($ev_top_content_pc) || trim($ev_top_content_pc)){
+        $webFilePath = '/img_data/event/'.trim($brCode)."/";
+        $boardEditor = trim($_SERVER['DOCUMENT_ROOT']).'/img_data/event/'.trim($brCode);
+        $uploads_dir = trim($boardEditor)."/";
+
+        if ( !is_dir($boardEditor) ) {
+            @mkdir($boardEditor, 0777, true);
+            @chmod($boardEditor, 0777);
+            
+        }
+        if ( !is_dir($uploads_dir) ) {
+            @mkdir($uploads_dir, 0777, true);
+            @chmod($uploads_dir, 0777);
+            
+        }
+        
+        $webFilePath = trim($webFilePath).trim($evKey)."/";
+        $boardEditor = trim($boardEditor)."/".trim($evKey);
+        $uploads_dir = trim($boardEditor)."/";
+
+        if ( !is_dir($boardEditor) ) {
+            @mkdir($boardEditor, 0777, true);
+            @chmod($boardEditor, 0777);
+        }
+        if ( !is_dir($uploads_dir) ) {
+            @mkdir($uploads_dir, 0777, true);
+            @chmod($uploads_dir, 0777);
+        }
+    }
+
     /* 신규 이벤트 등록 */
     if($mode == "register"){
         $SQL = 
@@ -40,19 +73,42 @@
             ev_bottom_content_mo , ev_always , ev_start , ev_end , ev_stat, reg_id, reg_date, chg_date, del_yn) 
         VALUES 
             ('{$brCode}', '{$evCode}', '{$evKey}' , '{$evType}', '{$evURL}' ,'{$evSubject}',
-            '{$ev_top_contetnt_pc}','{$ev_top_contetnt_mo}' ,'{$evName_yn}', 'Y', 
+            '{$ev_top_content_pc}','{$ev_top_content_mo}' ,'{$evName_yn}', 'Y', 
             '{$evTel_yn}', '{$evSex_yn}', '{$evAge_yn}', '{$evComment_yn}', '{$evBrith_yn}', 
             '{$evRec_person_yn}', '{$evCounsel_time_yn}', '{$ev_bottom_content_pc}',
             '{$ev_bottom_content_mo}' , '{$evAlways}' , '{$evStart}', '{$evEnd}', '{$evStat}', '{$regID}', now(), now(), 'N');";
 
-       if( $DB->query($SQL) ){
+        /* 이미지 파일 tmp -> data 옮기기 */
+        if( trim($ev_top_content_pc) || trim($ev_top_content_pc) || trim($ev_top_content_pc) || trim($ev_top_content_pc)){
+            $tmp_dir = '/home/fs_landings/www/img_tmp/event/'.trim($brCode)."/".trim($evKey);
+
+            function fileCopy($tmp, $upload){
+                if (is_dir($tmp)){                              
+                    if ($dir = opendir($tmp)){                     
+                        while (($file = readdir($dir)) !== false){   
+                            if(($file !== ".") && ($file !== "..") && ($file !== "")) {
+                                if(is_dir($tmp."/".$file)){
+                                    fileCopy($tmp."/".$file, $upload.$file);
+                                }else{
+                                    copy($tmp."/".$file, $upload.$file);
+                                }
+                            }
+                        }                                           
+                        closedir($dir);
+                    }                                             
+                }    
+            }
+
+            fileCopy($tmp_dir, $uploads_dir);
+        }
+        if( $DB->query($SQL) ){
             $strSQL = "UPDATE mpr_seq SET code_seq	= code_seq + 1 ";
             $seq = $DB->query($strSQL);
 
             echo "OK";
-       }else{
+        }else{
             echo "NO";
-       }
+        }
     }
 
     /* 이벤트 수정 */
@@ -67,8 +123,8 @@
             ev_type = '{$evType}', 
             ev_url = '{$evURL}', 
             ev_subject = '{$evSubject}', 
-            ev_top_content_pc = '{$ev_top_contetnt_pc}', 
-            ev_top_content_mo = '{$ev_top_contetnt_mo}' ,
+            ev_top_content_pc = '{$ev_top_content_pc}', 
+            ev_top_content_mo = '{$ev_top_content_mo}' ,
             ev_name_yn = '{$evName_yn}', 
             ev_tel_yn = '{$evTel_yn}', 
             ev_sex_yn = '{$evSex_yn}', 
