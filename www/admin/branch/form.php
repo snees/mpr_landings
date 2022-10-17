@@ -355,13 +355,21 @@
         console.log(isok);
         if(isok){
             $.post("/admin/branch/branch_db.php", {
-                "mode" : 'register', "brName" : brName, "brCode" : brCode, "brPost" : brPost, "brAddr" : brAddr, "brRef" : brRef, "brTel" : brTel, "brMail" : brMail
+                mode : 'register', 
+                brName : brName, 
+                brCode : brCode, 
+                brPost : brPost, 
+                brAddr : brAddr, 
+                brRef : brRef, 
+                brTel : brTel, 
+                brMail : brMail,
+                regID : '<?php echo $_SESSION['userId']?>'
             }, function(data){
                 if ($.trim(data)=='OK') {
                     alert("저장 되었습니다.");
                     location.href='/admin/branch/index.php';
                 } else {
-                    alert("삭제하지 못하였습니다.");
+                    alert("저장하지 못하였습니다.");
                 }
             });
         }
@@ -424,13 +432,22 @@
 
         if(isok){
             $.post("/admin/branch/branch_db.php", {
-                "mode" : 'update', "brName" : brName, "brCode" : brCode, "brPost" : brPost, "brAddr" : brAddr, "brRef" : brRef, "brTel" : brTel, "brMail" : brMail, "nowPageCode" : nowPageCode
+                "mode" : 'update',
+                brName : brName, 
+                brCode : brCode, 
+                brPost : brPost, 
+                brAddr : brAddr, 
+                brRef : brRef, 
+                brTel : brTel, 
+                brMail : brMail, 
+                nowPageCode : nowPageCode,
+                regID : '<?php echo $_SESSION['userId']?>'
             }, function(data){
                 if ($.trim(data)=='OK') {
                     alert("수정되었습니다.");
                     location.href='/admin/branch/index.php';
                 } else {
-                    alert("삭제하지 못하였습니다.");
+                    alert("수정하지 못하였습니다.");
                 }
             });
         }

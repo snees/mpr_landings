@@ -58,7 +58,14 @@
 
                                                 $arryWhere = array();
                                                 $strQueryString= "";
-                                                $strWhere = "del_yn = 'N'";
+
+                                                $lv_SQL = "SELECT user_lv FROM mpr_member WHERE user_id = '{$_SESSION['userId']}'";
+                                                $user_lv = $DB -> row($lv_SQL);
+                                                if( trim($user_lv['user_lv']) == 100 ){
+                                                    $strWhere = "del_yn = 'N' AND user_id = '{$_SESSION['userId']}'";
+                                                }else{
+                                                    $strWhere = "del_yn = 'N'";
+                                                }
 
                                                 if (trim($_GET['input_search']) ) {
                                                     $strWhere = "del_yn = 'N' AND ";

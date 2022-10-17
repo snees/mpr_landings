@@ -11,6 +11,7 @@
     $brTel = $_REQUEST['brTel'];
     $brMail = $_REQUEST['brMail'];
     $nowPageCode = $_REQUEST['nowPageCode'];
+    $regID = $_REQUEST['regID'];
     
 
     /* 신규 등록 */
@@ -20,13 +21,13 @@
             "INSERT INTO mpr_branch 
                 (user_id, br_code, br_name, br_post, br_addr, br_addr_etc, br_tel, user_email, reg_date, chg_date, del_yn)
             VALUES
-                ('snees', '{$brCode}', '{$brName}', {$brPost}, '{$brAddr}', '{$brRef}', '{$brTel}' , '{$brMail}', now(), now(), 'N');";
+                ('{$regID}', '{$brCode}', '{$brName}', {$brPost}, '{$brAddr}', '{$brRef}', '{$brTel}' , '{$brMail}', now(), now(), 'N');";
         }else{
             $SQL = 
             "INSERT INTO mpr_branch 
                 (user_id, br_code, br_name, br_tel, user_email, reg_date, chg_date, del_yn)
             VALUES 
-                ('snees', '{$brCode}', '{$brName}', '{$brTel}' ,'{$brMail}', now(), now(), 'N');";
+                ('{$regID}', '{$brCode}', '{$brName}', '{$brTel}' ,'{$brMail}', now(), now(), 'N');";
         }
 
         if ( $DB -> query($SQL) ) {
@@ -45,7 +46,7 @@
             "UPDATE 
                 mpr_branch 
             SET 
-                user_id = 'snees', 
+                user_id = '{$regID}', 
                 br_code = '{$brCode}', 
                 br_name = '{$brName}', 
                 br_post = {$brPost}, 
@@ -61,7 +62,7 @@
             "UPDATE 
                 mpr_branch 
             SET 
-                user_id = 'snees',
+                user_id = '{$regID}',
                 br_code = '{$brCode}', 
                 br_name = '{$brName}' , 
                 br_tel = '{$brTel}', 
