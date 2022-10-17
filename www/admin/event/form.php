@@ -124,7 +124,7 @@
         if('<?php echo trim($_GET['mode']); ?>'=='update' ) {
             $("#br_code").val("<?php echo $result['br_code']; ?>").prop("selected", true); 
         }        
-        $("#br_name").val($("#br_code option:checked").text());
+        $("#brand_name").val($("#br_code option:checked").text());
 
         var type;
         // summernote 구동
@@ -150,7 +150,7 @@
             $.ajax({
                 data : formData,
                 type : "POST",
-                url: "/admin/event/editor-upload.php",
+                url: "/admin/event/editor_tmp_upload.php",
                 dataType : 'json',
                 cache: false,
                 contentType : false,
@@ -165,7 +165,6 @@
 
         $("input[name='client_sync']:radio").change(function () {
             //CLIENTS 동기화 여부.
-            var noticeCat = this.value;
 
                 if(this.value == 'Y'){
                     $('.ev_key').val('');
@@ -196,12 +195,10 @@
                     type : "POST",
                     dataType : "JSON",
                     data : {
-                    key : $(this).val(), // API KEY 
+                    event_key : $(this).val(), // API KEY 
                     type : type
                     }
                 }).done(function(rs){	
-                    /* console.log($.trim(rs.result));
-                    console.log($.trim(rs.message)); */
                     if(rs.result){
 
                         // mpr_branch에 해당 업체가 등록되어있는지 확인
@@ -221,7 +218,11 @@
                         
                         if(isthere == false){
                             alert("등록되지 않은 업체입니다.");
+                            $('#ev_subject').attr("disabled", true);
+                            $('#save_btn').attr("disabled", true);
+                            $('#br_name').attr("placeholder", "업체를 등록해주세요.");
                         }else{
+                            console.log(rs.cust_nm);
                             $('#br_code').val($.trim(rs.br_code));
                             $('#br_name').val($.trim(rs.cust_nm));
                             $('#ev_subject').val(rs.event_nm);
@@ -258,8 +259,7 @@
         });
 
         $("#br_code").change(function() {
-            $("#br_name").val($("#br_code option:checked").text()); 
-            console.log($("#br_name").val());
+            $("#brand_name").val($("#br_code option:checked").text()); 
         });
 
 
@@ -290,7 +290,6 @@
                 $( "#reservation2" ).hide();
             }
         });
-
         // 상시진행 - x
         $( "#reservation" ).daterangepicker({
             <?php 
@@ -308,7 +307,7 @@
                 monthNames:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
                 },
                 startDate: "<?php echo $start_Date ?>",
-                end_Date: "<?php echo $end_Date ?>",
+                endDate: "<?php echo $end_Date ?>",
                 drops: "auto"
         });
 
@@ -392,7 +391,7 @@
                                 <div class="col-sm-12">
                                     <form method="POST" id="event-form">
                                     <input type="hidden" name="ev_code" id="ev_code" value="<?php echo $event_cd;?>">
-                                    <input type="hidden" name="br_name" id="br_name" value="">
+                                    <input type="hidden" name="brand_name" id="brand_name" value="">
                                     <table id="event-form-table" class="table table-bordered">
                                         <tbody>
 
@@ -419,11 +418,15 @@
                                                 <td>
                                                     <div class="d-flex">
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_y" value="Y" <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
+                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_y" value="Y" 
+                                                            <?php echo substr($result['ev_code'], 0,1) == 'M' ? "checked" : "" ?>
+                                                            <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
                                                             <label class="form-check-label" for="is_sync_y">사용</label>
                                                         </div>
                                                         <div class="form-check ml-3">
-                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_n" value="N" checked <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
+                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_n" value="N" 
+                                                            <?php echo substr($result['ev_code'], 0,1) != 'M' ? "checked" : "" ?>
+                                                            <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
                                                             <label class="form-check-label" for="is_sync_n">미사용</label>
                                                         </div>
                                                     </div>
@@ -437,7 +440,6 @@
                                                 </th>
                                                 <td>
                                                     <input type="text" class="form-control form-control-border ev_key" style="text-transform: uppercase;" id="ev_key" name="ev_key" value="<?php echo  $API ?>" readonly>
-                                                    <!-- <input type="text" class="form-control form-control-border" id="ev_key2" name="ev_key2" value="<?php echo $API?>" style="display:none;" readonly> -->
                                                 </td>
                                                 <th>
                                                     <label for="br_code">업체 선택</label>
@@ -652,6 +654,7 @@
 
     var subject_regex = /^[a-zA-Z가-힣0-9 ]+$/;
 
+    <?php if(!$_GET['idx']){?>
     /* 이벤트 등록 버튼 */
     $("#save_btn").on("click", function(){
         var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
@@ -701,7 +704,7 @@
             start_Date = today;
         }
 
-        var evURL = 'landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
+        var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
 
         var evSubject = $("#ev_subject").val();
         if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
@@ -713,8 +716,8 @@
         var brCode = $("#br_code").val();
         var evCode = $("#ev_code").val();
         var evKey = $("#ev_key").val();
-        var ev_top_contetnt_pc = $("#ev_top_content_pc").val();
-        var ev_top_contetnt_mo = $("#ev_top_contetnt_mo").val();
+        var ev_top_content_pc = $("#ev_top_content_pc").val();
+        var ev_top_content_mo = $("#ev_top_content_mo").val();
         var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
         var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
         var regID = '<?php echo $_SESSION['userId']?>';
@@ -728,8 +731,8 @@
                 evType : evType,
                 evURL : evURL,
                 evSubject : evSubject, 
-                ev_top_contetnt_pc : ev_top_contetnt_pc,
-                ev_top_contetnt_mo : ev_top_contetnt_mo,
+                ev_top_content_pc : ev_top_content_pc,
+                ev_top_content_mo : ev_top_content_mo,
                 evName_yn : name_Check, 
                 evTel_yn : tel_Check, 
                 evSex_yn : sex_Check, 
@@ -747,11 +750,14 @@
                 regID : regID
             }, function(data){
                 if ($.trim(data)=='OK') {
-                    var brName = $("#br_name").val();
-                    callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL);
+                    var brName = $("#brand_name").val();
+                    if($('input[name=client_sync]:checked').val()=='N'){
+                       callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );     
+                    }              
                     alert("등록되었습니다.");
-                    location.href='/admin/event/index.php';
+                    location.href= "/admin/event/index.php";
                 } else {
+                    console.log($.trim(data));
                     alert("저장하지 못하였습니다.");
                 }
             });
@@ -759,10 +765,12 @@
         
     });
 
+    <?php }?>
 
     <?php if($_GET['idx']){?>
     /* 수정 버튼 */
     $("#update_btn").on("click", function(){
+        console.log('123213');
         var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
         var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
         var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
@@ -822,8 +830,8 @@
         var brCode = $("#br_code").val();
         var evCode = $("#ev_code").val();
         var evKey = $("#ev_key").val();
-        var ev_top_contetnt_pc = $("#ev_top_content_pc").val();
-        var ev_top_contetnt_mo = $("#ev_top_contetnt_mo").val();
+        var ev_top_content_pc = $("#ev_top_content_pc").val();
+        var ev_top_content_mo = $("#ev_top_content_mo").val();
         var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
         var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
         var regID = '<?php echo $_SESSION['userId']?>';
@@ -838,8 +846,8 @@
                 evType : evType,
                 evURL : evURL,
                 evSubject : evSubject, 
-                ev_top_contetnt_pc : ev_top_contetnt_pc,
-                ev_top_contetnt_mo : ev_top_contetnt_mo,
+                ev_top_content_pc : ev_top_content_pc,
+                ev_top_content_mo : ev_top_content_mo,
                 evName_yn : name_Check, 
                 evTel_yn : tel_Check, 
                 evSex_yn : sex_Check, 
@@ -858,10 +866,12 @@
                 idx : idx
             }, function(data){
                 if ($.trim(data)=='OK') {
-                    var brName = $("#br_name").val();
-                    callApi("update", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );
+                    var brName = $("#brand_name").val();                    
+                    if('<?php echo substr($result['ev_code'], 0,1); ?>' != 'M'){
+                        callApi("update", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL);      
+                    }              
                     alert("수정되었습니다.");
-                    location.href='/admin/event/index.php';
+                    location.href= "/admin/event/index.php";
                 } else {
                     alert("수정하지 못하였습니다.");
                 }
@@ -884,9 +894,11 @@
                 idx : idx
             }, function(data){
                 if ($.trim(data)=='OK') {
-                    callApi("delete", $('#ev_key').val());
+                    if('<?php echo substr($result['ev_code'], 0,1); ?>' != 'M'){
+                        callApi("delete", $('#ev_key').val());
+                    }
                     alert("삭제되었습니다.");
-                    location.href='/admin/event/index.php';
+                    location.href= "/admin/event/index.php";             
                 } else {
                     alert("삭제하지 못하였습니다.");
                 }
