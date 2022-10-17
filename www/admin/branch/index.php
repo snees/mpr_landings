@@ -107,12 +107,12 @@
                                                                 count(case when br_code='{$row['br_code']}' and ev_stat='W' then 1 end) as W_count,
                                                                 count(case when br_code='{$row['br_code']}' and ev_stat='Y' then 1 end) as Y_count,
                                                                 count(case when br_code='{$row['br_code']}' and ev_stat='N' then 1 end) as N_count
-                                                            FROM mpr_event";
+                                                            FROM mpr_event WHERE del_yn='N' ";
                                                         $e_res = $DB -> row($E_SQL);
                                                         echo "<tr>
                                                                     <td>".$count--."</td>
                                                                     <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']." (".$row['br_code'].")</a></td>
-                                                                    <td style='color : #4374D9;'>진행예정:(".$e_res['W_count'].")&emsp;진행중:(".$e_res['Y_count'].")&emsp;종료:(".$e_res['N_count'].")</td>
+                                                                    <td style='color : #8C8C8C;'>진행예정:(".$e_res['W_count'].")&emsp;진행중:(".$e_res['Y_count'].")&emsp;종료:(".$e_res['N_count'].")</td>
                                                                 </tr>";
                                                     }
                                                 }
