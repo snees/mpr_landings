@@ -21,6 +21,12 @@
         $stat = $_GET['stat'];
     }
 ?>
+<style>
+    .btn:first-child:hover{
+        background-color : #dadfe4;
+        border-color : #ced4da;
+    }
+</style>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -143,13 +149,19 @@
                                                         
                                                         <form class="form-inline" action="index.php?stat=<?php echo $stat?>">
                                                             <div class="form-group" >
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend" style="height:30px;">
                                                                     <span class="input-group-text">
                                                                         <i class="far fa-calendar-alt"></i>
                                                                     </span>
                                                                     </div>
-                                                                    <input type="text" class="form-control float-right" id="reservation" name="reservation"style="height:30px; width:220px; margin-right:5px;">
+                                                                    
+                                                                    <input type="text" class="form-control float-right" id="reservation" name="reservation"style="height:30px; width:200px; text-align : center;">
+                                                                    <div class="input-group-append" style="height:30px; margin-right:5px;">
+                                                                        <button class="btn btn-navbar date_search" type="submit">
+                                                                            <i class="fas fa-search"></i>
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                                 <!-- /.input group -->
                                                             </div>
