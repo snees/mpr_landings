@@ -6,8 +6,6 @@
     #top_img_div, #bottom_img_div {
         margin: auto;
         width: 90%;
-        display: flex;
-        justify-content: center;
     }
     img{
         width : 100%;
