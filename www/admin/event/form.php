@@ -130,6 +130,7 @@
         // summernote 구동
         $('.editor_textarea').summernote({
             height: 300,
+            width : 1400,
             callbacks :{
                 onImageUpload : function(files, editor, welEditable) {
                     type = this.name;
@@ -642,7 +643,7 @@
     function popup_Open(){
         var url = "/admin/event/preview.php";
         var name = "show_preview";
-        var option = "width = 500, height = 500, top = 100, left = 200, scrollbars=yes, resizable=yes";
+        var option = "width = 1800, height =1000, top = 100, left = 100, scrollbars=yes, resizable=yes";
         window.open(url, name, option);
 
         return false;
@@ -818,7 +819,7 @@
             start_Date = today;
         }
 
-        var evURL = 'landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
+        var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
 
         var evSubject = $("#ev_subject").val();
         if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
