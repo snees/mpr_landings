@@ -6,6 +6,8 @@
     #top_img_div, #bottom_img_div {
         margin: auto;
         width: 90%;
+        display: flex;
+        justify-content: center;
     }
     img{
         width : 100%;
@@ -214,19 +216,14 @@
                 </div>
                 
                 <!-- 성별 -->
-                <div class="form-row" id="sex_input_div" style="display:none;">
-                    <div class="d-flex" >
-                        <label for="exampleInputCode1" class="input-label">성별</label>
-                        <div class="d-flex" >
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="sex_type" id="sex_type_M" value="M">
-                                <label class="form-check-label" for="sex_type_M" >남성</label>
-                            </div>
-                            <div class="form-check ml-3">
-                                <input class="form-check-input" type="radio" name="sex_type" id="sex_type_F" value="F">
-                                <label class="form-check-label" for="sex_type_F" >여성</label>
-                            </div>
-                        </div>
+
+                <div class="form-row" data-form="ev_sex">
+                    <label for="ev_sex" class="input-label">성별</label>
+                    <div class="radio-wrap d-flex">
+                        <input class="form-check-input" type="radio" name="sex_type" id="sex_type_M" value="M">
+                        <label class="form-check-label" for="sex_type_M" >남성</label>
+                        <input class="form-check-input" type="radio" name="sex_type" id="sex_type_F" value="F">
+                        <label class="form-check-label" for="sex_type_F" >여성</label>
                     </div>
                 </div>
 
