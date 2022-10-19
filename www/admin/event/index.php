@@ -230,7 +230,7 @@
 
 
                                                 
-                                                echo '<script>console.log("'.$strWhere.'");</script>';
+                                                /* echo '<script>console.log("'.$strWhere.'");</script>'; */
                                                 if(isset($_GET['page'])){
                                                     $page = $_GET['page'];
                                                 } else {
@@ -285,7 +285,7 @@
                                                 <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?> (<?php echo $date?>)</a></td>
                                                 
                                                 <!-- <?php $URL = "https://".$row['ev_url']; ?> -->
-                                                <td><a href="<?php echo $row['ev_url']?>">URL</a></td>
+                                                <td><a href="<?php echo $row['ev_url']?>" target="_blank">URL</a></td>
                                                 <td><?php echo $row['br_name']?></td>
                                                 <?php 
                                                     if($row['ev_always'] == "Y"){
