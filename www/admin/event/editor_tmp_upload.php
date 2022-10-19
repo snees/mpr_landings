@@ -171,7 +171,8 @@ if ($_FILES['files']['name']) {
                 echo json_encode(array(
                     'uploaded'=>'1',
                     'fileName'=>$filename,
-                    'url'=>$webFilePath
+                    'url'=>$webFilePath,
+                    'orgFile'=>$orgFile
                 ));
                 exit;  
             }

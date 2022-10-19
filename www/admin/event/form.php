@@ -34,7 +34,7 @@
     $bottom_pc_content = "";
     $bottom_mo_content = "";
 
-     $is_name_checked = "checked";
+    $is_name_checked = "checked";
     $is_tel_checked = "checked";
     $w_stat = "checked";
 
@@ -110,7 +110,8 @@
         $strSQL = " select max(code_seq) +1 as seq from mpr_seq";
         $seq = $DB->single($strSQL);
         $event_cd = "L".substr(str_pad($seq, 6, 0, STR_PAD_LEFT),-6);    
-        $API = $DB->hexAesEncrypt($event_cd);       
+        $API = $DB->hexAesEncrypt($event_cd);
+             
     }
 ?>
 
@@ -118,8 +119,12 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script>
+    
+    var j=0;
+    var imgFileName = new Object;
+    var isDelImg = false;
     $(document).ready(function(){
-
+        
         $('.vendor').append("<?php echo $options; ?>");
         if('<?php echo trim($_GET['mode']); ?>'=='update' ) {
             $("#br_code").val("<?php echo $result['br_code']; ?>").prop("selected", true); 
@@ -127,19 +132,31 @@
         $("#brand_name").val($("#br_code option:checked").text());
 
         var type;
+        
         // summernote 구동
         $('.editor_textarea').summernote({
             height: 300,
-            width : 1400,
             callbacks :{
                 onImageUpload : function(files, editor, welEditable) {
                     type = this.name;
                     for(var i = files.length-1; i >= 0; i--){
                         sendFile(files[i], this);
                     }
+                },
+                onMediaDelete : function(target) {
+                    var del_file = (target[0].src).split("/");
+                    if(del_file[3] == "img_data"){
+                        var del_path = "/img_data/event/" + del_file[5] + "/" + del_file[6];
+                        del_file = del_file.pop();
+                        console.log(del_file);
+                        console.log(del_path);
+                        deleteFile(del_file, del_path)
+                        // imgFileName에서 삭제하기
+                    }
                 }
             }
         });
+        
         function sendFile(file, el) {
             var formData = new FormData();
             var key = '<?php echo $API ?>';
@@ -159,8 +176,20 @@
                 processData : false,
                 success : function(data) {
                     $(el).summernote('editor.insertImage', data.url);
-                    
+                    imgFileName[data.orgFile] = data.fileName;
+                    console.log(imgFileName);
+                    console.log(Object.keys(imgFileName).length);
                 }
+            });
+        }
+
+        /* summernote 이미지 삭제 시 파일 및 DB에서도 삭제 */
+        function deleteFile(file, path){
+            $.post("/admin/event/editor_delete.php", {
+                fileName : file,
+                path : path
+            }, function(data){
+
             });
         }
 
@@ -192,7 +221,7 @@
                 var type = "<?php echo $DB->hexAesEncrypt('INQUIRE_LIST'); ?>";
                 //ConnectM 데이터 입력
                 $.ajax({
-                    url: "https://mprclients.mprkorea.com/event/api/apicall_new.php",
+                    url: "https://mprclients.mprkorea.com/event/api/apicall_event.php",
                     type : "POST",
                     dataType : "JSON",
                     data : {
@@ -223,7 +252,6 @@
                             $('#save_btn').attr("disabled", true);
                             $('#br_name').attr("placeholder", "업체를 등록해주세요.");
                         }else{
-                            console.log(rs.cust_nm);
                             $('#br_code').val($.trim(rs.br_code));
                             $('#br_name').val($.trim(rs.cust_nm));
                             $('#ev_subject').val(rs.event_nm);
@@ -331,6 +359,7 @@
 
     //ConnectM 이벤트 등록
     function callApi(type, ev_key, br_name, ev_subject, ev_code, start_Date, end_Date, is_always, br_code, url){        
+        console.log(type+" "+ ev_key+" "+ br_name+" "+ ev_subject+" "+ ev_code+" "+ start_Date+" "+ end_Date+" "+ is_always+" "+ br_code+" "+ url);
         var command =''
         if(type=='insert'){
             command = "<?php echo $DB->hexAesEncrypt('INSERT_EVENT'); ?>";
@@ -340,20 +369,20 @@
             command = "<?php echo $DB->hexAesEncrypt('DELETE_EVENT'); ?>";
         }
         $.ajax({
-            url: "https://mprclients.mprkorea.com/event/api/apicall_new.php",
+            url: "https://mprclients.mprkorea.com/event/api/apicall_event.php",
             type : "POST",
             dataType : "JSON",
             data : {
                 type          : command,
                 event_key     : ev_key,      //이벤트키
-                br_code       : br_code,   //업체코드
-                cust_nm       : br_name,   //업체이름
+                br_code       : br_code,    //업체코드
+                cust_nm       : br_name,    //업체이름
                 event_nm      : ev_subject, //이벤트제목
-                event_cd      : ev_code,    //이벤트 코드
-                expose_from   : start_Date, //시작일
-                expose_to     : end_Date,   //종료일
+                event_cd      : ev_code,     //이벤트 코드
+                expose_from   : start_Date,  //시작일
+                expose_to     : end_Date,    //종료일
                 expose_always : is_always,   //상시체크
-                event_url     : url,      //이벤트키
+                event_url     : url,         //이벤트키
                 reg_id        : '<?php echo $_SESSION['userId']; ?>'
             }
         }).done(function(rs){	
@@ -393,7 +422,7 @@
                                     <form method="POST" id="event-form">
                                     <input type="hidden" name="ev_code" id="ev_code" value="<?php echo $event_cd;?>">
                                     <input type="hidden" name="brand_name" id="brand_name" value="">
-                                    <table id="event-form-table" class="table table-bordered">
+                                    <table id="event-form-table" class="table table-bordered" style="table-layout:fixed">
                                         <tbody>
 
                                             <!-- 1 line -->
@@ -697,10 +726,10 @@
                 evStat = "Y";
             }else if(end_Date < today){
                 evStat = "N";
-            } 
-
+            }
+            
         }
-    
+        
         if(start_Date == ""){
             start_Date = today;
         }
@@ -717,11 +746,12 @@
         var brCode = $("#br_code").val();
         var evCode = $("#ev_code").val();
         var evKey = $("#ev_key").val();
-        var ev_top_content_pc = $("#ev_top_content_pc").val();
-        var ev_top_content_mo = $("#ev_top_content_mo").val();
-        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
-        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
+        var ev_top_content_pc = $("#ev_top_content_pc").val().replace('img_tmp', 'img_data');
+        var ev_top_content_mo = $("#ev_top_content_mo").val().replace('img_tmp', 'img_data');
+        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val().replace('img_tmp', 'img_data');
+        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val().replace('img_tmp', 'img_data');
         var regID = '<?php echo $_SESSION['userId']?>';
+
 
         if(isok){
             $.post("/admin/event/event_DB.php", {
@@ -748,7 +778,8 @@
                 evStart : start_Date,
                 evEnd : end_Date,
                 evStat : evStat,
-                regID : regID
+                regID : regID,
+                imgFileName : imgFileName
             }, function(data){
                 if ($.trim(data)=='OK') {
                     var brName = $("#brand_name").val();
@@ -771,7 +802,6 @@
     <?php if($_GET['idx']){?>
     /* 수정 버튼 */
     $("#update_btn").on("click", function(){
-        console.log('123213');
         var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
         var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
         var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
@@ -831,10 +861,12 @@
         var brCode = $("#br_code").val();
         var evCode = $("#ev_code").val();
         var evKey = $("#ev_key").val();
-        var ev_top_content_pc = $("#ev_top_content_pc").val();
-        var ev_top_content_mo = $("#ev_top_content_mo").val();
-        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
-        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
+        var ev_top_content_pc = $("#ev_top_content_pc").val().replace('img_tmp', 'img_data');
+        var ev_top_content_mo = $("#ev_top_content_mo").val().replace('img_tmp', 'img_data');
+        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val().replace('img_tmp', 'img_data');
+        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val().replace('img_tmp', 'img_data');
+
+
         var regID = '<?php echo $_SESSION['userId']?>';
 
         if(isok){
@@ -864,7 +896,8 @@
                 evEnd : end_Date,
                 evStat : evStat,
                 regID : regID,
-                idx : idx
+                idx : idx,
+                imgFileName : imgFileName
             }, function(data){
                 if ($.trim(data)=='OK') {
                     var brName = $("#brand_name").val();                    
