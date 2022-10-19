@@ -100,13 +100,6 @@
 <?php
     }else{        
         $btn_value = 'save_btn';
-        /* $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        $id_len = rand(8,15);
-        $var_size = strlen($chars);
-        $random_str="";
-        for( $i = 0; $i < $id_len ; $i++ ) {  
-            $random_str= $random_str.$chars[ rand( 0, $var_size - 1 ) ];
-        }   */  
         $strSQL = " select max(code_seq) +1 as seq from mpr_seq";
         $seq = $DB->single($strSQL);
         $event_cd = "L".substr(str_pad($seq, 6, 0, STR_PAD_LEFT),-6);    
@@ -392,7 +385,7 @@
                                     <form method="POST" id="event-form">
                                     <input type="hidden" name="ev_code" id="ev_code" value="<?php echo $event_cd;?>">
                                     <input type="hidden" name="brand_name" id="brand_name" value="">
-                                    <table id="event-form-table" class="table table-bordered">
+                                    <table id="event-form-table" class="table table-bordered" style="table-layout:fixed;">
                                         <tbody>
 
                                             <!-- 1 line -->
