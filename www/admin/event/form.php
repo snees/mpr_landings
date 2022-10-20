@@ -407,11 +407,7 @@
                                     <form method="POST" id="event-form">
                                     <input type="hidden" name="ev_code" id="ev_code" value="<?php echo $event_cd;?>">
                                     <input type="hidden" name="brand_name" id="brand_name" value="">
-<<<<<<< HEAD
-                                    <table id="event-form-table" class="table table-bordered" style="table-layout:fixed;">
-=======
                                     <table id="event-form-table" class="table table-bordered" style="table-layout:fixed">
->>>>>>> event_register
                                         <tbody>
 
                                             <!-- 1 line -->

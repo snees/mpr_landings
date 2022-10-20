@@ -160,7 +160,7 @@
                     $file_SQL = 
                     "INSERT INTO mpr_files 
                         (ev_idx, edt_type, og_name, ch_name, file_size, reg_date, chg_date, del_yn)
-                    VALUES ({$idx}, '{$evType}', '{$orgfileName[$i]}', '{$newfileName[$i]}', {$imgSize}, now(), now(), 'N')";
+                    VALUES ({$ev_idx}, '{$evType}', '{$orgfileName[$i]}', '{$newfileName[$i]}', {$imgSize}, now(), now(), 'N')";
 
                     if($DB->query($file_SQL)){
                         $isfileDB_Upload = true;
