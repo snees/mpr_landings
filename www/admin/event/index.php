@@ -21,6 +21,12 @@
         $stat = $_GET['stat'];
     }
 ?>
+<style>
+    .btn:first-child:hover{
+        background-color : #dadfe4;
+        border-color : #ced4da;
+    }
+</style>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -143,13 +149,19 @@
                                                         
                                                         <form class="form-inline" action="index.php?stat=<?php echo $stat?>">
                                                             <div class="form-group" >
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
+                                                                <div class="input-group input-group-sm">
+                                                                    <div class="input-group-prepend" style="height:30px;">
                                                                     <span class="input-group-text">
                                                                         <i class="far fa-calendar-alt"></i>
                                                                     </span>
                                                                     </div>
-                                                                    <input type="text" class="form-control float-right" id="reservation" name="reservation"style="height:30px; width:220px; margin-right:5px;">
+                                                                    
+                                                                    <input type="text" class="form-control float-right" id="reservation" name="reservation"style="height:30px; width:200px; text-align : center;">
+                                                                    <div class="input-group-append" style="height:30px; margin-right:5px;">
+                                                                        <button class="btn btn-navbar date_search" type="submit">
+                                                                            <i class="fas fa-search"></i>
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                                 <!-- /.input group -->
                                                             </div>
@@ -189,15 +201,17 @@
                                             <?php
                                                 $arryWhere = array();
 
-                                                // 검색 안했을때 테이블 가져오기
-                                                if($stat =="total"){
-                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
-                                                }else{
-                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_stat = '{$stat}'";
+
+                                                $lv_SQL = "SELECT user_lv FROM mpr_member WHERE user_id = '{$_SESSION['userId']}'";
+                                                $user_lv = $DB -> row($lv_SQL);
+
+                                                if(trim($user_lv['user_lv']) == 100){
+                                                    $strWhere = "b.user_id = '{$_SESSION['userId']}' AND ";
                                                 }
+
                                                 // 검색했을때 테이블 가져오기
                                                 if ( trim($_GET['search']) && trim($_GET['input_search']) ) {
-                                                    $strWhere = "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
+                                                    $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
                                                     if( trim($_GET['in_stat']) != "total"){
                                                         $arryWhere[] = "ev_stat = '{$_GET['in_stat']}' and {$_GET['search']} like '%{$_GET['input_search']}%' ";
                                                     }else{
@@ -205,9 +219,18 @@
                                                     }
                                                     $strWhere.= implode(' and ', $arryWhere);//---- 배열로 만든다. explode('@', '문자열@문자열@문자열')
                                                     
-                                                    
+                                                }else{
+                                                    // 검색 안했을때 테이블 가져오기
+                                                    if($stat =="total"){
+                                                        $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
+                                                    }else{
+                                                        $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_stat = '{$stat}'";
+                                                    }
                                                 }
-                                                echo '<script>console.log("'.$strWhere.'");</script>';
+
+
+                                                
+                                                /* echo '<script>console.log("'.$strWhere.'");</script>'; */
                                                 if(isset($_GET['page'])){
                                                     $page = $_GET['page'];
                                                 } else {
@@ -262,7 +285,7 @@
                                                 <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?> (<?php echo $date?>)</a></td>
                                                 
                                                 <!-- <?php $URL = "https://".$row['ev_url']; ?> -->
-                                                <td><a href="<?php echo $row['ev_url']?>">URL</a></td>
+                                                <td><a href="<?php echo $row['ev_url']?>" target="_blank">URL</a></td>
                                                 <td><?php echo $row['br_name']?></td>
                                                 <?php 
                                                     if($row['ev_always'] == "Y"){

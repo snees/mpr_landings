@@ -34,7 +34,7 @@
     $bottom_pc_content = "";
     $bottom_mo_content = "";
 
-     $is_name_checked = "checked";
+    $is_name_checked = "checked";
     $is_tel_checked = "checked";
     $w_stat = "checked";
 
@@ -81,29 +81,29 @@
 
         <script>
         
-        window.onload = function(){            
-            
-            $('#ev_top_content_pc').val();
-            $('#delete_btn').show();
-            
-            if($("#ev_always").is(":checked")){
-                $( "#reservation2" ).show();
-                $( "#reservation" ).hide();
-                    
-            }else{
-                $( "#reservation" ).show();
-                $( "#reservation2" ).hide();                
+            window.onload = function(){            
+                
+                $('#delete_btn').show();
+                
+                if($("#ev_always").is(":checked")){
+                    $( "#reservation2" ).show();
+                    $( "#reservation" ).hide();
+                        
+                }else{
+                    $( "#reservation" ).show();
+                    $( "#reservation2" ).hide();                
+                }
             }
-        }
-
-    </script>
+            
+        </script>
 <?php
     }else{        
         $btn_value = 'save_btn';
         $strSQL = " select max(code_seq) +1 as seq from mpr_seq";
         $seq = $DB->single($strSQL);
         $event_cd = "L".substr(str_pad($seq, 6, 0, STR_PAD_LEFT),-6);    
-        $API = $DB->hexAesEncrypt($event_cd);       
+        $API = $DB->hexAesEncrypt($event_cd);
+             
     }
 ?>
 
@@ -111,8 +111,12 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script>
-    $(document).ready(function(){
+    
+    var imgFileName = new Object;
+    
 
+    $(document).ready(function(){
+        
         $('.vendor').append("<?php echo $options; ?>");
         if('<?php echo trim($_GET['mode']); ?>'=='update' ) {
             $("#br_code").val("<?php echo $result['br_code']; ?>").prop("selected", true); 
@@ -120,6 +124,7 @@
         $("#brand_name").val($("#br_code option:checked").text());
 
         var type;
+        
         // summernote 구동
         $('.editor_textarea').summernote({
             height: 300,
@@ -129,9 +134,21 @@
                     for(var i = files.length-1; i >= 0; i--){
                         sendFile(files[i], this);
                     }
+                },
+                onMediaDelete : function(target) {
+                    var del_file = (target[0].src).split("/");
+                    var del_fileName = del_file.pop();
+                    if(del_file[3] != "img_data"){      // 새로 등록한 사진
+                        if(Object.keys(imgFileName).length != 0){   
+                            var Key = getKeyValue(imgFileName, del_fileName);
+                            delete imgFileName[Key];
+                            console.log(imgFileName);
+                        }   
+                    }
                 }
             }
         });
+        
         function sendFile(file, el) {
             var formData = new FormData();
             var key = '<?php echo $API ?>';
@@ -151,9 +168,14 @@
                 processData : false,
                 success : function(data) {
                     $(el).summernote('editor.insertImage', data.url);
-                    
+                    imgFileName[data.orgFile] = data.fileName;
                 }
             });
+        }
+
+        /* imgFileName obj value 값으로 key 찾는 함수 */
+        function getKeyValue(obj, value){
+            return Object.keys(obj).find(key => obj[key] === value);
         }
 
         $("input[name='client_sync']:radio").change(function () {
@@ -184,7 +206,7 @@
                 var type = "<?php echo $DB->hexAesEncrypt('INQUIRE_LIST'); ?>";
                 //ConnectM 데이터 입력
                 $.ajax({
-                    url: "https://mprclients.mprkorea.com/event/api/apicall_new.php",
+                    url: "https://mprclients.mprkorea.com/event/api/apicall_event.php",
                     type : "POST",
                     dataType : "JSON",
                     data : {
@@ -215,7 +237,6 @@
                             $('#save_btn').attr("disabled", true);
                             $('#br_name').attr("placeholder", "업체를 등록해주세요.");
                         }else{
-                            console.log(rs.cust_nm);
                             $('#br_code').val($.trim(rs.br_code));
                             $('#br_name').val($.trim(rs.cust_nm));
                             $('#ev_subject').val(rs.event_nm);
@@ -323,6 +344,7 @@
 
     //ConnectM 이벤트 등록
     function callApi(type, ev_key, br_name, ev_subject, ev_code, start_Date, end_Date, is_always, br_code, url){        
+        console.log(type+" "+ ev_key+" "+ br_name+" "+ ev_subject+" "+ ev_code+" "+ start_Date+" "+ end_Date+" "+ is_always+" "+ br_code+" "+ url);
         var command =''
         if(type=='insert'){
             command = "<?php echo $DB->hexAesEncrypt('INSERT_EVENT'); ?>";
@@ -332,20 +354,20 @@
             command = "<?php echo $DB->hexAesEncrypt('DELETE_EVENT'); ?>";
         }
         $.ajax({
-            url: "https://mprclients.mprkorea.com/event/api/apicall_new.php",
+            url: "https://mprclients.mprkorea.com/event/api/apicall_event.php",
             type : "POST",
             dataType : "JSON",
             data : {
                 type          : command,
                 event_key     : ev_key,      //이벤트키
-                br_code       : br_code,   //업체코드
-                cust_nm       : br_name,   //업체이름
+                br_code       : br_code,    //업체코드
+                cust_nm       : br_name,    //업체이름
                 event_nm      : ev_subject, //이벤트제목
-                event_cd      : ev_code,    //이벤트 코드
-                expose_from   : start_Date, //시작일
-                expose_to     : end_Date,   //종료일
+                event_cd      : ev_code,     //이벤트 코드
+                expose_from   : start_Date,  //시작일
+                expose_to     : end_Date,    //종료일
                 expose_always : is_always,   //상시체크
-                event_url     : url,      //이벤트키
+                event_url     : url,         //이벤트키
                 reg_id        : '<?php echo $_SESSION['userId']; ?>'
             }
         }).done(function(rs){	
@@ -385,7 +407,11 @@
                                     <form method="POST" id="event-form">
                                     <input type="hidden" name="ev_code" id="ev_code" value="<?php echo $event_cd;?>">
                                     <input type="hidden" name="brand_name" id="brand_name" value="">
+<<<<<<< HEAD
                                     <table id="event-form-table" class="table table-bordered" style="table-layout:fixed;">
+=======
+                                    <table id="event-form-table" class="table table-bordered" style="table-layout:fixed">
+>>>>>>> event_register
                                         <tbody>
 
                                             <!-- 1 line -->
@@ -635,7 +661,7 @@
     function popup_Open(){
         var url = "/admin/event/preview.php";
         var name = "show_preview";
-        var option = "width = 500, height = 500, top = 100, left = 200, scrollbars=yes, resizable=yes";
+        var option = "width = 1800, height =1000, top = 100, left = 100, scrollbars=yes, resizable=yes";
         window.open(url, name, option);
 
         return false;
@@ -650,6 +676,121 @@
     <?php if(!$_GET['idx']){?>
     /* 이벤트 등록 버튼 */
     $("#save_btn").on("click", function(){
+        var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
+        var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
+        var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
+        var age_Check = $("#ev_age_yn").is(":checked") ? "Y" : "N";
+        var comment_Check = $("#ev_comment_yn").is(":checked") ? "Y" : "N";
+        var birth_Check = $("#ev_birthday_yn").is(":checked") ? "Y" : "N";
+        var ev_rec_percon_Check = $("#ev_rec_person_yn").is(":checked") ? "Y" : "N";
+        var ev_counsel_time_Check = $("#ev_counsel_time_yn").is(":checked") ? "Y" : "N";
+        var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
+
+        var evType = $("#ev_type_f").is(":checked") ? "F" : "M";
+
+        var isok = true;
+        var evStat = "";
+        var today = new Date();
+        today = today.toJSON().substr(0,10);
+        
+
+        if(ev_always_Check == "Y"){
+            var start_Date  =  $("#reservation2").val();
+            var end_Date = "";
+            
+            
+            if(start_Date > today){
+                evStat = "W";
+            }else if(start_Date <= today){
+                evStat = "Y";
+            }
+
+        }else{
+            var start_Date = $("#reservation").val().split(" ")[0];
+            var end_Date = $("#reservation").val().split(" ")[2];
+
+            if(start_Date > today){
+                evStat = "W";
+            }else if((start_Date <= today) && (today <= end_Date)){
+                evStat = "Y";
+            }else if(end_Date < today){
+                evStat = "N";
+            }
+            
+        }
+        
+        if(start_Date == ""){
+            start_Date = today;
+        }
+
+        var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
+
+        var evSubject = $("#ev_subject").val();
+        if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
+            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글, 영문, 숫자로만 입력가능합니다.");
+            alertMsg();
+            isok=false;
+        }
+
+        var brCode = $("#br_code").val();
+        var evCode = $("#ev_code").val();
+        var evKey = $("#ev_key").val();
+        var ev_top_content_pc = $("#ev_top_content_pc").val();
+        var ev_top_content_mo = $("#ev_top_content_mo").val();
+        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
+        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
+        var regID = '<?php echo $_SESSION['userId']?>';
+
+
+        if(isok){
+            $.post("/admin/event/event_DB.php", {
+                mode : 'register',
+                brCode : brCode, 
+                evCode : evCode, 
+                evKey : evKey, 
+                evType : evType,
+                evURL : evURL,
+                evSubject : evSubject, 
+                ev_top_content_pc : ev_top_content_pc,
+                ev_top_content_mo : ev_top_content_mo,
+                evName_yn : name_Check, 
+                evTel_yn : tel_Check, 
+                evSex_yn : sex_Check, 
+                evAge_yn : age_Check, 
+                evComment_yn : comment_Check, 
+                evBrith_yn : birth_Check, 
+                evRec_person_yn : ev_rec_percon_Check, 
+                evCounsel_time_yn : ev_counsel_time_Check, 
+                ev_bottom_content_pc : ev_bottom_content_pc,
+                ev_bottom_content_mo : ev_bottom_content_mo,
+                evAlways : ev_always_Check,
+                evStart : start_Date,
+                evEnd : end_Date,
+                evStat : evStat,
+                regID : regID,
+                imgFileName : imgFileName
+            }, function(data){
+                if ($.trim(data)=='OK') {
+                    var brName = $("#brand_name").val();
+                    if($('input[name=client_sync]:checked').val()=='N'){
+                       callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );     
+                    }              
+                    alert("등록되었습니다.");
+                    location.href= "/admin/event/index.php";
+                } else {
+                    console.log($.trim(data));
+                    alert("저장하지 못하였습니다.");
+                }
+            });
+        }
+        
+    });
+
+    <?php }?>
+
+    <?php if($_GET['idx']){?>
+    /* 수정 버튼 */
+    $("#update_btn").on("click", function(){
         var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
         var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
         var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
@@ -713,120 +854,57 @@
         var ev_top_content_mo = $("#ev_top_content_mo").val();
         var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
         var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
-        var regID = '<?php echo $_SESSION['userId']?>';
-
-        if(isok){
-            $.post("/admin/event/event_DB.php", {
-                mode : 'register',
-                brCode : brCode, 
-                evCode : evCode, 
-                evKey : evKey, 
-                evType : evType,
-                evURL : evURL,
-                evSubject : evSubject, 
-                ev_top_content_pc : ev_top_content_pc,
-                ev_top_content_mo : ev_top_content_mo,
-                evName_yn : name_Check, 
-                evTel_yn : tel_Check, 
-                evSex_yn : sex_Check, 
-                evAge_yn : age_Check, 
-                evComment_yn : comment_Check, 
-                evBrith_yn : birth_Check, 
-                evRec_person_yn : ev_rec_percon_Check, 
-                evCounsel_time_yn : ev_counsel_time_Check, 
-                ev_bottom_content_pc : ev_bottom_content_pc,
-                ev_bottom_content_mo : ev_bottom_content_mo,
-                evAlways : ev_always_Check,
-                evStart : start_Date,
-                evEnd : end_Date,
-                evStat : evStat,
-                regID : regID
-            }, function(data){
-                if ($.trim(data)=='OK') {
-                    var brName = $("#brand_name").val();
-                    if($('input[name=client_sync]:checked').val()=='N'){
-                       callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );     
-                    }              
-                    alert("등록되었습니다.");
-                    location.href= "/admin/event/index.php";
-                } else {
-                    console.log($.trim(data));
-                    alert("저장하지 못하였습니다.");
-                }
-            });
-        }
-        
-    });
-
-    <?php }?>
-
-    <?php if($_GET['idx']){?>
-    /* 수정 버튼 */
-    $("#update_btn").on("click", function(){
-        console.log('123213');
-        var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
-        var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
-        var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
-        var age_Check = $("#ev_age_yn").is(":checked") ? "Y" : "N";
-        var comment_Check = $("#ev_comment_yn").is(":checked") ? "Y" : "N";
-        var birth_Check = $("#ev_birthday_yn").is(":checked") ? "Y" : "N";
-        var ev_rec_percon_Check = $("#ev_rec_person_yn").is(":checked") ? "Y" : "N";
-        var ev_counsel_time_Check = $("#ev_counsel_time_yn").is(":checked") ? "Y" : "N";
-        var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
-
-        var evType = $("#ev_type_f").is(":checked") ? "F" : "M";
-
-        var isok = true;
-        var evStat = "";
-        var today = new Date();
-        today = today.toJSON().substr(0,10);
         
 
-        if(ev_always_Check == "Y"){
-            var start_Date  =  $("#reservation2").val();
-            var end_Date = "";
+        var imgFileName_del = [];
+
+        // summernote에 올라온 사진 개수만큼 배열에 넣기
+        var top_pc_count = ev_top_content_pc.split("src=\"").length-1;
+        var top_mo_count = ev_top_content_mo.split("src=\"").length-1;
+        var bottom_pc_count = ev_bottom_content_pc.split("src=\"").length-1;
+        var bottom_mo_count = ev_bottom_content_mo.split("src=\"").length-1;
+
+        var k=0;
+        for(var i=0; i<top_pc_count; i++){
             
+            top_pc = ev_top_content_pc.split("src=\"")[i+1];
+            top_pc = top_pc.split("/")[5].split("\"")[0];
+            console.log(top_pc);
+
+            imgFileName_del[k++] = top_pc;
+
+        }
+        for(var i=0; i<top_mo_count; i++){
             
-            if(start_Date > today){
-                evStat = "W";
-            }else if(start_Date <= today){
-                evStat = "Y";
-            }
+            top_mo = ev_top_content_mo.split("src=\"")[i+1];
+            top_mo = top_mo.split("/")[5].split("\"")[0];
+            console.log(top_mo);
 
-        }else{
-            var start_Date = $("#reservation").val().split(" ")[0];
-            var end_Date = $("#reservation").val().split(" ")[2];
-
-            if(start_Date > today){
-                evStat = "W";
-            }else if((start_Date <= today) && (today <= end_Date)){
-                evStat = "Y";
-            }else if(end_Date < today){
-                evStat = "N";
-            } 
+            imgFileName_del[k++] = top_mo;
 
         }
-    
-        if(start_Date == ""){
-            start_Date = today;
+        for(var i=0; i<bottom_pc_count; i++){
+            
+            bottom_pc = ev_bottom_content_pc.split("src=\"")[i+1];
+            bottom_pc = bottom_pc.split("/")[5].split("\"")[0];
+            console.log(bottom_pc);
+
+            imgFileName_del[k++] = bottom_pc;
+
         }
+        for(var i=0; i<bottom_mo_count; i++){
+            
+            bottom_mo = ev_bottom_content_mo.split("src=\"")[i+1];
+            bottom_mo = bottom_mo.split("/")[5].split("\"")[0];
+            console.log(bottom_mo);
 
-        var evURL = 'landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
+            imgFileName_del[k++] = bottom_mo;
 
-        var evSubject = $("#ev_subject").val();
-        if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
-            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글, 영문, 숫자로만 입력가능합니다.");
-            alertMsg();
-            isok=false;
         }
+        console.log(imgFileName_del);
 
-        var brCode = $("#br_code").val();
-        var evCode = $("#ev_code").val();
-        var evKey = $("#ev_key").val();
-        var ev_top_content_pc = $("#ev_top_content_pc").val();
-        var ev_top_content_mo = $("#ev_top_content_mo").val();
-        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
-        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
+
+
         var regID = '<?php echo $_SESSION['userId']?>';
 
         if(isok){
@@ -856,7 +934,9 @@
                 evEnd : end_Date,
                 evStat : evStat,
                 regID : regID,
-                idx : idx
+                idx : idx,
+                imgFileName : imgFileName,
+                imgFileName_del : imgFileName_del
             }, function(data){
                 if ($.trim(data)=='OK') {
                     var brName = $("#brand_name").val();                    
@@ -878,12 +958,17 @@
     /* 삭제 버튼 */
     $("#delete_btn").on("click", function(){
 
+        var brCode = $("#br_code").val();
+        var evKey = $("#ev_key").val();
+
         if(confirm("삭제하시겠습니까?")){
             <?php if($_GET['idx']){?>
             var idx = <?php echo $_GET['idx']?>;
             <?php } ?>
             $.post("/admin/event/event_DB.php", {
                 mode : 'delete',
+                brCode : brCode,
+                evKey : evKey, 
                 idx : idx
             }, function(data){
                 if ($.trim(data)=='OK') {
