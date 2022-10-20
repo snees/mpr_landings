@@ -81,22 +81,21 @@
 
         <script>
         
-        window.onload = function(){            
-            
-            $('#ev_top_content_pc').val();
-            $('#delete_btn').show();
-            
-            if($("#ev_always").is(":checked")){
-                $( "#reservation2" ).show();
-                $( "#reservation" ).hide();
-                    
-            }else{
-                $( "#reservation" ).show();
-                $( "#reservation2" ).hide();                
+            window.onload = function(){            
+                
+                $('#delete_btn').show();
+                
+                if($("#ev_always").is(":checked")){
+                    $( "#reservation2" ).show();
+                    $( "#reservation" ).hide();
+                        
+                }else{
+                    $( "#reservation" ).show();
+                    $( "#reservation2" ).hide();                
+                }
             }
-        }
-
-    </script>
+            
+        </script>
 <?php
     }else{        
         $btn_value = 'save_btn';
@@ -120,9 +119,9 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script>
     
-    var j=0;
     var imgFileName = new Object;
-    var isDelImg = false;
+    
+
     $(document).ready(function(){
         
         $('.vendor').append("<?php echo $options; ?>");
@@ -145,13 +144,13 @@
                 },
                 onMediaDelete : function(target) {
                     var del_file = (target[0].src).split("/");
-                    if(del_file[3] == "img_data"){
-                        var del_path = "/img_data/event/" + del_file[5] + "/" + del_file[6];
-                        del_file = del_file.pop();
-                        console.log(del_file);
-                        console.log(del_path);
-                        deleteFile(del_file, del_path)
-                        // imgFileName에서 삭제하기
+                    var del_fileName = del_file.pop();
+                    if(del_file[3] != "img_data"){      // 새로 등록한 사진
+                        if(Object.keys(imgFileName).length != 0){   
+                            var Key = getKeyValue(imgFileName, del_fileName);
+                            delete imgFileName[Key];
+                            console.log(imgFileName);
+                        }   
                     }
                 }
             }
@@ -177,20 +176,13 @@
                 success : function(data) {
                     $(el).summernote('editor.insertImage', data.url);
                     imgFileName[data.orgFile] = data.fileName;
-                    console.log(imgFileName);
-                    console.log(Object.keys(imgFileName).length);
                 }
             });
         }
 
-        /* summernote 이미지 삭제 시 파일 및 DB에서도 삭제 */
-        function deleteFile(file, path){
-            $.post("/admin/event/editor_delete.php", {
-                fileName : file,
-                path : path
-            }, function(data){
-
-            });
+        /* imgFileName obj value 값으로 key 찾는 함수 */
+        function getKeyValue(obj, value){
+            return Object.keys(obj).find(key => obj[key] === value);
         }
 
         $("input[name='client_sync']:radio").change(function () {
@@ -746,10 +738,10 @@
         var brCode = $("#br_code").val();
         var evCode = $("#ev_code").val();
         var evKey = $("#ev_key").val();
-        var ev_top_content_pc = $("#ev_top_content_pc").val().replace('img_tmp', 'img_data');
-        var ev_top_content_mo = $("#ev_top_content_mo").val().replace('img_tmp', 'img_data');
-        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val().replace('img_tmp', 'img_data');
-        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val().replace('img_tmp', 'img_data');
+        var ev_top_content_pc = $("#ev_top_content_pc").val();
+        var ev_top_content_mo = $("#ev_top_content_mo").val();
+        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
+        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
         var regID = '<?php echo $_SESSION['userId']?>';
 
 
@@ -861,10 +853,59 @@
         var brCode = $("#br_code").val();
         var evCode = $("#ev_code").val();
         var evKey = $("#ev_key").val();
-        var ev_top_content_pc = $("#ev_top_content_pc").val().replace('img_tmp', 'img_data');
-        var ev_top_content_mo = $("#ev_top_content_mo").val().replace('img_tmp', 'img_data');
-        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val().replace('img_tmp', 'img_data');
-        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val().replace('img_tmp', 'img_data');
+        var ev_top_content_pc = $("#ev_top_content_pc").val();
+        var ev_top_content_mo = $("#ev_top_content_mo").val();
+        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
+        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
+        
+
+        var imgFileName_del = [];
+
+        // summernote에 올라온 사진 개수만큼 배열에 넣기
+        var top_pc_count = ev_top_content_pc.split("src=\"").length-1;
+        var top_mo_count = ev_top_content_mo.split("src=\"").length-1;
+        var bottom_pc_count = ev_bottom_content_pc.split("src=\"").length-1;
+        var bottom_mo_count = ev_bottom_content_mo.split("src=\"").length-1;
+
+        var k=0;
+        for(var i=0; i<top_pc_count; i++){
+            
+            top_pc = ev_top_content_pc.split("src=\"")[i+1];
+            top_pc = top_pc.split("/")[5].split("\"")[0];
+            console.log(top_pc);
+
+            imgFileName_del[k++] = top_pc;
+
+        }
+        for(var i=0; i<top_mo_count; i++){
+            
+            top_mo = ev_top_content_mo.split("src=\"")[i+1];
+            top_mo = top_mo.split("/")[5].split("\"")[0];
+            console.log(top_mo);
+
+            imgFileName_del[k++] = top_mo;
+
+        }
+        for(var i=0; i<bottom_pc_count; i++){
+            
+            bottom_pc = ev_bottom_content_pc.split("src=\"")[i+1];
+            bottom_pc = bottom_pc.split("/")[5].split("\"")[0];
+            console.log(bottom_pc);
+
+            imgFileName_del[k++] = bottom_pc;
+
+        }
+        for(var i=0; i<bottom_mo_count; i++){
+            
+            bottom_mo = ev_bottom_content_mo.split("src=\"")[i+1];
+            bottom_mo = bottom_mo.split("/")[5].split("\"")[0];
+            console.log(bottom_mo);
+
+            imgFileName_del[k++] = bottom_mo;
+
+        }
+        console.log(imgFileName_del);
+
 
 
         var regID = '<?php echo $_SESSION['userId']?>';
@@ -897,7 +938,8 @@
                 evStat : evStat,
                 regID : regID,
                 idx : idx,
-                imgFileName : imgFileName
+                imgFileName : imgFileName,
+                imgFileName_del : imgFileName_del
             }, function(data){
                 if ($.trim(data)=='OK') {
                     var brName = $("#brand_name").val();                    
@@ -919,12 +961,17 @@
     /* 삭제 버튼 */
     $("#delete_btn").on("click", function(){
 
+        var brCode = $("#br_code").val();
+        var evKey = $("#ev_key").val();
+
         if(confirm("삭제하시겠습니까?")){
             <?php if($_GET['idx']){?>
             var idx = <?php echo $_GET['idx']?>;
             <?php } ?>
             $.post("/admin/event/event_DB.php", {
                 mode : 'delete',
+                brCode : brCode,
+                evKey : evKey, 
                 idx : idx
             }, function(data){
                 if ($.trim(data)=='OK') {
