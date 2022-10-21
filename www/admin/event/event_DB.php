@@ -3,32 +3,157 @@
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/config.php";
 
     $mode = $_REQUEST['mode'];
+    $formData = $_REQUEST['formData'];
+
+    $arr = array();
+
+    for($i=0; $i<count($formData); $i++){
+        $arr[$formData[$i]['name']] = $formData[$i]['value'];
+    }
     
     $brCode = $_REQUEST['brCode'];
-    $evCode = $_REQUEST['evCode'];
-    $evKey = $_REQUEST['evKey'];
-    $evType = $_REQUEST['evType'];
+    $evCode = $arr['ev_code'];
+    $evKey = $arr['ev_key'];
+    $evType = $arr['ev_type'];
     $evURL = $_REQUEST['evURL'];
-    $evSubject = $_REQUEST['evSubject'];
-    $ev_top_content_pc = $_REQUEST['ev_top_content_pc'];
-    $ev_top_content_mo = $_REQUEST['ev_top_content_mo'];
-    $evName_yn = $_REQUEST['evName_yn'];
-    $evTel_yn = $_REQUEST['evTel_yn'];
-    $evSex_yn = $_REQUEST['evSex_yn'];
-    $evAge_yn = $_REQUEST['evAge_yn'];
-    $evComment_yn = $_REQUEST['evComment_yn'];
-    $evBrith_yn = $_REQUEST['evBrith_yn'];
-    $evRec_person_yn = $_REQUEST['evRec_person_yn'];
-    $evCounsel_time_yn = $_REQUEST['evCounsel_time_yn'];
-    $ev_bottom_content_pc = $_REQUEST['ev_bottom_content_pc'];
-    $ev_bottom_content_mo = $_REQUEST['ev_bottom_content_mo'];
-    $evAlways = $_REQUEST['evAlways'];
-    $evStart = $_REQUEST['evStart'];
-    $evEnd = $_REQUEST['evEnd'];
+    $evSubject = $arr['ev_subject'];
+    $ev_top_content_pc = $arr['ev_top_content_pc'];
+    $ev_top_content_mo = $arr['ev_top_content_mo'];
+
+    $evName_req ="";
+    $evTel_req ="";
+    $evSex_req ="";
+    $evAge_req ="";
+    $evComment_req ="";
+    $evBrith_req ="";
+    $evRec_person_req ="";
+    $evCounsel_time_req ="";
+    
+
+    // 이름
+    if($arr['ev_name_yn'] == "on"){
+        $evName_yn = "Y";
+        // 필수 여부
+        if($arr['ev_name_req'] == "on"){
+            $evName_req = "Y";
+        }else{
+            $evName_req = "N";
+        }
+    }else{
+        $evName_yn = "N";
+    }
+
+    // 전화번호
+    if($arr['ev_tel_yn'] == "on"){
+        $evTel_yn = "Y";
+        // 필수 여부
+        if($arr['ev_tel_req'] == "on"){
+            $evTel_req = "Y";
+        }else{
+            $evTel_req = "N";
+        }
+    }else{
+        $evTel_yn = "N";
+    }
+
+    // 성별
+    if($arr['ev_sex_yn'] == "on"){
+        $evSex_yn = "Y";
+        // 필수 여부
+        if($arr['ev_sex_req'] == "on"){
+            $evSex_req = "Y";
+        }else{
+            $evSex_req = "N";
+        }
+    }else{
+        $evSex_yn = "N";
+    }
+    
+    // 나이
+    if($arr['ev_age_yn'] == "on"){
+        $evAge_yn = "Y";
+        // 필수 여부
+        if($arr['ev_age_req'] == "on"){
+            $evAge_req = "Y";
+        }else{
+            $evAge_req = "N";
+        }
+    }else{
+        $evAge_yn = "N";
+    }
+
+    // 문의사항
+    if($arr['ev_comment_yn'] == "on"){
+        $evComment_yn = "Y";
+        // 필수 여부
+        if($arr['ev_comment_req'] == "on"){
+            $evComment_req = "Y";
+        }else{
+            $evComment_req = "N";
+        }
+    }else{
+        $evComment_yn = "N";
+    }
+
+    // 생년월일
+    if($arr['ev_birthday_yn'] == "on"){
+        $evBrith_yn = "Y";
+        // 필수 여부
+        if($arr['ev_birthday_req'] == "on"){
+            $evBrith_req = "Y";
+        }else{
+            $evBrith_req = "N";
+        }
+    }else{
+        $evBrith_yn = "N";
+    }
+
+    // 추천인
+    if($arr['ev_rec_person_yn'] == "on"){
+        $evRec_person_yn = "Y";
+        // 필수 여부
+        if($arr['ev_rec_person_req'] == "on"){
+            $evRec_person_req = "Y";
+        }else{
+            $evRec_person_req = "N";
+        }
+    }else{
+        $evRec_person_yn = "N";
+    }
+
+    // 연락 가능 시간대
+    if($arr['ev_counsel_time_yn'] == "on"){
+        $evCounsel_time_yn = "Y";
+        // 이름 필수 여부
+        if($arr['ev_counsel_time_req'] == "on"){
+            $evCounsel_time_req = "Y";
+        }else{
+            $evCounsel_time_req = "N";
+        }
+    }else{
+        $evCounsel_time_yn = "N";
+    }
+
+    // 상시 진행
+    if($arr['ev_always'] == "on"){
+        $evAlways = "Y";
+        $evStart = $arr['reservation2'];
+    }else{
+        $evAlways = "N";
+        $evStart = explode(" ", $arr['reservation'])[0];
+        $evEnd = explode(" ", $arr['reservation'])[2];
+    }
+
+    $ev_bottom_content_pc = $arr['ev_bottom_content_pc'];
+    $ev_bottom_content_mo = $arr['ev_bottom_content_mo'];
+
     $evStat = $_REQUEST['evStat'];
     $regID = $_REQUEST['regID'];
     $idx = $_REQUEST['idx'];
     $imgFileName = $_REQUEST['imgFileName'];
+
+
+    
 
     /* summernote에 새로 등록한 이미지가 있을 경우 실행  */
     if($mode != "delete" && count($imgFileName) != 0){
@@ -134,16 +259,30 @@
         $SQL = 
         "INSERT INTO mpr_event
             (br_code, ev_code, ev_key, ev_type, ev_url, ev_subject, 
-            ev_top_content_pc, ev_top_content_mo ,ev_name_yn, ev_tel_req, 
-            ev_tel_yn, ev_sex_yn, ev_age_yn, ev_comment_yn, ev_birthday_yn, 
-            ev_rec_person_yn, ev_counsel_time_yn, ev_bottom_content_pc , 
-            ev_bottom_content_mo , ev_always , ev_start , ev_end , ev_stat, reg_id, reg_date, chg_date, del_yn) 
+            ev_top_content_pc, ev_top_content_mo,
+            ev_name_req, ev_name_yn,
+            ev_tel_req, ev_tel_yn, 
+            ev_sex_req, ev_sex_yn,
+            ev_age_req, ev_age_yn,
+            ev_comment_req, ev_comment_yn,
+            ev_birthday_req, ev_birthday_yn, 
+            ev_rec_person_req, ev_rec_person_yn,
+            ev_counsel_time_req, ev_counsel_time_yn,
+            ev_bottom_content_pc, ev_bottom_content_mo, 
+            ev_always, ev_start, ev_end, ev_stat, reg_id, reg_date, chg_date, del_yn) 
         VALUES 
             ('{$brCode}', '{$evCode}', '{$evKey}' , '{$evType}', '{$evURL}' ,'{$evSubject}',
-            '{$ev_top_content_pc}','{$ev_top_content_mo}' ,'{$evName_yn}', 'Y', 
-            '{$evTel_yn}', '{$evSex_yn}', '{$evAge_yn}', '{$evComment_yn}', '{$evBrith_yn}', 
-            '{$evRec_person_yn}', '{$evCounsel_time_yn}', '{$ev_bottom_content_pc}',
-            '{$ev_bottom_content_mo}' , '{$evAlways}' , '{$evStart}', '{$evEnd}', '{$evStat}', '{$regID}', now(), now(), 'N');";
+            '{$ev_top_content_pc}','{$ev_top_content_mo}',
+            '{$evName_req}', '{$evName_yn}',
+            '{$evTel_req}', '{$evTel_yn}',
+            '{$evSex_req}', '{$evSex_yn}',
+            '{$evAge_req}', '{$evAge_yn}',
+            '{$evComment_req}', '{$evComment_yn}',
+            '{$evBrith_req}', '{$evBrith_yn}', 
+            '{$evRec_person_req}', '{$evRec_person_yn}',
+            '{$evCounsel_time_req}', '{$evCounsel_time_yn}',
+            '{$ev_bottom_content_pc}', '{$ev_bottom_content_mo}',
+            '{$evAlways}' , '{$evStart}', '{$evEnd}', '{$evStat}', '{$regID}', now(), now(), 'N');";
 
         /* 이미지 파일 tmp -> data 옮기기 */
         if( count($imgFileName) != 0 ){
@@ -214,14 +353,22 @@
             ev_url = '{$evURL}', 
             ev_subject = '{$evSubject}', 
             ev_top_content_pc = '{$ev_top_content_pc}', 
-            ev_top_content_mo = '{$ev_top_content_mo}' ,
-            ev_name_yn = '{$evName_yn}', 
-            ev_tel_yn = '{$evTel_yn}', 
+            ev_top_content_mo = '{$ev_top_content_mo}',
+            ev_name_req = '{$evName_req}',
+            ev_name_yn = '{$evName_yn}',
+            ev_tel_req = '{$evTel_req}',
+            ev_tel_yn = '{$evTel_yn}',
+            ev_sex_req = '{$evSex_req}',
             ev_sex_yn = '{$evSex_yn}', 
-            ev_age_yn = '{$evAge_yn}', 
-            ev_comment_yn = '{$evComment_yn}', 
-            ev_birthday_yn = '{$evBrith_yn}', 
-            ev_rec_person_yn = '{$evRec_person_yn}', 
+            ev_age_req = '{$evAge_req}',
+            ev_age_yn = '{$evAge_yn}',
+            ev_comment_req = '{$evComment_req}',
+            ev_comment_yn = '{$evComment_yn}',
+            ev_birthday_req = '{$evBrith_req}',
+            ev_birthday_yn = '{$evBrith_yn}',
+            ev_rec_person_req = '{$evRec_person_req}',
+            ev_rec_person_yn = '{$evRec_person_yn}',
+            ev_counsel_time_req = '{$evCounsel_time_req}',
             ev_counsel_time_yn = '{$evCounsel_time_yn}', 
             ev_bottom_content_pc =  '{$ev_bottom_content_pc}', 
             ev_bottom_content_mo = '{$ev_bottom_content_mo}',

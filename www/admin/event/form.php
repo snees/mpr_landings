@@ -9,6 +9,17 @@
     $start_Date = $today;
     $end_Date = $endDay;
 ?>
+<style>
+    .form_div{
+        margin-bottom : 15px;
+    }
+    legend {
+        margin : 0px;
+    }
+    .note-group-image-url, .note-modal-footer {
+        display : none;
+    }
+</style>
 
 <?php     
         //업체정보
@@ -65,7 +76,18 @@
         if($result['ev_birthday_yn'] == "Y") $is_birth_checked = "checked";
         if($result['ev_rec_person_yn'] == "Y") $is_ev_rec_person_checked = "checked";
         if($result['ev_counsel_time_yn'] == "Y") $is_counsel_time_checked = "checked";
+        
+        if($result['ev_name_req'] == "Y") $is_name_req_checked = "checked";
+        if($result['ev_tel_req'] == "Y") $is_tel_req_checked = "checked";
+        if($result['ev_sex_req'] == "Y") $is_sex_req_checked = "checked";
+        if($result['ev_age_req'] == "Y") $is_age_req_checked = "checked";
+        if($result['ev_comment_req'] == "Y") $is_comment_req_checked = "checked";
+        if($result['ev_birthday_req'] == "Y") $is_birth_req_checked = "checked";
+        if($result['ev_rec_person_req'] == "Y") $is_ev_rec_person_req_checked = "checked";
+        if($result['ev_counsel_time_req'] == "Y") $is_counsel_time_req_checked = "checked";
+        
         if($result['ev_always'] == "Y") $is_ev_always_checked = "checked";
+
         if($result['ev_stat'] == "W"){
             $w_stat = "checked";  
         } else if($result['ev_stat'] == "Y"){
@@ -76,25 +98,38 @@
             $n_stat = "checked";
         }
 
-
 ?>
-
         <script>
-        
-            window.onload = function(){            
-                
+            window.onload = function(){      
                 $('#delete_btn').show();
                 
                 if($("#ev_always").is(":checked")){
                     $( "#reservation2" ).show();
                     $( "#reservation" ).hide();
-                        
                 }else{
                     $( "#reservation" ).show();
                     $( "#reservation2" ).hide();                
                 }
+
+                if( $("#ev_sex_req").is(":checked") ){
+                    $("#ev_sex_req").attr("disabled" , false);
+                }
+                if( $("#ev_age_req").is(":checked") ){
+                    $("#ev_age_req").attr("disabled" , false);
+                }
+                if( $("#ev_comment_req").is(":checked") ){
+                    $("#ev_comment_req").attr("disabled" , false);
+                }
+                if( $("#ev_birthday_req").is(":checked") ){
+                    $("#ev_birthday_req").attr("disabled" , false);
+                }
+                if( $("#ev_rec_person_req").is(":checked") ){
+                    $("#ev_rec_person_req").attr("disabled" , false);
+                }
+                if( $("#ev_counsel_time_req").is(":checked") ){
+                    $("#ev_counsel_time_req").attr("disabled" , false);
+                }
             }
-            
         </script>
 <?php
     }else{        
@@ -110,6 +145,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js">
 <script>
     
     var imgFileName = new Object;
@@ -128,6 +164,11 @@
         // summernote 구동
         $('.editor_textarea').summernote({
             height: 300,
+            placeholder : "이미지 또는 링크만 업로드 가능합니다.",
+            toolbar: [
+                ['insert',['picture','link','video']],
+		        ['view', ['codeview','fullscreen', 'help']]
+            ],
             callbacks :{
                 onImageUpload : function(files, editor, welEditable) {
                     type = this.name;
@@ -144,6 +185,15 @@
                             delete imgFileName[Key];
                             console.log(imgFileName);
                         }   
+                    }
+                },
+                onKeydown: function(e) {
+                    var t = $(".note-editable").text();   
+                    if (t.length >= 0) {
+                        //delete key
+                        if (e.keyCode != 8)
+                        e.preventDefault();
+                        // add other keys ...
                     }
                 }
             }
@@ -177,6 +227,11 @@
         function getKeyValue(obj, value){
             return Object.keys(obj).find(key => obj[key] === value);
         }
+        
+
+        $('#color').spectrum({
+            type: "component"
+        });
 
         $("input[name='client_sync']:radio").change(function () {
             //CLIENTS 동기화 여부.
@@ -381,6 +436,80 @@
             return false;
         }); 
     }
+
+
+    /* 폼 필수여부 활성화 / 비활성화 */
+
+    $( function() {
+
+        // 기본 폼
+        $("#ev_name_yn").change(function(){
+            if($("#ev_name_yn").is(":checked")){
+                $("#ev_name_req").attr("disabled", false);
+            }else{
+                $("#ev_name_req").attr("disabled", true);
+                $("#ev_name_req").attr("checked", false);
+            }
+        });
+        $("#ev_tel_yn").change(function(){
+            if($("#ev_tel_yn").is(":checked")){
+                $("#ev_tel_req").attr("disabled", false);
+            }else{
+                $("#ev_tel_req").attr("disabled", true);
+                $("#ev_tel_req").attr("checked", false);
+            }
+        });
+
+        // 추가 폼
+        $("#ev_sex_yn").change(function(){
+            if($("#ev_sex_yn").is(":checked")){
+                $("#ev_sex_req").attr("disabled", false);
+            }else{
+                $("#ev_sex_req").attr("disabled", true);
+                $("#ev_sex_req").attr("checked", false);
+            }
+        });
+        $("#ev_age_yn").change(function(){
+            if($("#ev_age_yn").is(":checked")){
+                $("#ev_age_req").attr("disabled", false);
+            }else{
+                $("#ev_age_req").attr("disabled", true);
+                $("#ev_age_req").attr("checked", false);
+            }
+        });
+        $("#ev_comment_yn").change(function(){
+            if($("#ev_comment_yn").is(":checked")){
+                $("#ev_comment_req").attr("disabled", false);
+            }else{
+                $("#ev_comment_req").attr("disabled", true);
+                $("#ev_comment_req").attr("checked", false);
+            }
+        });
+        $("#ev_birthday_yn").change(function(){
+            if($("#ev_birthday_yn").is(":checked")){
+                $("#ev_birthday_req").attr("disabled", false);
+            }else{
+                $("#ev_birthday_req").attr("disabled", true);
+                $("#ev_birthday_req").attr("checked", false);
+            }
+        });
+        $("#ev_rec_person_yn").change(function(){
+            if($("#ev_rec_person_yn").is(":checked")){
+                $("#ev_rec_person_req").attr("disabled", false);
+            }else{
+                $("#ev_rec_person_req").attr("disabled", true);
+                $("#ev_rec_person_req").attr("checked", false);
+            }
+        });
+        $("#ev_counsel_time_yn").change(function(){
+            if($("#ev_counsel_time_yn").is(":checked")){
+                $("#ev_counsel_time_req").attr("disabled", false);
+            }else{
+                $("#ev_counsel_time_req").attr("disabled", true);
+                $("#ev_counsel_time_req").attr("checked", false);
+            }
+        });
+    });
 </script>
 
 <div class="content-wrapper">
@@ -405,211 +534,253 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <form method="POST" id="event-form">
-                                    <input type="hidden" name="ev_code" id="ev_code" value="<?php echo $event_cd;?>">
-                                    <input type="hidden" name="brand_name" id="brand_name" value="">
-                                    <table id="event-form-table" class="table table-bordered" style="table-layout:fixed">
-                                        <tbody>
+                                        <input type="hidden" name="ev_code" id="ev_code" value="<?php echo $event_cd;?>">
+                                        <input type="hidden" name="brand_name" id="brand_name" value="">
+                                        <table id="event-form-table" class="table table-bordered" style="table-layout:fixed">
+                                            <tbody>
 
-                                            <!-- 1 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="ev_type">등록 양식</label>
-                                                </th>
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="ev_type" id="ev_type_f" value="F" checked <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
-                                                            <label class="form-check-label" for="ev_type_f">기본형</label>
-                                                        </div>
-                                                        <div class="form-check ml-3">
-                                                            <input class="form-check-input" type="radio" name="ev_type" id="ev_type_m" value="M" <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
-                                                            <label class="form-check-label" for="ev_type_m">사용자 지정</label>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <th>
-                                                    <label for="is_sync">CLIENTS 동기화 여부</label>
-                                                </th>
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_y" value="Y" 
-                                                            <?php echo substr($result['ev_code'], 0,1) == 'M' ? "checked" : "" ?>
-                                                            <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
-                                                            <label class="form-check-label" for="is_sync_y">사용</label>
-                                                        </div>
-                                                        <div class="form-check ml-3">
-                                                            <input class="form-check-input" type="radio" name="client_sync" id="is_sync_n" value="N" 
-                                                            <?php echo substr($result['ev_code'], 0,1) != 'M' ? "checked" : "" ?>
-                                                            <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
-                                                            <label class="form-check-label" for="is_sync_n">미사용</label>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <!-- 2 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="ev_key">이벤트 API KEY</label>
-                                                </th>
-                                                <td>
-                                                    <input type="text" class="form-control form-control-border ev_key" style="text-transform: uppercase;" id="ev_key" name="ev_key" value="<?php echo  $API ?>" readonly>
-                                                </td>
-                                                <th>
-                                                    <label for="br_code">업체 선택</label>
-                                                </th>
-                                                <td class='vendor'>
-                                                    
-                                                </td>
-                                            </tr>
-
-                                            <!-- 3 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="ev_subject">이벤트 제목</label>
-                                                </th>
-                                                <td colspan="3">
-                                                    <input type="text" class="form-control form-control-border" id="ev_subject" name="ev_subject" autocomplete="off"  value="<?php echo $result['ev_subject']?>" placeholder="이벤트 제목 입력...">                                                    
-                                                </td>
-                                            </tr>
-
-                                            <!-- 4 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="ev_top_content_pc">이벤트 PC 상단 이미지</label>
-                                                </th>
-                                                <td colspan="3">
-                                                    <textarea class="editor_textarea" id="ev_top_content_pc" name="ev_top_content_pc"><?php echo $top_pc_content?></textarea>
-                                                    
-                                                    
-                                                </td>
-                                            </tr>
-
-                                            <!-- 5 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="ev_top_content_mo">이벤트 모바일 상단 이미지</label>
-                                                </th>
-                                                <td colspan="3">
-                                                    <textarea class="editor_textarea" id="ev_top_content_mo" name="ev_top_content_mo"><?php echo $top_mo_content?></textarea>
-                                                </td>
-                                            </tr>
-
-                                            <!-- 6 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="">폼 형식</label>
-                                                </th>
-                                                <td>
-                                                    <legend>기본 폼</legend>
-                                                    <div class="d-flex">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_name_yn" name="ev_name_yn" <?php echo $is_name_checked?>>
-                                                            <label for="ev_name_yn" class="custom-control-label">이름</label>
-                                                        </div>
-                                                        <div class="custom-control custom-checkbox ml-3">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_tel_yn" name="ev_tel_yn" <?php echo $is_tel_checked?>>
-                                                            <label for="ev_tel_yn" class="custom-control-label">연락처</label>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td colspan="2">
-                                                    <legend>추가 폼</legend>
-                                                    <div class="d-flex">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_sex_yn" name="ev_sex_yn" <?php echo $is_sex_checked?>>
-                                                            <label for="ev_sex_yn" class="custom-control-label">성별</label>
-                                                        </div>
-                                                        <div class="custom-control custom-checkbox ml-3">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_age_yn" name="ev_age_yn" <?php echo $is_age_checked?>>
-                                                            <label for="ev_age_yn" class="custom-control-label">나이</label>
-                                                        </div>
-                                                        <div class="custom-control custom-checkbox ml-3">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_comment_yn" name="ev_comment_yn" <?php echo $is_comment_checked?>>
-                                                            <label for="ev_comment_yn" class="custom-control-label">문의사항</label>
-                                                        </div>
-                                                        <div class="custom-control custom-checkbox ml-3">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_birthday_yn" name="ev_birthday_yn" <?php echo $is_birth_checked?>>
-                                                            <label for="ev_birthday_yn" class="custom-control-label">생년월일</label>
-                                                        </div>
-                                                        <div class="custom-control custom-checkbox ml-3">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_rec_person_yn" name="ev_rec_person_yn" <?php echo $is_ev_rec_person_checked?>>
-                                                            <label for="ev_rec_person_yn" class="custom-control-label">추천인</label>
-                                                        </div>
-                                                        <div class="custom-control custom-checkbox ml-3">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_counsel_time_yn" name="ev_counsel_time_yn" <?php echo $is_counsel_time_checked?>>
-                                                            <label for="ev_counsel_time_yn" class="custom-control-label">연락가능시간대</label>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <!-- 7 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="ev_bottom_content_pc">이벤트 PC 하단 이미지</label>
-                                                </th>
-                                                <td colspan="3">
-                                                    <textarea class="editor_textarea" id="ev_bottom_content_pc" name="ev_bottom_content_pc"><?php echo $bottom_pc_content?></textarea>
-                                                </td>
-                                            </tr>
-
-                                            <!-- 8 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="ev_bottom_content_mo">이벤트 모바일 하단 이미지</label>
-                                                </th>
-                                                <td colspan="3">
-                                                    <textarea class="editor_textarea" id="ev_bottom_content_mo" name="ev_bottom_content_mo"><?php echo $bottom_mo_content?></textarea>
-                                                </td>
-                                            </tr>
-
-                                            <!-- 9 line -->
-                                            <tr>
-                                                <th>
-                                                    <label for="">이벤트 기간</label>
-                                                </th>
-                                                <td colspan="3">
-                                                    <div class="form-group">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="ev_always" name="ev_always" <?php echo $is_ev_always_checked ?>>
-                                                            <label for="ev_always" class="custom-control-label">상시 진행</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group" >
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                            <span class="input-group-text">
-                                                                <i class="far fa-calendar-alt"></i>
-                                                            </span>
+                                                <!-- 1 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="ev_type">등록 양식</label>
+                                                    </th>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="ev_type" id="ev_type_f" value="F" checked <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
+                                                                <label class="form-check-label" for="ev_type_f">기본형</label>
                                                             </div>
-                                                            <input type="text" class="form-control float-right" id="reservation" name="reservation" style="height:30px; width:220px; margin-right:5px;">
-                                                            <input type="text" class="form-control float-right" id="reservation2" name="reservation2" style="height:30px; width:220px; margin-right:5px; display:none;">
+                                                            <div class="form-check ml-3">
+                                                                <input class="form-check-input" type="radio" name="ev_type" id="ev_type_m" value="M" <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
+                                                                <label class="form-check-label" for="ev_type_m">사용자 지정</label>
+                                                            </div>
                                                         </div>
-                                                        <!-- /.input group -->
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                    <th>
+                                                        <label for="is_sync">CLIENTS 동기화 여부</label>
+                                                    </th>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="client_sync" id="is_sync_y" value="Y" 
+                                                                <?php echo substr($result['ev_code'], 0,1) == 'M' ? "checked" : "" ?>
+                                                                <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
+                                                                <label class="form-check-label" for="is_sync_y">사용</label>
+                                                            </div>
+                                                            <div class="form-check ml-3">
+                                                                <input class="form-check-input" type="radio" name="client_sync" id="is_sync_n" value="N" 
+                                                                <?php echo substr($result['ev_code'], 0,1) != 'M' ? "checked" : "" ?>
+                                                                <?php echo $_REQUEST['mode'] == 'update' ? 'onclick="return(false);"' : '' ?>>
+                                                                <label class="form-check-label" for="is_sync_n">미사용</label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
 
-                                            <!-- Confirm line -->
-                                            <tr>
-                                                <td colspan="4">
-                                                    <div class="d-flex justify-content-between">
-                                                    <div class="d-flex">
-                                                        <!-- <a href = "javascript:popup_Open()" target = "_blank">미리보기</a> -->
-                                                        <button type="button" class="btn btn-info"  onclick="popup_Open()">미리보기</button>
-                                                        <!-- <button type="button" class="btn btn-info"   onclick="window.open('/admin/event/preview.php','new','scrollbars=yes,resizable=no width=500 height=600, left=-1220,top=200');return false">미리보기</button> -->
-                                                    </div>
-                                                    <div class="d-flex">
-                                                        <a href="/admin/event/" class="btn btn-default" style="margin-right:5px;">취소</a>
-                                                        <input type="button" class="btn btn-info" value="저장" id="<?php echo $btn_value; ?>" name="<?php echo $btn_value; ?>" style="margin-right:5px;">                                                        
-                                                        <input type="button" class="btn btn-danger" value="삭제" id="delete_btn" name="delete_btn" style="display:none;">                                                        
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                <!-- 2 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="ev_key">이벤트 API KEY</label>
+                                                    </th>
+                                                    <td>
+                                                        <input type="text" class="form-control form-control-border ev_key" style="text-transform: uppercase;" id="ev_key" name="ev_key" value="<?php echo  $API ?>" readonly>
+                                                    </td>
+                                                    <th>
+                                                        <label for="br_code">업체 선택</label>
+                                                    </th>
+                                                    <td class='vendor'>
+                                                        
+                                                    </td>
+                                                </tr>
+
+                                                <!-- 3 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="ev_subject">이벤트 제목</label>
+                                                    </th>
+                                                    <td colspan="3">
+                                                        <input type="text" class="form-control form-control-border" id="ev_subject" name="ev_subject" autocomplete="off"  value="<?php echo $result['ev_subject']?>" placeholder="이벤트 제목 입력...">                                                    
+                                                    </td>
+                                                </tr>
+
+                                                <!-- 4 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="ev_top_content_pc">이벤트 PC 상단 이미지</label>
+                                                    </th>
+                                                    <td colspan="3">
+                                                        <textarea class="editor_textarea" id="ev_top_content_pc" name="ev_top_content_pc"><?php echo $top_pc_content?></textarea>
+                                                        
+                                                        
+                                                    </td>
+                                                </tr>
+
+                                                <!-- 5 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="ev_top_content_mo">이벤트 모바일 상단 이미지</label>
+                                                    </th>
+                                                    <td colspan="3">
+                                                        <textarea class="editor_textarea" id="ev_top_content_mo" name="ev_top_content_mo"><?php echo $top_mo_content?></textarea>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- 6 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="">이벤트 입력 폼 형식</label>
+                                                    </th>
+                                                    <td>
+                                                        <legend>기본 폼</legend>
+                                                        <div class="d-flex form_div">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_name_yn" name="ev_name_yn" <?php echo $is_name_checked?>>
+                                                                <label for="ev_name_yn" class="custom-control-label">이름</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_tel_yn" name="ev_tel_yn" <?php echo $is_tel_checked?>>
+                                                                <label for="ev_tel_yn" class="custom-control-label">연락처</label>
+                                                            </div>
+                                                        </div>
+                                                        <legend>입력 필수 여부</legend>
+                                                        <div class="d-flex">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_name_req" name="ev_name_req" <?php echo $is_name_req_checked?>>
+                                                                <label for="ev_name_req" class="custom-control-label">이름</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_tel_req" name="ev_tel_req" <?php echo $is_tel_req_checked?>>
+                                                                <label for="ev_tel_req" class="custom-control-label">연락처</label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <legend>추가 폼</legend>
+                                                        <div class="d-flex form_div">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_sex_yn" name="ev_sex_yn" <?php echo $is_sex_checked?>>
+                                                                <label for="ev_sex_yn" class="custom-control-label">성별</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_age_yn" name="ev_age_yn" <?php echo $is_age_checked?>>
+                                                                <label for="ev_age_yn" class="custom-control-label">나이</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_comment_yn" name="ev_comment_yn" <?php echo $is_comment_checked?>>
+                                                                <label for="ev_comment_yn" class="custom-control-label">문의사항</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_birthday_yn" name="ev_birthday_yn" <?php echo $is_birth_checked?>>
+                                                                <label for="ev_birthday_yn" class="custom-control-label">생년월일</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_rec_person_yn" name="ev_rec_person_yn" <?php echo $is_ev_rec_person_checked?>>
+                                                                <label for="ev_rec_person_yn" class="custom-control-label">추천인</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_counsel_time_yn" name="ev_counsel_time_yn" <?php echo $is_counsel_time_checked?>>
+                                                                <label for="ev_counsel_time_yn" class="custom-control-label">연락가능시간대</label>
+                                                            </div>
+                                                        </div>
+                                                        <legend>입력 필수 여부</legend>
+                                                        <div class="d-flex">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_sex_req" name="ev_sex_req" disabled <?php echo $is_sex_req_checked?>>
+                                                                <label for="ev_sex_req" class="custom-control-label">성별</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_age_req" name="ev_age_req" disabled <?php echo $is_age_req_checked?>>
+                                                                <label for="ev_age_req" class="custom-control-label">나이</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_comment_req" name="ev_comment_req" disabled <?php echo $is_comment_req_checked?>>
+                                                                <label for="ev_comment_req" class="custom-control-label">문의사항</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_birthday_req" name="ev_birthday_req" disabled <?php echo $is_birth_req_checked?>>
+                                                                <label for="ev_birthday_req" class="custom-control-label">생년월일</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_rec_person_req" name="ev_rec_person_req" disabled <?php echo $is_ev_rec_person_req_checked?>>
+                                                                <label for="ev_rec_person_req" class="custom-control-label">추천인</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox ml-3">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_counsel_time_req" name="ev_counsel_time_req" disabled <?php echo $is_counsel_time_req_checked?>>
+                                                                <label for="ev_counsel_time_req" class="custom-control-label">연락가능시간대</label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <th>입력 폼 배경 색상</th>
+                                                    <td colspan="3"><input type="text" id="color"/></td>
+                                                </tr>
+                                                <!-- 7 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="ev_bottom_content_pc">이벤트 PC 하단 이미지</label>
+                                                    </th>
+                                                    <td colspan="3">
+                                                        <textarea class="editor_textarea" id="ev_bottom_content_pc" name="ev_bottom_content_pc"><?php echo $bottom_pc_content?></textarea>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- 8 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="ev_bottom_content_mo">이벤트 모바일 하단 이미지</label>
+                                                    </th>
+                                                    <td colspan="3">
+                                                        <textarea class="editor_textarea" id="ev_bottom_content_mo" name="ev_bottom_content_mo"><?php echo $bottom_mo_content?></textarea>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- 9 line -->
+                                                <tr>
+                                                    <th>
+                                                        <label for="">이벤트 기간</label>
+                                                    </th>
+                                                    <td colspan="3">
+                                                        <div class="form-group">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input" type="checkbox" id="ev_always" name="ev_always" <?php echo $is_ev_always_checked ?>>
+                                                                <label for="ev_always" class="custom-control-label">상시 진행</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" >
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                <span class="input-group-text">
+                                                                    <i class="far fa-calendar-alt"></i>
+                                                                </span>
+                                                                </div>
+                                                                <input type="text" class="form-control float-right" id="reservation" name="reservation" style="height:30px; width:220px; margin-right:5px;">
+                                                                <input type="text" class="form-control float-right" id="reservation2" name="reservation2" style="height:30px; width:220px; margin-right:5px; display:none;">
+                                                            </div>
+                                                            <!-- /.input group -->
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Confirm line -->
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <div class="d-flex justify-content-between">
+                                                        <div class="d-flex">
+                                                            <!-- <a href = "javascript:popup_Open()" target = "_blank">미리보기</a> -->
+                                                            <button type="button" class="btn btn-info"  onclick="popup_Open()">미리보기</button>
+                                                            <!-- <button type="button" class="btn btn-info"   onclick="window.open('/admin/event/preview.php','new','scrollbars=yes,resizable=no width=500 height=600, left=-1220,top=200');return false">미리보기</button> -->
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <a href="/admin/event/" class="btn btn-default" style="margin-right:5px;">취소</a>
+                                                            <input type="button" class="btn btn-info" value="저장" id="<?php echo $btn_value; ?>" name="<?php echo $btn_value; ?>" style="margin-right:5px;">                                                        
+                                                            <input type="button" class="btn btn-danger" value="삭제" id="delete_btn" name="delete_btn" style="display:none;">                                                        
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </form>
                                 </div>
                             </div>
@@ -672,35 +843,25 @@
     <?php if(!$_GET['idx']){?>
     /* 이벤트 등록 버튼 */
     $("#save_btn").on("click", function(){
-        var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
-        var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
-        var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
-        var age_Check = $("#ev_age_yn").is(":checked") ? "Y" : "N";
-        var comment_Check = $("#ev_comment_yn").is(":checked") ? "Y" : "N";
-        var birth_Check = $("#ev_birthday_yn").is(":checked") ? "Y" : "N";
-        var ev_rec_percon_Check = $("#ev_rec_person_yn").is(":checked") ? "Y" : "N";
-        var ev_counsel_time_Check = $("#ev_counsel_time_yn").is(":checked") ? "Y" : "N";
-        var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
 
-        var evType = $("#ev_type_f").is(":checked") ? "F" : "M";
+        var brCode = $("#br_code").val();
+        var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
+        var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
 
         var isok = true;
         var evStat = "";
         var today = new Date();
         today = today.toJSON().substr(0,10);
         
-
         if(ev_always_Check == "Y"){
             var start_Date  =  $("#reservation2").val();
             var end_Date = "";
-            
             
             if(start_Date > today){
                 evStat = "W";
             }else if(start_Date <= today){
                 evStat = "Y";
             }
-
         }else{
             var start_Date = $("#reservation").val().split(" ")[0];
             var end_Date = $("#reservation").val().split(" ")[2];
@@ -712,14 +873,11 @@
             }else if(end_Date < today){
                 evStat = "N";
             }
-            
         }
         
         if(start_Date == ""){
             start_Date = today;
         }
-
-        var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
 
         var evSubject = $("#ev_subject").val();
         if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
@@ -728,46 +886,24 @@
             isok=false;
         }
 
-        var brCode = $("#br_code").val();
-        var evCode = $("#ev_code").val();
-        var evKey = $("#ev_key").val();
-        var ev_top_content_pc = $("#ev_top_content_pc").val();
-        var ev_top_content_mo = $("#ev_top_content_mo").val();
-        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
-        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
         var regID = '<?php echo $_SESSION['userId']?>';
-
-
+        var formData = $("form").serializeArray();
+        
         if(isok){
             $.post("/admin/event/event_DB.php", {
                 mode : 'register',
-                brCode : brCode, 
-                evCode : evCode, 
-                evKey : evKey, 
-                evType : evType,
+                formData : formData,
+                brCode : brCode,
                 evURL : evURL,
-                evSubject : evSubject, 
-                ev_top_content_pc : ev_top_content_pc,
-                ev_top_content_mo : ev_top_content_mo,
-                evName_yn : name_Check, 
-                evTel_yn : tel_Check, 
-                evSex_yn : sex_Check, 
-                evAge_yn : age_Check, 
-                evComment_yn : comment_Check, 
-                evBrith_yn : birth_Check, 
-                evRec_person_yn : ev_rec_percon_Check, 
-                evCounsel_time_yn : ev_counsel_time_Check, 
-                ev_bottom_content_pc : ev_bottom_content_pc,
-                ev_bottom_content_mo : ev_bottom_content_mo,
-                evAlways : ev_always_Check,
-                evStart : start_Date,
-                evEnd : end_Date,
                 evStat : evStat,
                 regID : regID,
                 imgFileName : imgFileName
             }, function(data){
                 if ($.trim(data)=='OK') {
+                    var evKey = $("#ev_key").val();
                     var brName = $("#brand_name").val();
+                    var evCode = $("#ev_code").val();
+                    
                     if($('input[name=client_sync]:checked').val()=='N'){
                        callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );     
                     }              
@@ -787,17 +923,11 @@
     <?php if($_GET['idx']){?>
     /* 수정 버튼 */
     $("#update_btn").on("click", function(){
-        var name_Check = $("#ev_name_yn").is(":checked") ? "Y" : "N";
-        var tel_Check = $("#ev_tel_yn").is(":checked") ? "Y" : "N";
-        var sex_Check = $("#ev_sex_yn").is(":checked") ? "Y" : "N";
-        var age_Check = $("#ev_age_yn").is(":checked") ? "Y" : "N";
-        var comment_Check = $("#ev_comment_yn").is(":checked") ? "Y" : "N";
-        var birth_Check = $("#ev_birthday_yn").is(":checked") ? "Y" : "N";
-        var ev_rec_percon_Check = $("#ev_rec_person_yn").is(":checked") ? "Y" : "N";
-        var ev_counsel_time_Check = $("#ev_counsel_time_yn").is(":checked") ? "Y" : "N";
-        var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
 
-        var evType = $("#ev_type_f").is(":checked") ? "F" : "M";
+        var brCode = $("#br_code").val();
+        var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
+        var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
+        var regID = '<?php echo $_SESSION['userId']?>';
 
         var isok = true;
         var evStat = "";
@@ -834,8 +964,6 @@
             start_Date = today;
         }
 
-        var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
-
         var evSubject = $("#ev_subject").val();
         if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
             $("#alert_msg").text("이벤트 제목은 3자 이상의 한글, 영문, 숫자로만 입력가능합니다.");
@@ -843,16 +971,13 @@
             isok=false;
         }
 
-        var brCode = $("#br_code").val();
-        var evCode = $("#ev_code").val();
-        var evKey = $("#ev_key").val();
-        var ev_top_content_pc = $("#ev_top_content_pc").val();
-        var ev_top_content_mo = $("#ev_top_content_mo").val();
-        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val();
-        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val();
-        
-
         var imgFileName_del = [];
+
+        var ev_top_content_pc = $("#ev_top_content_pc").val()
+        var ev_top_content_mo = $("#ev_top_content_mo").val()
+        var ev_bottom_content_pc = $("#ev_bottom_content_pc").val()
+        var ev_bottom_content_mo = $("#ev_bottom_content_mo").val()
+
 
         // summernote에 올라온 사진 개수만큼 배열에 넣기
         var top_pc_count = ev_top_content_pc.split("src=\"").length-1;
@@ -899,43 +1024,26 @@
         }
         console.log(imgFileName_del);
 
-
-
-        var regID = '<?php echo $_SESSION['userId']?>';
+        var formData = $("form").serializeArray();
 
         if(isok){
             var idx = <?php echo $_GET['idx']?>;
             $.post("/admin/event/event_DB.php", {
-                mode : 'update',                
-                brCode : brCode, 
-                evCode : evCode, 
-                evKey : evKey, 
-                evType : evType,
+                mode : 'update',
+                formData : formData,            
+                brCode : brCode,
                 evURL : evURL,
-                evSubject : evSubject, 
-                ev_top_content_pc : ev_top_content_pc,
-                ev_top_content_mo : ev_top_content_mo,
-                evName_yn : name_Check, 
-                evTel_yn : tel_Check, 
-                evSex_yn : sex_Check, 
-                evAge_yn : age_Check, 
-                evComment_yn : comment_Check, 
-                evBrith_yn : birth_Check, 
-                evRec_person_yn : ev_rec_percon_Check, 
-                evCounsel_time_yn : ev_counsel_time_Check, 
-                ev_bottom_content_pc : ev_bottom_content_pc,
-                ev_bottom_content_mo : ev_bottom_content_mo,
-                evAlways : ev_always_Check,
-                evStart : start_Date,
-                evEnd : end_Date,
                 evStat : evStat,
                 regID : regID,
                 idx : idx,
                 imgFileName : imgFileName,
                 imgFileName_del : imgFileName_del
             }, function(data){
-                if ($.trim(data)=='OK') {
-                    var brName = $("#brand_name").val();                    
+                if ($.trim(data)=='OK') {   
+                    var evKey = $("#ev_key").val();
+                    var brName = $("#brand_name").val();
+                    var evCode = $("#ev_code").val();
+                                  
                     if('<?php echo substr($result['ev_code'], 0,1); ?>' != 'M'){
                         callApi("update", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL);      
                     }              
