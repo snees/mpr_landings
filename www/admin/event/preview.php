@@ -1,5 +1,6 @@
 <?php 
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.sub.php";
+
 ?>
 
 <style>
@@ -21,6 +22,8 @@
 
     // <title></title> 
     var title = opener.document.getElementById("ev_subject").value;
+    var color = opener.document.getElementById("color").value;
+
     if(title != ""){
         document.title = title;
     }
@@ -58,6 +61,8 @@
 
 
             $(document).ready(function(){
+
+                $("#landing").css("background", color);
                 
                 /* Mobile 상단 이미지 */
                 for(var i=0; i<top_count_mo; i++){
@@ -107,6 +112,8 @@
 
             $(document).ready(function(){
 
+                $("#landing").css("background", color);
+                
                 /* PC 상단 이미지 */
                 for(var i=0; i<top_count_pc; i++){
                     top_img_url[i] = top_content_pc.split("src=\"")[i+1].split("\"")[0];

@@ -146,6 +146,7 @@
 
     $ev_bottom_content_pc = $arr['ev_bottom_content_pc'];
     $ev_bottom_content_mo = $arr['ev_bottom_content_mo'];
+    $color = $_REQUEST['color'];
 
     $evStat = $_REQUEST['evStat'];
     $regID = $_REQUEST['regID'];
@@ -269,7 +270,7 @@
             ev_rec_person_req, ev_rec_person_yn,
             ev_counsel_time_req, ev_counsel_time_yn,
             ev_bottom_content_pc, ev_bottom_content_mo, 
-            ev_always, ev_start, ev_end, ev_stat, reg_id, reg_date, chg_date, del_yn) 
+            ev_always, ev_color, ev_start, ev_end, ev_stat, reg_id, reg_date, chg_date, del_yn) 
         VALUES 
             ('{$brCode}', '{$evCode}', '{$evKey}' , '{$evType}', '{$evURL}' ,'{$evSubject}',
             '{$ev_top_content_pc}','{$ev_top_content_mo}',
@@ -282,7 +283,7 @@
             '{$evRec_person_req}', '{$evRec_person_yn}',
             '{$evCounsel_time_req}', '{$evCounsel_time_yn}',
             '{$ev_bottom_content_pc}', '{$ev_bottom_content_mo}',
-            '{$evAlways}' , '{$evStart}', '{$evEnd}', '{$evStat}', '{$regID}', now(), now(), 'N');";
+            '{$evAlways}', '{$color}',  '{$evStart}', '{$evEnd}', '{$evStat}', '{$regID}', now(), now(), 'N');";
 
         /* 이미지 파일 tmp -> data 옮기기 */
         if( count($imgFileName) != 0 ){
@@ -373,6 +374,7 @@
             ev_bottom_content_pc =  '{$ev_bottom_content_pc}', 
             ev_bottom_content_mo = '{$ev_bottom_content_mo}',
             ev_always = '{$evAlways}',
+            ev_color = '{$color}',
             ev_start = '{$evStart}', 
             ev_end = '{$evEnd}', 
             ev_stat = '{$evStat}', 

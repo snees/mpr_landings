@@ -44,6 +44,7 @@
     $top_mo_content = "";
     $bottom_pc_content = "";
     $bottom_mo_content = "";
+    $ev_color = "#000000";
 
     $is_name_checked = "checked";
     $is_tel_checked = "checked";
@@ -65,6 +66,7 @@
         $start_Date = $result['ev_start'];
         $end_Date = $result['ev_end'];
         $event_cd = $result['ev_code'];
+        $ev_color = $result['ev_color'];
 
         if($result['ev_name_yn'] == "Y") $is_name_checked = "checked";
         else $is_name_checked = "";
@@ -145,7 +147,6 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-<script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js">
 <script>
     
     var imgFileName = new Object;
@@ -228,9 +229,10 @@
             return Object.keys(obj).find(key => obj[key] === value);
         }
         
-
-        $('#color').spectrum({
-            type: "component"
+        $("#color").spectrum({
+            type: "component",
+            showInput: true,
+            showAlpha: false
         });
 
         $("input[name='client_sync']:radio").change(function () {
@@ -713,8 +715,8 @@
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <th>입력 폼 배경 색상</th>
-                                                    <td colspan="3"><input type="text" id="color"/></td>
+                                                    <th>이벤트 배경 색상</th>
+                                                    <td colspan="3"><input type="text" class="form-control col-3" id="color" value="<?php echo $ev_color?>"/></td>
                                                 </tr>
                                                 <!-- 7 line -->
                                                 <tr>
@@ -847,6 +849,7 @@
         var brCode = $("#br_code").val();
         var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
         var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
+        var color = $("#color").val();
 
         var isok = true;
         var evStat = "";
@@ -897,6 +900,7 @@
                 evURL : evURL,
                 evStat : evStat,
                 regID : regID,
+                color : color,
                 imgFileName : imgFileName
             }, function(data){
                 if ($.trim(data)=='OK') {
@@ -928,6 +932,7 @@
         var ev_always_Check = $("#ev_always").is(":checked") ? "Y" : "N";
         var evURL = 'https://landings.mprkorea.com/page/?biz=' + $("#br_code").val() + '&code=' + $("#ev_key").val();
         var regID = '<?php echo $_SESSION['userId']?>';
+        var color = $("#color").val();
 
         var isok = true;
         var evStat = "";
@@ -1036,6 +1041,7 @@
                 evStat : evStat,
                 regID : regID,
                 idx : idx,
+                color : color,
                 imgFileName : imgFileName,
                 imgFileName_del : imgFileName_del
             }, function(data){

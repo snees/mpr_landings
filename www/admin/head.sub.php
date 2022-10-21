@@ -24,6 +24,9 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/config.php";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" >
     <!-- Summernote CSS -->
     <link rel="stylesheet" href="<?php echo INC_URL; ?>/summernote/summernote-lite.css">
+    <!-- ColorPicker CSS -->
+    <link rel="stylesheet" href="<?php echo INC_URL; ?>/spectrum/spectrum.css">
+
     <!-- TimePicker CSS -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
     <!-- Theme style -->
@@ -38,6 +41,9 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/config.php";
     <!-- Summernote JS -->
     <script src="<?php echo INC_URL; ?>/summernote/summernote-lite.js"></script>
     <script src="<?php echo INC_URL; ?>/summernote/summernote-ko-KR.js"></script>
+    <!-- ColorPicker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/src/spectrum.js"></script>
+    <script src="<?php echo INC_URL; ?>/summernote/spectrum.js"></script>
     <!-- TimePicker JS -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
     <!-- AdminLTE App -->
