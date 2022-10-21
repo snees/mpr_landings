@@ -6,6 +6,7 @@
 
     $max_date = $DB -> row("SELECT MAX(ev_end) AS max_date FROM mpr_event");
     $min_date = $DB -> row("SELECT MIN(ev_start) AS min_date FROM mpr_event");
+
     if(trim($_GET['reservation'])){
         $datepicker = $_GET['reservation'];
         $startDate = explode(" ", $datepicker)[0];
@@ -15,10 +16,43 @@
         $startDate = $min_date['min_date'];
         $endDate = $max_date['max_date'];
     }
+
+    /* stat확인 */
     if(!trim($_GET['stat'])){
         $stat = "total";
     }else{
         $stat = $_GET['stat'];
+    }
+
+    /* 페이징 조회 개수 확인 */
+    if(!trim($_GET['lines']) || trim($_GET['lines']) == 10){
+        $list = 10;
+        $ten = "selected";
+        $twenty = "";
+        $thirty = "";
+    }else if(trim($_GET['lines']) == 20){
+        $list = 20;
+        $ten = "";
+        $twenty = "selected";
+        $thirty = "";
+    }else if(trim($_GET['lines']) == 30){
+        $list = 30;
+        $ten = "";
+        $twenty = "";
+        $thirty = "selected";
+    }
+
+    /* 검색 여부 확인 */
+    
+    if(trim($_GET['reservation'])){
+?>
+        <script>
+            $(document).ready(function(){
+                $("#page_Limit").hide();
+                $("#ev_reg").css("justify-content", "right");
+            });
+        </script>
+<?php
     }
 ?>
 <style>
@@ -108,8 +142,8 @@
             }
             $(this).css("color", "#BDBDBD");
         });
-    })
-    
+    });
+
 </script>
 
 <div class="content-wrapper">
@@ -141,13 +175,12 @@
                                                     
                                                     <div class="navbar navbar-expand navbar-white navbar-light d-flex justify-content-between" id="navbar-search2" >
                                                         <ul class="nav navbar-nav" style="list-style:none; margin:0px; padding:0 10px;">
-                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=total" id="st_total" style="color:#BDBDBD;">전체</a></li>
+                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=total&lines=<?php echo $list?>" id="st_total" style="color:#BDBDBD;">전체</a></li>
                                                             <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=W" id="st_w" style="color:#BDBDBD;">진행 예정</a></li>
                                                             <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=Y" id="st_y" style="color:#BDBDBD;">진행중</a></li>
                                                             <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=N" id="st_n" style="color:#BDBDBD;">종료</a></li>
                                                         </ul>
-                                                        
-                                                        <form class="form-inline" action="index.php?stat=<?php echo $stat?>">
+                                                        <form class="form-inline" action="index.php?stat=<?php echo $stat?>" onsubmit="submit_success()">
                                                             <div class="form-group" >
                                                                 <div class="input-group input-group-sm">
                                                                     <div class="input-group-prepend" style="height:30px;">
@@ -165,7 +198,7 @@
                                                                 </div>
                                                                 <!-- /.input group -->
                                                             </div>
-                                                            <input type="hidden" value="<?php echo $stat?>" name="in_stat">
+                                                            <input type="hidden" value="<?php echo $stat?>" name="stat">
                                                             <div class="form-group" style="width: 90px; justify-content:right;">
                                                                 <select class="form-control select2" name="search" style="width:100%; height:30px; font-size:small; margin-right: 5px;">
                                                                     <option value="br_name" <?php echo trim($strSearch)=='br_name'?' selected ':'';?>>업체</option>
@@ -212,8 +245,8 @@
                                                 // 검색했을때 테이블 가져오기
                                                 if ( trim($_GET['search']) && trim($_GET['input_search']) ) {
                                                     $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
-                                                    if( trim($_GET['in_stat']) != "total"){
-                                                        $arryWhere[] = "ev_stat = '{$_GET['in_stat']}' and {$_GET['search']} like '%{$_GET['input_search']}%' ";
+                                                    if( trim($_GET['stat']) != "total"){
+                                                        $arryWhere[] = "ev_stat = '{$_GET['stat']}' and {$_GET['search']} like '%{$_GET['input_search']}%' ";
                                                     }else{
                                                         $arryWhere[] = "{$_GET['search']} like '%{$_GET['input_search']}%' ";
                                                     }
@@ -246,9 +279,9 @@
                                                                 <td colspan='5'>검색결과가 없습니다.</td>
                                                             </tr>";
                                                     $total_page = 0;
+                                                    $list = 0;
                                                 }else{
-
-                                                    $list = 5;
+                                                    
                                                     $block_ct = 10;
                                                             
                                                     $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
@@ -317,8 +350,18 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="3">
-                                                    <a class="btn btn-sm btn-primary" href="/admin/event/form.php">신규 등록</a>
+                                                <td colspan="6">
+                                                    <div style="display:flex; justify-content: space-between"  id="ev_reg">
+                                                        <div style="float:left;" id="page_Limit">
+                                                            <label for="pageLimit" style="float:left; margin : 4px 10px 0 0;" >페이지당 조회 건수</label>
+                                                            <select class="form-control select2" name="pageLimit" id="pageLimit" style="width:55px; height:30px; font-size:small; margin-right: 5px;">
+                                                                <option value="10" <?php echo $ten?>>10개</option>
+                                                                <option value="20" <?php echo $twenty?>>20개</option>
+                                                                <option value="30" <?php echo $thirty?>>30개</option>
+                                                            </select>
+                                                        </div>
+                                                        <a class="btn btn-sm btn-primary" href="/admin/event/form.php">신규 등록</a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -372,6 +415,22 @@
     </section>
 
 </div>
+<script>
+    $('#pageLimit').change(function(){
+        var lines = $(this).val();
+        <?php
+            if(!trim($_GET['stat'])){
+        ?>
+            location.href="https://landings.mprkorea.com/admin/event/?lines="+lines;
+        <?php 
+            }else{
+        ?>
+            location.href="https://landings.mprkorea.com/admin/event/index.php?stat=<?php echo $stat?>&lines="+lines;
+        <?php
+            }
+        ?>
+    });
+</script>
 
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/tail.php";
