@@ -25,7 +25,7 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/config.php";
     <!-- Summernote CSS -->
     <link rel="stylesheet" href="<?php echo INC_URL; ?>/summernote/summernote-lite.css">
     <!-- ColorPicker CSS -->
-    <link rel="stylesheet" href="<?php echo INC_URL; ?>/spectrum/spectrum.css">
+    <link rel="stylesheet" href="<?php echo INC_URL; ?>/spectrum/spectrum.css"/>
 
     <!-- TimePicker CSS -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
