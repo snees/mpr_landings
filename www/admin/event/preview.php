@@ -15,9 +15,15 @@
         width : 90%;
         margin : auto;
     }
+    iframe {
+        width : 100%;
+        height : 500px;
+    }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.mb.YTPlayer/3.3.1/css/jquery.mb.YTPlayer.min.css">
 
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mb.YTPlayer/3.3.1/jquery.mb.YTPlayer.min.js"></script>
 <script>
 
     // <title></title> 
@@ -68,8 +74,18 @@
                 for(var i=0; i<top_count_mo; i++){
                     top_img_url[i] = top_content_mo.split("src=\"")[i+1].split("\"")[0];
 
-                    top_img[i] = document.createElement('img'); 
-                    top_img[i].src = "https://landings.mprkorea.com/"+top_img_url[i];
+                    if( (top_img_url[i].split("/")[1]) == "img_data" ){
+                        top_img[i] = document.createElement('img'); 
+                        top_img[i].src = "https://landings.mprkorea.com/"+top_img_url[i];
+                    }else{
+                        var container = document.createElement('div');
+                        container.setAttribute("id", "background"+[i]);
+                        container.setAttribute("class", "player");
+                        var property = "{videoURL:'https:"+top_img_url[i]+"', mute: true, showControls: false, useOnMobile: true, quality: 'highres', containment: 'self', loop: true, autoPlay: true, stopMovieOnBlur: false, startAt: 0, opacity: 1, disabledkb : 0, controls : 0}";
+                        container.setAttribute("data-property", property);
+                        top_img[i] = container;
+                    }
+                    
                     $("#top_img_div").append(top_img[i]);
 
                     
@@ -79,8 +95,17 @@
                 for(var i=0; i<bottom_count_mo; i++){
                     bottom_img_url[i] = top_content_mo.split("src=\"")[i+1].split("\"")[0];
 
-                    bottom_img[i] = document.createElement('img'); 
-                    bottom_img[i].src = "https://landings.mprkorea.com/"+bottom_img_url[i];
+                    if( (bottom_img_url[i].split("/")[1]) == "img_data" ){
+                        bottom_img[i] = document.createElement('img'); 
+                        bottom_img[i].src = "https://landings.mprkorea.com/"+bottom_img_url[i];
+                    }else{
+                        var container = document.createElement('div');
+                        container.setAttribute("id", "background"+[i]);
+                        container.setAttribute("class", "player");
+                        var property = "{videoURL:'https:"+bottom_img_url[i]+"', mute: true, showControls: false, useOnMobile: true, quality: 'highres', containment: 'self', loop: true, autoPlay: true, stopMovieOnBlur: false, startAt: 0, opacity: 1, disabledkb : 0, controls : 0}";
+                        container.setAttribute("data-property", property);
+                        bottom_img[i] = container;
+                    }
                     
                     $("#bottom_img_div").append(bottom_img[i]);
                 
@@ -102,6 +127,7 @@
             
             var top_count_pc = top_content_pc.split("src=\"").length-1;
             var bottom_count_pc = bottom_content_pc.split("src=\"").length-1;
+            
 
             var top_img_url = [];
             var top_img = [];
@@ -117,10 +143,18 @@
                 /* PC 상단 이미지 */
                 for(var i=0; i<top_count_pc; i++){
                     top_img_url[i] = top_content_pc.split("src=\"")[i+1].split("\"")[0];
-                    
 
-                    top_img[i] = document.createElement('img'); 
-                    top_img[i].src = "https://landings.mprkorea.com/"+top_img_url[i];
+                    if( (top_img_url[i].split("/")[1]) == "img_data" ){
+                        top_img[i] = document.createElement('img'); 
+                        top_img[i].src = "https://landings.mprkorea.com/"+top_img_url[i];
+                    }else{
+                        var container = document.createElement('div');
+                        container.setAttribute("id", "background"+[i]);
+                        container.setAttribute("class", "player");
+                        var property = "{videoURL:'https:"+top_img_url[i]+"', mute: true, showControls: false, useOnMobile: true, quality: 'highres', containment: 'self', loop: true, autoPlay: true, stopMovieOnBlur: false, startAt: 0, opacity: 1, disabledkb : 0, controls : 0}";
+                        container.setAttribute("data-property", property);
+                        top_img[i] = container;
+                    }
                     
                     $("#top_img_div").append(top_img[i]);
                 }
@@ -128,13 +162,22 @@
                 /* PC 하단 이미지 */
                 for(var i=0; i<bottom_count_pc; i++){
                     bottom_img_url[i] = bottom_content_pc.split("src=\"")[i+1].split("\"")[0];
-                    
 
-                    bottom_img[i] = document.createElement('img'); 
-                    bottom_img[i].src = "https://landings.mprkorea.com/"+bottom_img_url[i];
+                    if( (bottom_img_url[i].split("/")[1]) == "img_data" ){
+                        bottom_img[i] = document.createElement('img'); 
+                        bottom_img[i].src = "https://landings.mprkorea.com/"+bottom_img_url[i];
+                    }else{
+                        var container = document.createElement('div');
+                        container.setAttribute("id", "background"+[i]);
+                        container.setAttribute("class", "player");
+                        var property = "{videoURL:'https:"+bottom_img_url[i]+"', mute: true, showControls: false, useOnMobile: true, quality: 'highres', containment: 'self', loop: true, autoPlay: true, stopMovieOnBlur: false, startAt: 0, opacity: 1, disabledkb : 0, controls : 0}";
+                        container.setAttribute("data-property", property);
+                        bottom_img[i] = container;
+                    }
                     
                     $("#bottom_img_div").append(bottom_img[i]);
-                }
+                    
+                } 
             })
     <?php
         }
@@ -166,6 +209,7 @@
 
     $(document).ready(function(){
         $("#ev_term").text(ev_term_str);
+        $('.player').YTPlayer();
 
         if(ev_name == true){
             $("#name_input_div").show();
@@ -277,6 +321,8 @@
             </div>
         </form>
 
-        <div id="bottom_img_div"></div>
+        <div id="bottom_img_div">
+        </div>
     </div>
 </div>
+
