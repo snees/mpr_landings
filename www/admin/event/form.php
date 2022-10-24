@@ -16,8 +16,11 @@
     legend {
         margin : 0px;
     }
-    .note-group-image-url, .note-modal-footer {
+    .note-group-image-url {
         display : none;
+    }
+    .note-modal-footer {
+        height : 60px;
     }
 </style>
 
@@ -44,7 +47,7 @@
     $top_mo_content = "";
     $bottom_pc_content = "";
     $bottom_mo_content = "";
-    $ev_color = "#000000";
+    $ev_color = "#EAEAEA";
 
     $is_name_checked = "checked";
     $is_tel_checked = "checked";
