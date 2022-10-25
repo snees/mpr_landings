@@ -205,7 +205,7 @@
         
         function sendFile(file, el) {
             var formData = new FormData();
-            var key = '<?php echo $API ?>';
+            var key = $("#ev_key").val();
             var code = $("#br_code").val();
             formData.append("files", file);
             formData.append("type", type);
@@ -242,7 +242,7 @@
             //CLIENTS 동기화 여부.
 
                 if(this.value == 'Y'){
-                    $('.ev_key').val('');
+                    $('#ev_key').val('');
                     $("input[name='ev_key']").attr("readonly",false);
                     $(".vendor").empty();
                     /* var tags = "<input type='text' class='form-control form-control-border' id='br_name' name='br_name' value=''>"; */
@@ -260,7 +260,7 @@
                 }
         });
 
-        $("#ev_key").change(function() {
+        $("#ev_key").on("change",function() {
             if($(this).val().length == 32){
 
                 var type = "<?php echo $DB->hexAesEncrypt('INQUIRE_LIST'); ?>";
@@ -588,7 +588,7 @@
                                                         <label for="ev_key">이벤트 API KEY</label>
                                                     </th>
                                                     <td>
-                                                        <input type="text" class="form-control form-control-border ev_key" style="text-transform: uppercase;" id="ev_key" name="ev_key" value="<?php echo  $API ?>" readonly>
+                                                        <input type="text" class="form-control form-control-border ev_key" style="text-transform: uppercase;" id="ev_key" name="ev_key" value="<?php echo  $API ?>" readonly="readonly">
                                                     </td>
                                                     <th>
                                                         <label for="br_code">업체 선택</label>
@@ -894,6 +894,18 @@
 
         var regID = '<?php echo $_SESSION['userId']?>';
         var formData = $("form").serializeArray();
+        
+        var isSyncY = $("#is_sync_y").val();
+        
+        if(isSyncY == "Y" && ev_always_Check == "Y"){
+            var formDate = $("#reservation2").val();
+            formData.push({name : "reservation2", value : formDate});
+        }else if(isSyncY == "Y" && ev_always_Check == "N"){
+            var formDate = $("#reservation").val();
+            formData.push({name : "reservation", value : formDate});
+        }
+        
+        console.log(formData);
         
         if(isok){
             $.post("/admin/event/event_DB.php", {
