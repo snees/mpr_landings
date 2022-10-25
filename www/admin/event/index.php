@@ -87,6 +87,7 @@
         }, function (start, end, label){
             console.log(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
         });
+        
     });
 
 
@@ -171,7 +172,7 @@
                                     <table id="event-list" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th colspan="6" style="padding:0px;">
+                                                <th colspan="7" style="padding:0px;">
                                                     
                                                     <div class="navbar navbar-expand navbar-white navbar-light d-flex justify-content-between" id="navbar-search2" >
                                                         <ul class="nav navbar-nav" style="list-style:none; margin:0px; padding:0 10px;">
@@ -180,7 +181,7 @@
                                                             <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=Y" id="st_y" style="color:#BDBDBD;">진행중</a></li>
                                                             <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=N" id="st_n" style="color:#BDBDBD;">종료</a></li>
                                                         </ul>
-                                                        <form class="form-inline" action="index.php?stat=<?php echo $stat?>" onsubmit="submit_success()">
+                                                        <form class="form-inline" action="index.php?stat=<?php echo $stat?>">
                                                             <div class="form-group" >
                                                                 <div class="input-group input-group-sm">
                                                                     <div class="input-group-prepend" style="height:30px;">
@@ -227,6 +228,7 @@
                                                 <th class="sorting sorting_asc" aria-controls="event-list">이벤트 URL</th>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">업체</th>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">이벤트 기간</th>
+                                                <th class="sorting sorting_asc" aria-controls="event-list">등록일</th>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">상태</th>
                                             </tr>
                                         </thead>
@@ -276,7 +278,7 @@
                                                 if($row_num == 0){
                                                     echo "<tr>
                                                                 <td>&nbsp;</td>
-                                                                <td colspan='5'>검색결과가 없습니다.</td>
+                                                                <td colspan='6'>검색결과가 없습니다.</td>
                                                             </tr>";
                                                     $total_page = 0;
                                                     $list = 0;
@@ -302,20 +304,18 @@
 
                                                     $S_SQL = 
                                                     "SELECT 
-                                                        e.idx, e.ev_subject, e.ev_url, e.ev_start, e.ev_end, e.ev_stat, e.ev_always, br_name
+                                                        e.idx, e.ev_subject, e.ev_url, e.ev_start, e.ev_end, e.ev_stat, e.ev_always, e.reg_date , br_name
                                                     FROM 
                                                         mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE {$strWhere}
-                                                    order by idx desc
+                                                    ORDER BY idx DESC
                                                     LIMIT {$start_num}, {$list}";
-
-                                                    // echo $S_SQL;
+                                                    
                                                     $res = $DB -> query($S_SQL);
                                                     foreach($res as $row){
-                                                        $date = date("ymdh",strtotime($row['reg_date']));
                                             ?>
                                             <tr>
                                                 <td><?php echo $count--;?></td>
-                                                <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?> (<?php echo $date?>)</a></td>
+                                                <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?></a></td>
                                                 
                                                 <!-- <?php $URL = "https://".$row['ev_url']; ?> -->
                                                 <td><a href="<?php echo $row['ev_url']?>" target="_blank">URL</a></td>
@@ -327,6 +327,12 @@
                                                         echo '<td>'.$row['ev_start']."~".$row['ev_end'].'</td>';
                                                     }
                                                 ?>
+                                                <td>
+                                                    <?php 
+                                                        $regDate = date("Y-m-d", strtotime($row['reg_date']));
+                                                        echo $regDate;
+                                                    ?>
+                                                    </td>
                                                 <td>
                                                     <?php 
                                                         switch($row['ev_stat']){
@@ -350,7 +356,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="6">
+                                                <td colspan="7">
                                                     <div style="display:flex; justify-content: space-between"  id="ev_reg">
                                                         <div style="float:left;" id="page_Limit">
                                                             <label for="pageLimit" style="float:left; margin : 4px 10px 0 0;" >페이지당 조회 건수</label>
@@ -416,6 +422,7 @@
 
 </div>
 <script>
+    /* 페이지당 조회 건수 */
     $('#pageLimit').change(function(){
         var lines = $(this).val();
         <?php
@@ -430,6 +437,8 @@
             }
         ?>
     });
+
+
 </script>
 
 <?php

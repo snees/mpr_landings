@@ -6,7 +6,7 @@
 
 <!-- 업체 코드 랜덤 발급 -->
 <?php
-    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     $id_len = rand(4,6);
     $var_size = strlen($chars);
     $random_str="";
