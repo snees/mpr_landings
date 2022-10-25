@@ -127,7 +127,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="3">
+                                                <td colspan="3" style="text-align:right;">
                                                     <a class="btn btn-sm btn-primary" href="/admin/branch/form.php?mode=register">신규 등록</a>
                                                 </td>
                                             </tr>

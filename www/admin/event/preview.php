@@ -19,6 +19,9 @@
         width : 100%;
         height : 500px;
     }
+    .inline-YTPlayer{
+        max-width : 100%;
+    }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.mb.YTPlayer/3.3.1/css/jquery.mb.YTPlayer.min.css">
 
