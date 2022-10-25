@@ -33,6 +33,7 @@
         $S_SQL = "select * from mpr_branch where {$company} ";
         $res = $DB -> query($S_SQL);
         $options .= "<select class='custom-select form-control-border' id='br_code' name='br_code'>";
+        $options .= "<option disabled selected>업체를 선택해 주세요.</option>";
         $i=0;
         foreach($res as $row){
             $options .= "<option value='".$row['br_code']."'>".$row['br_name']."</option>";
@@ -297,24 +298,64 @@
                             $('#save_btn').attr("disabled", true);
                             $('#br_name').attr("placeholder", "업체를 등록해주세요.");
                         }else{
-                            $('#br_code').val($.trim(rs.br_code));
-                            $('#br_name').val($.trim(rs.cust_nm));
-                            $('#ev_subject').val(rs.event_nm);
-                            $('#ev_code').val(rs.event_cd);
-                            if($.trim(rs.continue) == 'Y'){
-                                $("input:checkbox[id='ev_always']").prop("checked", true); 
-                                $('#reservation2').data('daterangepicker').setEndDate('<?php echo $today;?>');
-                                $( "#reservation2" ).show();
-                                $( "#reservation" ).hide();
-                                $("input[name='reservation']").attr("readonly",false);
-                            }else{
-                                $("input:checkbox[id='ev_always']").prop("checked", false);                             
-                                $('#reservation').data('daterangepicker').setStartDate(rs.from);
-                                $('#reservation').data('daterangepicker').setEndDate(rs.to);
-                                $("input[name='reservation']").attr("readonly",true);
-                                $( "#reservation2" ).hide();
-                                $( "#reservation" ).show();
-                            }   
+                            var evCode_cl = rs.event_cd;
+                            <?php 
+                                $codeSQL = "SELECT ev_code FROM mpr_event";
+                                $res = $DB -> query($codeSQL);
+                                $cnt = $DB->single("SELECT count(*) FROM mpr_event");
+                                if($cnt > 0){
+                                    foreach($res as $row){
+                            ?>          
+                                        console.log(evCode_cl);
+                                        console.log('<?php echo $row['ev_code']?>');
+                                        if(evCode_cl == '<?php echo $row['ev_code']?>'){
+                                            alert("이미 등록된 이벤트입니다.");
+                                            $('#ev_key').val("");
+                                        }else{
+                                            $('#br_code').val($.trim(rs.br_code));
+                                            $('#br_name').val($.trim(rs.cust_nm));
+                                            $('#ev_subject').val(rs.event_nm);
+                                            $('#ev_code').val(rs.event_cd);
+                                            if($.trim(rs.continue) == 'Y'){
+                                                $("input:checkbox[id='ev_always']").prop("checked", true); 
+                                                $('#reservation2').data('daterangepicker').setEndDate('<?php echo $today;?>');
+                                                $( "#reservation2" ).show();
+                                                $( "#reservation" ).hide();
+                                                $("input[name='reservation']").attr("readonly",false);
+                                            }else{
+                                                $("input:checkbox[id='ev_always']").prop("checked", false);                             
+                                                $('#reservation').data('daterangepicker').setStartDate(rs.from);
+                                                $('#reservation').data('daterangepicker').setEndDate(rs.to);
+                                                $("input[name='reservation']").attr("readonly",true);
+                                                $( "#reservation2" ).hide();
+                                                $( "#reservation" ).show();
+                                            } 
+                                        }   
+                            <?php
+                                    }
+                                }else{
+                            ?>
+                                    $('#br_code').val($.trim(rs.br_code));
+                                    $('#br_name').val($.trim(rs.cust_nm));
+                                    $('#ev_subject').val(rs.event_nm);
+                                    $('#ev_code').val(rs.event_cd);
+                                    if($.trim(rs.continue) == 'Y'){
+                                        $("input:checkbox[id='ev_always']").prop("checked", true); 
+                                        $('#reservation2').data('daterangepicker').setEndDate('<?php echo $today;?>');
+                                        $( "#reservation2" ).show();
+                                        $( "#reservation" ).hide();
+                                        $("input[name='reservation']").attr("readonly",false);
+                                    }else{
+                                        $("input:checkbox[id='ev_always']").prop("checked", false);                             
+                                        $('#reservation').data('daterangepicker').setStartDate(rs.from);
+                                        $('#reservation').data('daterangepicker').setEndDate(rs.to);
+                                        $("input[name='reservation']").attr("readonly",true);
+                                        $( "#reservation2" ).hide();
+                                        $( "#reservation" ).show();
+                                    } 
+                            <?php
+                                }   
+                            ?>
                         }
                         
                     }else{  
@@ -892,6 +933,18 @@
             isok=false;
         }
 
+        var evKey = $("#ev_key").val();
+        if(evKey == ""){
+            $("#alert_msg").text("이벤트 API KEY는 필수입니다.");
+            alertMsg();
+            isok=false;
+        }
+        if(brCode == null){
+            $("#alert_msg").text("업체 선택은 필수입니다.");
+            alertMsg();
+            isok=false;
+        }
+
         var regID = '<?php echo $_SESSION['userId']?>';
         var formData = $("form").serializeArray();
         
@@ -925,7 +978,7 @@
                     
                     if($('input[name=client_sync]:checked').val()=='N'){
                        callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );     
-                    }              
+                    }        
                     alert("등록되었습니다.");
                     location.href= "/admin/event/index.php";
                 } else {
