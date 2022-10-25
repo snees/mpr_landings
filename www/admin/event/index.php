@@ -42,8 +42,7 @@
         $thirty = "selected";
     }
 
-    /* 검색 여부 확인 */
-    
+    /* 검색 시 페이징 조회 개수 조절 기능 없앰 */
     if(trim($_GET['reservation'])){
 ?>
         <script>
@@ -89,7 +88,6 @@
         });
         
     });
-
 
     var stat = '<?php echo $stat?>';
     switch(stat){
@@ -165,15 +163,12 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-
                             <div class="row">
                                 <div class="col-sm-12">
-
                                     <table id="event-list" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
                                                 <th colspan="7" style="padding:0px;">
-                                                    
                                                     <div class="navbar navbar-expand navbar-white navbar-light d-flex justify-content-between" id="navbar-search2" >
                                                         <ul class="nav navbar-nav" style="list-style:none; margin:0px; padding:0 10px;">
                                                             <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=total&lines=<?php echo $list?>" id="st_total" style="color:#BDBDBD;">전체</a></li>
@@ -208,7 +203,7 @@
                                                             </div>
 
                                                             <div class="input-group input-group-sm" >
-                                                                <input class="form-control form-control-navbar" type="search" value="<?php echo trim($keyword);?>" placeholder="검색어를 입력하세요." aria-label="Search" name="input_search" autocomplete='off'>
+                                                                <input class="form-control form-control-navbar" type="text" value="<?php echo trim($keyword);?>" placeholder="검색어를 입력하세요." aria-label="Search" name="input_search" autocomplete='off'>
                                                                 <div class="input-group-append">
                                                                 <button class="btn btn-navbar" type="submit">
                                                                     <i class="fas fa-search"></i>
@@ -412,14 +407,12 @@
                                     </ul>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
 </div>
 <script>
     /* 페이지당 조회 건수 */
@@ -437,8 +430,6 @@
             }
         ?>
     });
-
-
 </script>
 
 <?php
