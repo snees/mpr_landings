@@ -68,6 +68,13 @@ form#landing .text-row input[type="checkbox"]:checked + label:before { top : 5px
 .req_mark i.fa-asterisk { color: var(--red); }
 .req_mark i.fa-check { color: var(--green); }
 
+form#landing .form-row input:disabled,
+form#landing .form-row input:disabled + label,
+form#landing .form-row input:disabled + label:before,
+form#landing .form-row select:disabled,
+form#landing .form-row textarea:disabled
+{ background:rgba(255, 0, 0, .08); cursor: not-allowed; }
+
 @media (max-width: 1600px){
     #full-wrapper { max-width: 100%; }
     form#landing .form-row { font-size: .8rem; }

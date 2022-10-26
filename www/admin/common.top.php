@@ -1,7 +1,7 @@
 <?php
 
 // ↓ 기본 경로 세팅
-
+// include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/session.php";
 function cb_path()
 {
     $chroot = substr($_SERVER['SCRIPT_FILENAME'], 0, strpos($_SERVER['SCRIPT_FILENAME'], dirname(__FILE__)));

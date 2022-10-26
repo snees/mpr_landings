@@ -22,7 +22,7 @@
         </div>
         <form id="landing">
             <input type="hidden" name="br_code" value="<?php echo $clientKey; ?>" />
-            <input type="hidden" name="br_key" value="<?php echo $eventKey; ?>" />
+            <input type="hidden" name="br_key" id="br_key" value="<?php echo $eventKey; ?>" />
             <div class="text-row">
                 <div class="text-comment">이벤트 기간 : <span class="event-dates"></span> </div>
             </div>
@@ -65,7 +65,6 @@
             </div>
             <div class="form-row" data-form="ev_counsel_time">
                 <label for="ev_counsel_time" class="input-label">상담가능시간</label>
-                <!-- <input type="text" name="ev_counsel_time" id="ev_counsel_time" class="timePicker"> -->
                 <select name="ev_counsel_time" id="ev_counsel_time" onchange="validate(this, 'cstime');">
                     <option value="" selected disabled>상담가능시간 선택</option>
                     <option value="9-11">오전 9시 ~ 11시</option>
@@ -75,7 +74,7 @@
                 </select>
             </div>
             <div class="form-row" data-form="ev_comment">
-                <textarea name="ev_comment" id="ev_comment" placeholder="문의사항 입력" autocomplete="off" onblur="validate(this, 'sex');"></textarea>
+                <textarea name="ev_comment" id="ev_comment" placeholder="문의사항 입력" autocomplete="off" onblur="validate(this, 'comm');"></textarea>
             </div>
             <div class="text-row">
                 <input type="checkbox" id="is_privacy">

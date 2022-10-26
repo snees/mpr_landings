@@ -1,7 +1,6 @@
 <?php
-
 include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.sub.php";
-
+include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/session.php"
 // ↓ navbar 영역
 ?>
 
@@ -20,11 +19,11 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.sub.php";
 		<ul class="navbar-nav ml-auto">
 			<li class="nav-item position-relative">
                 <i class="fa-solid fa-user-gear"></i>
-                <span>회원정보 수정</span>
+                <a href="/admin/member/updateinfo/">회원정보 수정</a>
 			</li>
             <li>
                 <i class="fa-solid fa-right-from-bracket"></i>
-                <span>로그아웃</span>
+                <a href="/admin/login/logout.php">로그아웃</span>
             </li>
 		</ul>
         <!-- top-right nav elements -end -->
@@ -66,12 +65,14 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.sub.php";
                             <p>업체 목록</p>
                         </a>
                     </li>
+                    <?php if($_SESSION['lvl']==300){?>
                     <li class="nav-item">
                         <a href="/admin/member/" class="nav-link">
                             <i class="fa-solid fa-list-ul"></i>
                             <p>회원 목록</p>
                         </a>
                     </li>
+                    <?php }?>
 
                     <hr>
 

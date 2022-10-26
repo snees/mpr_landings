@@ -1,11 +1,4 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<?php 
-   
-
-    $S_SQL = "select * from mpr_event where ev_key = '{$_GET['code']}' ";
-    $res = $DB -> query($S_SQL);
-    echo "<script> console.log(".json_encode($res).") </script>";
-?>
 <script>
 
     // 태그 제거
@@ -26,6 +19,24 @@
         target.value = target.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
     }
 
+    // 언어 유형
+    const getLanguageType = (str) => {
+        let char_code = str.charCodeAt(0);
+        let lang_type = '';
+        if ( str ){
+            if( char_code >= 123 ){
+                lang_type += 'KOR';
+            }
+            else if( char_code > 64 && char_code < 123 ){
+                lang_type += 'ENG';
+            }
+            else {
+                lang_type += 'ETC';
+            }
+            return lang_type;
+        }
+    }
+
     // 숫자 길이 조절
     const numLeng = (el, maxlength) => {
         if(el.value.length > maxlength)  {
@@ -37,7 +48,7 @@
     // 유효한 폼 ON/OFF
     const isVisibleForm = (form, value) => {
         if(value != 'Y'){
-            $("[data-form='"+form+"']").remove();
+            $("[data-form='"+form+"']").hide();
         }
     }
 
@@ -47,7 +58,8 @@
         let elValue = el.value;
         let elValueSize = elValue.length;
         let elName;
-        if(type != 'sex'){
+
+        if(type != 'sex' && type != 'comm'){
             elName = el.previousElementSibling.innerText;
         }
         let checNums = /^[0-9]$/;
@@ -66,9 +78,13 @@
         else {
             switch(type){
                 case 'name' :
-                    if (elValueSize < 2 || elValueSize > 20 ){
+                    if (elValueSize < 2 | elValueSize > 20 ){
                         isReqForm(el, 'null');
                         rejectValidate(el, elName+"은(는) 최소 2자에서 20자 이하여야 합니다.");
+                    }
+                    else if(getLanguageType(elValue) == 'ETC'){
+                        isReqForm(el, 'null');
+                        rejectValidate(el, "한글 또는 영문자만 입력 가능합니다.");
                     }
                     else {
                         el.nextElementSibling.innerHTML = '';
@@ -78,7 +94,7 @@
                     }
                     break;
                 case 'tel' :
-                    if (elValueSize > 13 || elValueSize < 9 ){
+                    if (elValueSize < 13){
                         isReqForm(el, 'null');
                         rejectValidate(el, elName+" 길이를 확인해 주세요.");
                     }
@@ -135,11 +151,11 @@
                     }
                     break;
                 case 'comm' :
-                    if (evValueSize <= 0){
+                    if (elValueSize <= 0){
                         isReqForm(el, 'null');
                     }
                     else {
-                        el.nextElementSibling.innerHTML = '';
+                        //el.nextElementSibling.innerHTML = '';
                         if( elDataset == 'required' ){
                             isReqForm(el, 'fill');
                         }
@@ -181,6 +197,36 @@
         return false;
     }
 
+    // Alert 처리
+    const setAlert = (booltype, action, msg) => {
+        let alertIcon = '';
+        if(booltype == 'good'){
+            alertIcon = 'success';
+        }
+        else {
+            alertIcon = 'error';
+        }
+
+        Swal.fire({
+            position: 'center',
+            icon: alertIcon,
+            title: msg,
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+        switch(action){
+            case 'reload' :
+                setTimeout(() => location.reload(), 1600);
+            break;
+            case 'goback' :
+                setTimeout(() => history.length>1?window.history.back():window.close() , 1600);
+            break;
+            default :
+                return false;
+        }
+    }
+
     // 등록 처리
     const submitEvent = () => {
 
@@ -192,69 +238,29 @@
         let evFrm = $('#landing').serialize();
 
         $.ajax({
-            url: "<?php echo BASE_URL.'/ajax/ajax.submit.php'; ?>",
+            url: "https://mprclients.mprkorea.com/event/api/apicall.php",
             type : "POST",
             dataType : "JSON",
-            data : evFrm,
-        }).done(function(r){
-            if(r == 'OK'){
-                // alert('성공');
-                Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: '신청 완료!',
-                showConfirmButton: false,
-                timer: 2000
-                });
-                setTimeout(() => location.reload(), 2100);
-
-                var type = "<?php echo $DB->hexAesEncrypt('INSERT_DATA'); ?>";
-                //ConnectM 데이터 입력
-                /* $.ajax({
-                    url: "https://mprclients.mprkorea.com/event/api/apicall.php",
-                    type : "POST",
-                    dataType : "JSON",
-                    data : {
-                    type : type,
-                    key : "<?php echo $res['ev_key']; ?>", //API KEY  
-                    cust_nm : "<?php echo $res['ev_name']; ?>", // 접수자 이름 (필수)
-                    cust_hp : "<?php echo $res['ev_tel']; ?>", // 접수자연락처 (필수)
-                    etc : { "cust_sex" : "<?php echo $res['ev_sex']; ?>", 
-                            "cust_age" : "<?php echo $res['ev_age']; ?>",
-                            "cust_birth" : "<?php echo $res['ev_birthday']; ?>", 
-                            "rec_person" : "<?php echo $res['ev_rec_person']; ?>", 
-                            "cust_counsel_time" : "<?php echo $res['ev_counsel_time']; ?>",  
-                            "cust_comment" : "<?php echo $res['ev_comment']; ?>"
-                           } //기타추가항목
-                    }
-                }).done(function(rs){	
-                    console.log($.trim(rs.result));
-                    if($.trim(rs.result)){                        
-                        alert(rs.message);                         
-                        $('#fastAjax')[0].reset();
-                    }
-                }).fail(function(rs){
-                    alert(rs.message);
-                    return false;
-                });
- */
+            data : {
+            key : $('#br_key').val(), /* API KEY */  
+            cust_nm : $('#ev_name').val(), /* 접수자 이름 (필수) */
+            cust_hp : $('#ev_tel').val(), /* 접수자연락처 (필수) */
+            etc : { "counsel" : $('#ev_comment').val() , "cust_age" : $('#ev_age').val() , 
+                    "cust_time" : $('#ev_counsel_time').val(), "birthday" : $('#ev_birthday').val(), 
+                    "gender" : $('input[name="ev_sex"]:checked').val(), "referral" : $('#ev_rec_person').val()
+                } /* 기타추가항목 */
+            }
+        }).done(function(rs){	
+            if($.trim(rs.result)){
+                setAlert('good', 'reload', '신청 완료!'); 
             }
             else {
-                Swal.fire({
-                position: 'center',
-                icon: 'error',
-                title: '모종의 이유로 신청되지 못했습니다.',
-                showConfirmButton: false,
-                timer: 2000
-                });
+                setAlert('bad', '', '신청에 실패하였습니다.');
             }
-
-        }).fail(function(error){
-            console.log(error);
+        }).fail(function(rs){
+            alert(rs.message); 
             return false;
-        });  
-
-        return false;
+        });            
 
     }
 
@@ -274,17 +280,44 @@
             let pv = r.result;
 
             if(!pv) {
-                alert('페이지를 불러올 수 없습니다.');
-                return false;
+                setAlert('bad', 'goback', '불러올 페이지가 없습니다.');
             }
             else {
 
                 let type = pv.ev_type;
                 let title = pv.ev_subject;
                 let isAlways = pv.ev_always;
+                let evStat = pv.ev_stat;
                 let sdate = dateFormatter(pv.ev_start);
                 let edate = dateFormatter(pv.ev_end);
                 let isDel = pv.del_yn;
+
+                // 삭제 이벤트 처리
+                if(isDel == 'Y'){
+                    setAlert('bad', 'goback', '존재하지 않는 이벤트입니다.');
+                }
+
+                // 상시 진행이 아닌 '진행 예정' 또는 '종료' 이벤트 처리
+                let ev_dates = '';
+                if(isAlways != 'Y'){
+                    ev_dates = sdate + ' ~ ' + edate + '까지';
+                    if(evStat == 'W'){
+                        // 진헹 예정 이벤트 처리
+                        $('.form-row input, .form-row select, .form-row textarea').attr('disabled', true);
+                        $('.event-dates').css('color', 'rgba(0, 0, 0, .1)');
+                    }
+                    else if(evStat == 'N'){
+                        // 종료 이벤트 처리
+                        setAlert('bad', 'goback', '이미 종료된 이벤트 입니다.');
+                    }
+                }
+                else {
+                    ev_dates = '상시진행되는 이벤트 입니다.';
+                }
+
+                $('.event-dates').text(ev_dates);
+
+                // 기본형 폼 설정
                 if(type == 'F'){
 
                     // content
@@ -292,6 +325,16 @@
                     let mtop = removal(pv.ev_top_content_mo);
                     let pbtm = removal(pv.ev_bottom_content_pc);
                     let mbtm = removal(pv.ev_bottom_content_mo);
+
+                    // setUsingFormElements
+                    let arrUsingFrm = [pv.ev_name_yn, pv.ev_tel_yn, pv.ev_sex_yn, pv.ev_age_yn, pv.ev_birthday_yn, pv.ev_rec_person_yn, pv.ev_counsel_time_yn, pv.ev_comment_yn];
+                    for(let f = 0 ; f < arrUsingFrm.length ; f++){
+
+                        let frmName = $('.form-row').eq(f).data('form');
+                        let frmVal = arrUsingFrm[f];
+
+                        isVisibleForm(frmName, frmVal);
+                    }
 
                     // setRequireFormElements
                     let arrReqFrm = [pv.ev_name_req, pv.ev_tel_req, pv.ev_sex_req, pv.ev_age_req, pv.ev_birthday_req, pv.ev_rec_person_req, pv.ev_counsel_time_req, pv.ev_comment_req];
@@ -303,16 +346,6 @@
                             $('.form-row').eq(f).attr('data-stat', false);
                             $('.form-row').eq(f).children('label').append(strReq);
                         }
-                    }
-
-                    // setUsingFormElements
-                    let arrUsingFrm = [pv.ev_name_yn, pv.ev_tel_yn, pv.ev_sex_yn, pv.ev_age_yn, pv.ev_birthday_yn, pv.ev_rec_person_yn, pv.ev_counsel_time_yn, pv.ev_comment_yn];
-                    for(let f = 0 ; f < arrUsingFrm.length ; f++){
-
-                        let frmName = $('.form-row').eq(f).data('form');
-                        let frmVal = arrUsingFrm[f];
-
-                        isVisibleForm(frmName, frmVal);
                     }
 
                     // SetContentElements
@@ -328,36 +361,42 @@
                     <?php } ?>
                     }
                     else {
-                        if(ptop){
-                            topCont.innerHTML = ptop;
+                        if(ptop && mtop){
+                            <?php if($isMobile){ ?>
+                                topCont.innerHTML = mtop;
+                            <?php } else { ?>
+                                topCont.innerHTML = ptop;
+                            <?php } ?>
                         }
-                        if(pbtm){
-                            btmCont.innerHTML = pbtm;
+                        else {
+                            if(ptop){
+                                topCont.innerHTML = ptop;
+                            }
+                            else {
+                                topCont.innerHTML = mtop;
+                            }
                         }
-                        if(mtop){
-                            topCont.innerHTML = mtop;
+
+                        if(pbtm && mbtm){
+                            <?php if($isMobile){ ?>
+                                btmCont.innerHTML = mbtm;
+                            <?php } else { ?>
+                                btmCont.innerHTML = pbtm;
+                            <?php } ?>
                         }
-                        if(mbtm){
-                            btmCont.innerHTML = mbtm;
+                        else {
+                            if(ptop){
+                                btmCont.innerHTML = pbtm;
+                            }
+                            else {
+                                btmCont.innerHTML = mbtm;
+                            }
                         }
                     }
                 }
                 else if(type == 'M'){
-
                     let cont = pv.ev_content;
-
                 }
-
-                // SetEventDates
-                let ev_dates = '';
-                if(isAlways != 'Y'){
-                    ev_dates = sdate + ' ~ ' + edate + '까지';
-                }
-                else {
-                    ev_dates = '상시진행되는 이벤트 입니다.';
-                }
-
-                $('.event-dates').text(ev_dates);
 
                 // SetTitleAttribute
                 document.querySelector('title').innerText = title;

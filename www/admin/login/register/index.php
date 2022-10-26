@@ -1,112 +1,126 @@
 <?php
-    include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.php";
+    include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.sub.php";
 ?>
-<body>
-<div class="content-wrapper">
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>회원등록</h1>
-                </div>
+<script src="https://unpkg.com/@popperjs/core@2"></script><!-- tippy 사용 위찬 연결-->
+<script src="https://unpkg.com/tippy.js@6"></script><!-- tippy 사용 위찬 연결-->
+<body class="hold-transition register-page">
+<div class="register-box m-auto">
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <a href="../../index2.html" class="h1"><b>회원가입</b></a>
+    </div>
+    <div class="card-body">
+      <p class="login-box-msg">회원가입을 진행합니다.</p>
+
+      <form id="member_form" name = "member_form" action="/admin/login/register/insert.php" method="post">
+        <div class="input-group mb-3 d-flex">
+          <input type="text" class="form-control" placeholder="ID" id="id" name="id" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fa fa-id-badge"></span>
             </div>
+            <span style="color:#ff0000">*</span>
+          </div>
+          <input type="button" class="btn btn-sm btn-primary btn-block" id="chkbtn" value = "중복여부" onclick="checkUserId_tmp(member_form.id.value)">
+          
         </div>
-    </section>
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="card card-primary">
-                                <form id="member_form" name = "member_form" action="/admin/member/insert.php" method="post">
-                                    <div class="card-body">
-                                      <div class="form-group">
-                                        <label for="inputid">아이디*</label>
-                                        <input type="text" class="form-control" id="id" name="id" placeholder="ID" autofocus required/>
-                                        <input type="button" class="btn btn-sm btn-primary" id="chkbtn" value = "중복여부" onclick="checkUserId_tmp(member_form.id.value)">
-                                      </div>
-
-                                      <div class="form-group">
-                                        <label for="inputpwd">비밀번호*</label>
-                                        <input type="password" class="form-control" placeholder="Password" id="pwd" name="pwd" onblur="checkPassword()" disabled required>
-                                      </div>
-                                      <p id="p_pwd" style="color:#ff0000"></p>
-
-                                      <div class="form-group">
-                                        <label for="inputpwd">비밀번호 확인*</label>
-                                        <input type="password" class="form-control" placeholder="Retype password" id="chkpwd" name="chkPwd" onblur="checkPassword()" disabled required>
-                                      </div>
-                                      <p id="p_chkpwd" style="color:#ff0000"></p>
-
-                                      <div class="form-group">
-                                        <label for="inputname">이름*</label>
-                                        <input type="text" class="form-control" placeholder="NAME" id="name" name="name" onblur="checkName(this.value)" disabled required>
-                                      </div>
-                                      <p id="p_name" style="color:#ff0000"></p>
-
-                                      <div class="form-group">
-                                        <label for="inputnick">닉네임</label>
-                                        <input type="text" class="form-control" placeholder="NICKNAME" id="nickName" name="nickName"  onblur="checkNick(this.value)"disabled>
-                                      </div>
-                                      <p id="p_nick" style="color:#ff0000"></p>
-
-                                      <div class="form-group">
-                                        <label for="inputphone">연락처(전화번호)*</label>
-                                        <input type="tel" class="form-control" placeholder="PhoneNumber" id="phoneNum" name="phoneNum" oninput="autoHyphen2(this)" maxlength="13" onblur="checkPhone(this.value)" disabled required>
-                                      </div>
-                                      <p id="p_phone" style="color:#ff0000"></p>
-
-                                      <div class="form-group">
-                                        <label for="inputetc">기타 연락처</label>
-                                        <input type="tel" class="form-control" placeholder="기타연락처" id="etcNum" name="etcNum" oninput="autoHyphen2(this)" maxlength="13" onblur="checkEtc(this.value)" disabled>
-                                      </div>
-                                      <p id="p_etc" style="color:#ff0000"></p>
-
-
-                                      <div class="form-group">
-                                        <label for="inputemail">이메일*</label>
-                                        <input type="email" class="form-control" placeholder="Email" id="email" name="email" onblur="checkemail(this.value)" disabled required>
-                                      </div>
-                                      <p id="p_email" style="color:#ff0000"></p>
-
-                                      <div class="form-group">
-                                      <label><input type="checkbox" id="level" name="level" onclick="doOpenCheck(this)" value="100">&nbsp일반고객&nbsp</label>
-                                        <label><input type="checkbox" id="level" name="level" onclick="doOpenCheck(this)" value="200">&nbsp관리자</label>
-                                      </div>
-
-                                      <div class="form-group">
-                                      <label>승인여부 &nbsp&nbsp</label>
-                                        <select id="apprve" name="apprve" size="1">
-                                          <option value="Y">승인</option>
-                                          <option value="N">비승인</option>
-                                        </select>
-                                      </div>
-                                    </div>
-
-                                    <div class="card-footer">
-                                      <button type="button" class="btn btn-primary" onclick="checkAll()" id="btn1">회원등록</button>
-                                      <a href="/admin/member/" class="btn btn-default" style="margin-right:5px;">취소</a>
-                                    </div>
-                                    </div>
-                                  </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Password" id="pwd" name="pwd" onblur="checkPassword()" disabled required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
             </div>
+            <span style="color:#ff0000">*</span>
+          </div>
         </div>
-    </section>
+        <p id="p_pwd" style="color:#ff0000"></p>
+
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Retype password" id="chkpwd" name="chkPwd" onblur="checkPassword()" disabled required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+            <span style="color:#ff0000">*</span>
+          </div>
+        </div>
+        <p id="p_chkpwd" style="color:#ff0000"></p>
+
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="NAME" id="name" name="name" onblur="checkName(this.value)" disabled required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+            <span style="color:#ff0000">*</span>
+          </div>
+        </div>
+        <p id="p_name" style="color:#ff0000"></p>
+
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="NICKNAME" id="nickName" name="nickName"  onblur="checkNick(this.value)"disabled>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+        <p id="p_nick" style="color:#ff0000"></p>
+
+        <div class="input-group mb-3">
+          <input type="tel" class="form-control" placeholder="PhoneNumber" id="phoneNum" name="phoneNum" oninput="autoHyphen2(this)" maxlength="13"  onblur="checkPhone(this.value)" disabled required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fa fa-mobile"></span>
+            </div>
+            <span style="color:#ff0000">*</span>
+          </div>
+        </div>
+        <p id="p_phone" style="color:#ff0000"></p>
+
+        <div class="input-group mb-3">
+          <input type="tel" class="form-control" placeholder="기타연락처" id="etcNum" name="etcNum" oninput="autoHyphen2(this)" maxlength="13" onblur="checkEtc(this.value)" disabled>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fa fa-phone"></span>
+            </div>
+          </div>
+        </div>
+        <p id="p_etc" style="color:#ff0000"></p>
+
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" placeholder="Email" id="email" name="email" onblur="checkemail(this.value)" disabled required>
+          <input type="hidden" class="level" value="100">
+          <input type="hidden" class="approve" value="N">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+            <span style="color:#ff0000">*</span>
+          </div>
+        </div>
+        <p id="p_email" style="color:#ff0000"></p>
+
+          <div class="col-12 d-flex justify-content-between">
+            <input type="button" class="btn btn-primary col-5" onclick="checkAll()" id="btn1" value="회원가입" disabled> 
+            <input type="button" class="btn btn-primary col-5" onclick="location.replace('/admin/login');" id="btn2" value="취소">
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
+
+
 <script>
     const autoHyphen2 = (target) => {
         target.value = target.value
         .replace(/[^0-9]/g, '')
         .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
         }
+    var checkText = "";
     function checkAll(){
         if(!checkUserId(member_form.id.value))
         {
@@ -136,23 +150,19 @@
         {
             return false;
         }
-        if(!checklevel(member_form.level.value))
-        {
-          return false;
-        }
         var myform = document.getElementById("member_form");
         document.getElementById("btn1").addEventListener("click",function(){
             myform.submit();
         });
-
-        return true;
+        // $('#btn1').prop('disabled',false);
+        // return true;
     }
 
     function checkExist(value,data){
         if(value == "")
         {
-            alert(data +" 입력하시오");
-            return false;
+          alert(data+"입력해주세요");
+          return false;
         }
         return true;
     }
@@ -170,16 +180,17 @@
         var id_c = /^[A-Za-z]{1}[a-z0-9]{3,12}$/;
         if(!id_c.test(id))
         {
-            alert("영문 소문자, 숫자 4~12로 입력하세요");
+            alert("아이디를 영문 소문자, 숫자 4~12로 입력하세요");
             member_form.id.value="";
             member_form.id.focus();
             return false;
         }
+        
         return true;
     }
 
-    function checkPassword(id, pw1, pw2){
-      var pw = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
+    function checkPassword(){
+        var pw = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
         var pw1 = member_form.pwd.value;
         var pw2 = member_form.chkPwd.value;
         if(pw1.length==0)
@@ -192,7 +203,7 @@
         $("#p_pwd").html("");
         if(!pw.test(pw1))
         {
-          checkText="비밀번호를 영문 대소문자, 숫자, 특수문자를 포함한 8~20자리 입력하세요";
+          checkText="비밀번호를 영문 대소문자, 숫자 8~20자리 입력하세요";
           $("#p_pwd").html(checkText);
           setTimeout(function(){
             member_form.pwd.value.value="";
@@ -357,25 +368,7 @@
         return true;
     }
 
-    function checklevel(level)
-    {
-      var cnt = $("input:checkbox[name='level']:checked").length;
-      if(cnt<1)
-      {
-        alert("고객 유형을 선택해주세요");
-        return false;
-      }
-      return true;
-    }
-    function doOpenCheck(chk){
-        var obj = document.getElementsByName("level");
-        for(var i=0; i<obj.length; i++){
-            if(obj[i] != chk){
-                obj[i].checked = false;
-            }
-        }
-    }
-   function checkUserId_tmp(id){
+    function checkUserId_tmp(id){
         if(!checkExist(id,"아이디"))
             return false;
 
@@ -406,6 +399,37 @@
             }); 
         return true;
     }
+    // function submit(){
+    //   var myform = document.getElementById("member_form");
+    //   myform.submit();
+    //   return true;
+    // }
+    // function gohome()
+    // {
+    //   location.replace("/admin/login");
+    // }
+
+    // $(document).ready(function(){
+    //     $("#chkbtn").click(function(){
+    //         $.ajax({
+    //             url:"/admin/login/register/check.php",
+    //             type :"post",
+    //             data:{id:$("#id").val()},
+    //             dataType :'text',
+    //             success: function(data){
+    //                 if(data==0)
+    //                 {
+    //                   alert("사용가능한 아이디입니다.")
+    //                   $('input').prop('readonly',false);
+    //                 }
+    //                 else
+    //                 {
+    //                   alert("아이디가 중복되었습니다.");
+    //                 }
+    //             },
+    //         }); 
+    //     });
+    // });
 </script>
 
 <?php
