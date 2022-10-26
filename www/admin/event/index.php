@@ -2,20 +2,24 @@
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.php";
 
     $strSearch = trim($_GET['search']);
-    $keyword = trim($_GET['input_search']);
+    
 
     $max_date = $DB -> row("SELECT MAX(ev_end) AS max_date FROM mpr_event");
     $min_date = $DB -> row("SELECT MIN(ev_start) AS min_date FROM mpr_event");
 
-    if(trim($_GET['reservation'])){
-        $datepicker = $_GET['reservation'];
-        $startDate = explode(" ", $datepicker)[0];
-        $endDate = explode(" ", $datepicker)[2];
-        
-    }else{
+    /* 검색 정보 */
+    if(count($_POST)>0){    // 검색했을 때
+        $regDateVal = $_POST['regDateInput'];
+        $startDate = explode(" ", $_POST['reservation'])[0];
+        $endDate = explode(" ", $_POST['reservation'])[2];
+        $keyword = $_POST['input_search'];
+        $strSearch = $_POST['search'];
+    }else{                  // 검색 안했을 때
+        $regDateVal = "ORDER BY e.idx DESC";
         $startDate = $min_date['min_date'];
         $endDate = $max_date['max_date'];
     }
+    $oderBy = $regDateVal;
 
     /* stat확인 */
     if(!trim($_GET['stat'])){
@@ -55,10 +59,18 @@
     }
 ?>
 <style>
-    .btn:first-child:hover{
+    .input-group-append > .btn:first-child:hover{
         background-color : #dadfe4;
         border-color : #ced4da;
     }
+    .btn:first-child:hover{
+        background-color : white;
+        border-color : white;
+    }
+    .btn:first-child:hover{
+        border-color : white;
+    }
+
 </style>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -85,6 +97,27 @@
                 drops: "auto"
         }, function (start, end, label){
             console.log(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+        });
+
+        $("#regDateBtn").on("click", function(){
+            var className = $("#regDateImg").attr("class");
+            console.log(className);
+
+            if(className.split(" ")[1] == "fa-caret-down"){
+
+                $("#regDateImg").removeClass("fa-caret-down");
+                $("#regDateImg").addClass("fa-caret-up");
+                $("#regDateInput").val("ORDER BY e.reg_date ASC");
+                $("form").submit();
+
+            }else if(className.split(" ")[1] == "fa-caret-up"){
+
+                $("#regDateImg").removeClass("fa-caret-up");
+                $("#regDateImg").addClass("fa-caret-down");
+                $("#regDateInput").val("ORDER BY e.reg_date DESC");
+                $("form").submit();
+            
+            }
         });
         
     });
@@ -141,6 +174,14 @@
             }
             $(this).css("color", "#BDBDBD");
         });
+        var reg = $("#regDateInput").val();
+        if(reg == "ORDER BY e.reg_date DESC" || reg == "ORDER BY e.idx DESC"){
+            $("#regDateImg").removeClass("fa-caret-up");
+            $("#regDateImg").addClass("fa-caret-down");
+        }else{
+            $("#regDateImg").removeClass("fa-caret-down");
+            $("#regDateImg").addClass("fa-caret-up");
+        }
     });
 
 </script>
@@ -176,7 +217,7 @@
                                                             <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=Y" id="st_y" style="color:#BDBDBD;">진행중</a></li>
                                                             <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=N" id="st_n" style="color:#BDBDBD;">종료</a></li>
                                                         </ul>
-                                                        <form class="form-inline" action="index.php?stat=<?php echo $stat?>">
+                                                        <form class="form-inline" action="<?=$_SERVER['PHP_SELF']?>" method="POST">
                                                             <div class="form-group" >
                                                                 <div class="input-group input-group-sm">
                                                                     <div class="input-group-prepend" style="height:30px;">
@@ -187,7 +228,7 @@
                                                                     
                                                                     <input type="text" class="form-control float-right" id="reservation" name="reservation"style="height:30px; width:200px; text-align : center;">
                                                                     <div class="input-group-append" style="height:30px; margin-right:5px;">
-                                                                        <button class="btn btn-navbar date_search" type="submit">
+                                                                        <button class="btn btn-navbar date_search submitBtn" type="submit">
                                                                             <i class="fas fa-search"></i>
                                                                         </button>
                                                                     </div>
@@ -205,7 +246,7 @@
                                                             <div class="input-group input-group-sm" >
                                                                 <input class="form-control form-control-navbar" type="text" value="<?php echo trim($keyword);?>" placeholder="검색어를 입력하세요." aria-label="Search" name="input_search" autocomplete='off'>
                                                                 <div class="input-group-append">
-                                                                <button class="btn btn-navbar" type="submit">
+                                                                <button class="btn btn-navbar submitBtn" type="submit">
                                                                     <i class="fas fa-search"></i>
                                                                 </button>
                                                                 <button class="btn btn-navbar" type="button" data-widget="navbar-search">
@@ -213,6 +254,7 @@
                                                                 </button>
                                                                 </div>
                                                             </div>
+                                                            <input type="hidden" id="regDateInput" name="regDateInput" value="<?php echo $regDateVal ?>">
                                                         </form>
                                                     </div>
                                                 </th>
@@ -223,14 +265,13 @@
                                                 <th class="sorting sorting_asc" aria-controls="event-list">이벤트 URL</th>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">업체</th>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">이벤트 기간</th>
-                                                <th class="sorting sorting_asc" aria-controls="event-list">등록일</th>
+                                                <th class="sorting sorting_asc" aria-controls="event-list">등록일 <button type="button" class="btn submitBtn" style="padding:0px;" id="regDateBtn"><i class="fa-solid fa-caret-down" id="regDateImg"></i></button></th>
                                                 <th class="sorting sorting_asc" aria-controls="event-list">상태</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
                                                 $arryWhere = array();
-
 
                                                 $lv_SQL = "SELECT user_lv FROM mpr_member WHERE user_id = '{$_SESSION['userId']}'";
                                                 $user_lv = $DB -> row($lv_SQL);
@@ -240,12 +281,12 @@
                                                 }
 
                                                 // 검색했을때 테이블 가져오기
-                                                if ( trim($_GET['search']) && trim($_GET['input_search']) ) {
+                                                if ( trim($_POST['search']) && trim($_POST['input_search']) ) {
                                                     $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
-                                                    if( trim($_GET['stat']) != "total"){
-                                                        $arryWhere[] = "ev_stat = '{$_GET['stat']}' and {$_GET['search']} like '%{$_GET['input_search']}%' ";
+                                                    if( trim($_POST['stat']) != "total"){
+                                                        $arryWhere[] = "ev_stat = '{$_POST['stat']}' and {$_POST['search']} like '%{$_POST['input_search']}%' ";
                                                     }else{
-                                                        $arryWhere[] = "{$_GET['search']} like '%{$_GET['input_search']}%' ";
+                                                        $arryWhere[] = "{$_POST['search']} like '%{$_POST['input_search']}%' ";
                                                     }
                                                     $strWhere.= implode(' and ', $arryWhere);//---- 배열로 만든다. explode('@', '문자열@문자열@문자열')
                                                     
@@ -302,9 +343,9 @@
                                                         e.idx, e.ev_subject, e.ev_url, e.ev_start, e.ev_end, e.ev_stat, e.ev_always, e.reg_date , br_name
                                                     FROM 
                                                         mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE {$strWhere}
-                                                    ORDER BY idx DESC
+                                                    {$oderBy}
                                                     LIMIT {$start_num}, {$list}";
-                                                    
+
                                                     $res = $DB -> query($S_SQL);
                                                     foreach($res as $row){
                                             ?>
@@ -430,6 +471,7 @@
             }
         ?>
     });
+
 </script>
 
 <?php
