@@ -256,6 +256,7 @@
                     $('#ev_key').val("<?php echo  $API ?>");
                     $("input[name='ev_key']").attr("readonly",true);$(".vendor").empty();
                     $(".vendor").append("<?php echo $options;?>");
+                    $("#ev_subject").attr('disabled', false);
                     $("#reservation").attr('disabled', false);
                     $("#reservation2").attr('disabled', false);            
                 }
@@ -300,9 +301,9 @@
                         }else{
                             var evCode_cl = rs.event_cd;
                             <?php 
-                                $codeSQL = "SELECT ev_code FROM mpr_event";
+                                $codeSQL = "SELECT ev_code FROM mpr_event WHERE del_yn = 'N'";
                                 $res = $DB -> query($codeSQL);
-                                $cnt = $DB->single("SELECT count(*) FROM mpr_event");
+                                $cnt = $DB->single("SELECT count(*) FROM mpr_event WHERE del_yn = 'N'");
                                 if($cnt > 0){
                                     foreach($res as $row){
                             ?>          
@@ -311,6 +312,9 @@
                                         if(evCode_cl == '<?php echo $row['ev_code']?>'){
                                             alert("이미 등록된 이벤트입니다.");
                                             $('#ev_key').val("");
+                                            $('#ev_subject').val("");
+                                            $('#br_name').val("");
+                                            $('#br_code').val("");
                                         }else{
                                             $('#br_code').val($.trim(rs.br_code));
                                             $('#br_name').val($.trim(rs.cust_nm));
@@ -884,7 +888,7 @@
 
 <script>
 
-    var subject_regex = /^[a-zA-Z가-힣0-9 ]+$/;
+    var subject_regex = /^[a-zA-Z가-힣0-9.`~!@#$%^&*|\\\'\";:\/? ]+$/;
 
     <?php if(!$_GET['idx']){?>
     /* 이벤트 등록 버튼 */
@@ -928,7 +932,7 @@
 
         var evSubject = $("#ev_subject").val();
         if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
-            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글, 영문, 숫자로만 입력가능합니다.");
+            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글, 영문, 숫자, 특수문자로만 입력가능합니다.");
             alertMsg();
             isok=false;
         }
@@ -976,9 +980,9 @@
                     var brName = $("#brand_name").val();
                     var evCode = $("#ev_code").val();
                     
-                    if($('input[name=client_sync]:checked').val()=='N'){
+                    /* if($('input[name=client_sync]:checked').val()=='N'){
                        callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );     
-                    }        
+                    }  */
                     alert("등록되었습니다.");
                     location.href= "/admin/event/index.php";
                 } else {
