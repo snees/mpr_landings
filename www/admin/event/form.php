@@ -888,7 +888,8 @@
 
 <script>
 
-    var subject_regex = /^[a-zA-Z가-힣0-9.`~!@#$%^&*|\\\'\";:\/? ]+$/;
+    var subject_regex = /^[a-zA-Z가-힣0-9\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\" ]+$/;
+    var regExp = /^[a-zA-Z가-힣0-9 ]+$/;
 
     <?php if(!$_GET['idx']){?>
     /* 이벤트 등록 버튼 */
@@ -932,7 +933,12 @@
 
         var evSubject = $("#ev_subject").val();
         if( !(subject_regex.test(evSubject) && evSubject.length >= 3)){
-            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글, 영문, 숫자, 특수문자로만 입력가능합니다.");
+            $("#alert_msg").text("이벤트 제목은 3자 이상의 한글,영문,숫자,특수문자로만 입력가능합니다.");
+            alertMsg();
+            isok=false;
+        }
+        if(!regExp.test(evSubject)){
+            $("#alert_msg").text("이벤트 제목은 한글이나 영문 또는 숫자가 반드시 포함되어야 합니다.");
             alertMsg();
             isok=false;
         }
