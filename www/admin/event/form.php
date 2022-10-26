@@ -980,9 +980,9 @@
                     var brName = $("#brand_name").val();
                     var evCode = $("#ev_code").val();
                     
-                    /* if($('input[name=client_sync]:checked').val()=='N'){
+                    if($('input[name=client_sync]:checked').val()=='N'){
                        callApi("insert", evKey, brName, evSubject, evCode, start_Date, end_Date, ev_always_Check, brCode, evURL );     
-                    }  */
+                    } 
                     alert("등록되었습니다.");
                     location.href= "/admin/event/index.php";
                 } else {

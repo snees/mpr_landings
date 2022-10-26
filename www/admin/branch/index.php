@@ -1,5 +1,13 @@
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.php";
+
+    /* 검색 정보 */
+    if(count($_POST)>0){    // 검색했을 때
+        $keyword = $_POST['input_search'];                      // 검색어
+        $list = $_POST['lines'];                                // 페이지당 조회 건수
+    }else{                  // 검색 안했을 때
+        $list = 10;
+    }
 ?>
 
 <div class="content-wrapper">
@@ -29,24 +37,24 @@
                                             <tr>
                                                 <th colspan="3" style="padding:0px;">
                                                     <div class="navbar navbar-expand navbar-white navbar-light" id="navbar-search2" style="justify-content: right;">
-                                                        <form class="form-inline" action="index.php?mode=search">
+                                                        <form class="form-inline" action="<?=$_SERVER['PHP_SELF']?>" method="POST">
                                                             <div class="input-group input-group-sm" >
-                                                                <input class="form-control form-control-navbar" type="search" placeholder="업체명을 입력하세요." aria-label="Search" name="input_search" autocomplete='off'>
+                                                                <input class="form-control form-control-navbar" type="text" placeholder="업체명을 입력하세요." value="<?php echo $keyword?>" id="inSearch" name="input_search" autocomplete='off'>
                                                                 <div class="input-group-append">
                                                                 <button class="btn btn-navbar" type="submit">
                                                                     <i class="fas fa-search"></i>
                                                                 </button>
-                                                                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                                                <button class="btn btn-navbar" type="button" id="searchCancel">
                                                                     <i class="fas fa-times"></i>
                                                                 </button>
                                                                 </div>
                                                             </div>
+                                                            <input type="hidden" id="lines" name="lines" value="<?php echo $list ?>">
+                                                            <input type="hidden" value="1" name="pageMove" id="pageMove">
                                                         </form>
                                                     </div>
                                                 </th>
                                             </tr>
-                                            
-                                            
                                             <tr>
                                                 <th class="sorting sorting_asc" aria-controls="client-list">번호</th>
                                                 <th class="sorting sorting_asc" aria-controls="client-list">업체(이름/코드)</th>
@@ -61,20 +69,21 @@
 
                                                 $lv_SQL = "SELECT user_lv FROM mpr_member WHERE user_id = '{$_SESSION['userId']}'";
                                                 $user_lv = $DB -> row($lv_SQL);
+
                                                 if( trim($user_lv['user_lv']) == 100 ){
                                                     $strWhere = "del_yn = 'N' AND user_id = '{$_SESSION['userId']}'";
                                                 }else{
                                                     $strWhere = "del_yn = 'N'";
                                                 }
 
-                                                if (trim($_GET['input_search']) ) {
+                                                if (trim($_POST['input_search']) ) {
                                                     $strWhere = "del_yn = 'N' AND ";
-                                                    $arryWhere[] = "br_name like '%{$_GET['input_search']}%' ";
+                                                    $arryWhere[] = "br_name like '%{$_POST['input_search']}%' ";
                                                     $strWhere.= implode(' and ', $arryWhere);//---- 배열로 만든다. explode('@', '문자열@문자열@문자열')
                                                     $strQueryString.= "&search={$keyword}";
                                                 }
-                                                if(isset($_GET['page'])){
-                                                    $page = $_GET['page'];
+                                                if(isset($_POST['pageMove'])){
+                                                    $page = $_POST['pageMove'];
                                                 } else {
                                                     $page = 1;
                                                 }
@@ -92,16 +101,16 @@
                                                     $list = 5;
                                                     $block_ct = 10;
                     
-                                                    $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
-                                                    $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
-                                                    $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
+                                                    $block_num = ceil($page/$block_ct);                 // 현재 페이지 블록 구하기
+                                                    $block_start = (($block_num - 1) * $block_ct) + 1;  // 블록의 시작번호
+                                                    $block_end = $block_start + $block_ct - 1;          //블록 마지막 번호
                     
                                                     $total_page = ceil($row_num / $list);
                                                     if($block_end > $total_page) {
-                                                        $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
+                                                        $block_end = $total_page;                       //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
                                                     }
-                                                    $total_block = ceil($total_page/$block_ct); //블럭 총 개수
-                                                    $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
+                                                    $total_block = ceil($total_page/$block_ct);         //블럭 총 개수
+                                                    $start_num = ($page-1) * $list;                     //시작번호 (page-1)에서 $list를 곱한다.
                         
                                                     $count = $row_num-$list*($page-1);
                                             ?>
@@ -128,6 +137,14 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="3" style="text-align:right;">
+                                                    <div style="float:left;" id="page_Limit">
+                                                        <label for="pageLimit" style="float:left; margin : 4px 10px 0 0;" >페이지당 조회 건수</label>
+                                                        <select class="form-control select2" name="pageLimit" id="pageLimit" style="width:55px; height:30px; font-size:small; margin-right: 5px;">
+                                                            <option value="10" <?php echo trim($list)=='10'?' selected ':'';?>>10개</option>
+                                                            <option value="20" <?php echo trim($list)=='20'?' selected ':'';?>>20개</option>
+                                                            <option value="30" <?php echo trim($list)=='30'?' selected ':'';?>>30개</option>
+                                                        </select>
+                                                    </div>
                                                     <a class="btn btn-sm btn-primary" href="/admin/branch/form.php?mode=register">신규 등록</a>
                                                 </td>
                                             </tr>
@@ -148,26 +165,26 @@
                                         <?php
                                             if( ($page-1) > 0){
                                                 $prev = $page - 1;
-                                                echo "<li class='paginate_button page-item next'><a href='index.php?page={$prev}' class='page-link'>이전</a></li>";
+                                                echo "<li class='paginate_button page-item next'><button class='page-link' id='prevBtn' value='".$prev."'>이전</button></li>";
                                             }else{
-                                                echo "<li class='paginate_button page-item previous disabled'><a href='#' class='page-link'>이전</a></li>";
+                                                echo "<li class='paginate_button page-item next disabled'><button class='page-link' disabled>이전</button></li>";
                                             }
                                             for($i=$block_start; $i<=$block_end; $i++){ 
-                                                if($total_page !=0){
+                                                if($total_page !=0 ){
                                                     if($page == $i){  
-                                                        echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>$i</a></li>";
+                                                        echo "<li class='paginate_button page-item active'><button class='page-link' disabled>".$i."</button></li>";
                                                     }else{
-                                                        echo "<li class='paginate_button page-item'><a href='index.php?page={$i}' class='page-link'>$i</a></li>";
+                                                        echo "<li class='paginate_button page-item'><button class='page-link nextPage".$i."' value='".$i."' onclick='nextPage(this.value)'>".$i."</button></li>";
                                                     }
                                                 }else{
-                                                    echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>1</a></li>";
+                                                    echo "<li class='paginate_button page-item active'><button class='page-link'>1</button></li>";
                                                 }
                                             }
                                             if( ($page+1) <= $block_end){
                                                 $next = $page + 1;
-                                                echo "<li class='paginate_button page-item next'><a href='index.php?page={$next}' class='page-link'>다음</a></li>";
+                                                echo "<li class='paginate_button page-item next'><button class='page-link' id='nextBtn' value='".$next."'>다음</button></li>";
                                             }else{
-                                                echo "<li class='paginate_button page-item next disabled'><a href='#' class='page-link'>다음</a></li>";
+                                                echo "<li class='paginate_button page-item next disabled'><button class='page-link' disabled>다음</button></li>";
                                             }
                                         ?>
                                     </ul>
@@ -186,7 +203,14 @@
 <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
 
-    // 업체 정보 페이지 이동
+    /* 페이지당 조회 건수 */
+    $('#pageLimit').change(function(){
+        var lines = $(this).val();
+        $("#lines").val(lines);
+        $("form").submit();
+    });
+
+    /* 업체 정보 페이지 이동 */
     function go(ths){
         var code = $(ths).text();
         console.log(code);
@@ -195,10 +219,26 @@
         location.href = "/admin/branch/form.php?mode=update&code="+code;
     }
 
-    // 검색
-    function search(){
-
+    /* 페이지 */
+    $("#prevBtn").on("click", function(){
+        var pageMove = $("#prevBtn").val();
+        $("#pageMove").val(pageMove);
+        $("form").submit();
+    });
+    $("#nextBtn").on("click", function(){
+        var pageMove = $("#nextBtn").val();
+        $("#pageMove").val(pageMove);
+        $("form").submit();
+    });
+    function nextPage(nextPage){
+        $("#pageMove").val(nextPage);
+        $("form").submit();
     }
+
+    /* 검색 취소 버튼 */
+    $("#searchCancel").on("click", function(){
+        $("#inSearch").val("");
+    });
 </script>
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/tail.php";

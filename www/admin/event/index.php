@@ -214,12 +214,12 @@
                                                             </div>
 
                                                             <div class="input-group input-group-sm" >
-                                                                <input class="form-control form-control-navbar" type="text" value="<?php echo trim($keyword);?>" placeholder="검색어를 입력하세요." aria-label="Search" name="input_search" autocomplete='off'>
+                                                                <input class="form-control form-control-navbar" type="text" value="<?php echo trim($keyword);?>" placeholder="검색어를 입력하세요." id="inSearch" name="input_search" autocomplete='off'>
                                                                 <div class="input-group-append">
                                                                 <button class="btn btn-navbar submitBtn" type="submit">
                                                                     <i class="fas fa-search"></i>
                                                                 </button>
-                                                                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                                                <button class="btn btn-navbar" type="button" id="searchCancel">
                                                                     <i class="fas fa-times"></i>
                                                                 </button>
                                                                 </div>
@@ -227,6 +227,7 @@
                                                             <input type="hidden" id="regDateInput" name="regDateInput" value="<?php echo $regDateVal ?>">
                                                             <input type="hidden" id="lines" name="lines" value="<?php echo $list ?>">
                                                             <input type="hidden" value="<?php echo $stat?>" name="stat" id="stat">
+                                                            <input type="hidden" value="1" name="pageMove" id="pageMove">
                                                         </form>
                                                     </div>
                                                 </th>
@@ -271,10 +272,8 @@
                                                     }
                                                 }
 
-
-                                        
-                                                if(isset($_GET['page'])){
-                                                    $page = $_GET['page'];
+                                                if(isset($_POST['pageMove'])){
+                                                    $page = $_POST['pageMove'];
                                                 } else {
                                                     $page = 1;
                                                 }
@@ -391,26 +390,26 @@
                                         <?php
                                             if( ($page-1) > 0){
                                                 $prev = $page - 1;
-                                                echo "<li class='paginate_button page-item next'><a href='index.php?page={$prev}' class='page-link'>이전</a></li>";
+                                                echo "<li class='paginate_button page-item next'><button class='page-link' id='prevBtn' value='".$prev."'>이전</button></li>";
                                             }else{
-                                                echo "<li class='paginate_button page-item next disabled'><a href='#' class='page-link'>이전</a></li>";
+                                                echo "<li class='paginate_button page-item next disabled'><button class='page-link' disabled>이전</button></li>";
                                             }
                                             for($i=$block_start; $i<=$block_end; $i++){ 
                                                 if($total_page !=0 ){
                                                     if($page == $i){  
-                                                        echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>$i</a></li>";
+                                                        echo "<li class='paginate_button page-item active'><button class='page-link' disabled>".$i."</button></li>";
                                                     }else{
-                                                        echo "<li class='paginate_button page-item'><a href='index.php?page={$i}' class='page-link'>$i</a></li>";
+                                                        echo "<li class='paginate_button page-item'><button class='page-link nextPage".$i."' value='".$i."' onclick='nextPage(this.value)'>".$i."</button></li>";
                                                     }
                                                 }else{
-                                                    echo "<li class='paginate_button page-item active'><a href='#' class='page-link'>1</a></li>";
+                                                    echo "<li class='paginate_button page-item active'><button class='page-link'>1</button></li>";
                                                 }
                                             }
                                             if( ($page+1) <= $block_end){
                                                 $next = $page + 1;
-                                                echo "<li class='paginate_button page-item next'><a href='index.php?page={$next}' class='page-link'>다음</a></li>";
+                                                echo "<li class='paginate_button page-item next'><button class='page-link' id='nextBtn' value='".$next."'>다음</button></li>";
                                             }else{
-                                                echo "<li class='paginate_button page-item next disabled'><a href='#' class='page-link'>다음</a></li>";
+                                                echo "<li class='paginate_button page-item next disabled'><button class='page-link' disabled>다음</button></li>";
                                             }
                                         ?>
                                     </ul>
@@ -447,6 +446,31 @@
     $('#st_n').on("click", function(){
         $("#stat").val("N");
         $("form").submit();
+    });
+
+    $(".applyBtn").on("click", function(){
+        console.log("hi");
+    });
+
+    /* 페이지 */
+    $("#prevBtn").on("click", function(){
+        var pageMove = $("#prevBtn").val();
+        $("#pageMove").val(pageMove);
+        $("form").submit();
+    });
+    $("#nextBtn").on("click", function(){
+        var pageMove = $("#nextBtn").val();
+        $("#pageMove").val(pageMove);
+        $("form").submit();
+    });
+    function nextPage(nextPage){
+        $("#pageMove").val(nextPage);
+        $("form").submit();
+    }
+
+    /* 검색 취소 버튼 */
+    $("#searchCancel").on("click", function(){
+        $("#inSearch").val("");
     });
 </script>
 
