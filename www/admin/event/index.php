@@ -184,10 +184,10 @@
                                                 <th colspan="7" style="padding:0px;">
                                                     <div class="navbar navbar-expand navbar-white navbar-light d-flex justify-content-between" id="navbar-search2" >
                                                         <ul class="nav navbar-nav" style="list-style:none; margin:0px; padding:0 10px;">
-                                                            <li style="float:left; margin-right:5px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_total">전체</button></a></li>
-                                                            <li style="float:left; margin-right:5px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_w">진행 예정</a></li>
-                                                            <li style="float:left; margin-right:5px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_y">진행중</a></li>
-                                                            <li style="float:left; margin-right:5px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_n">종료</a></li>
+                                                            <li style="float:left; margin-right:2px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_total">전체</button></a></li>
+                                                            <li style="float:left; margin-right:2px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_w">진행 예정</a></li>
+                                                            <li style="float:left; margin-right:2px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_y">진행중</a></li>
+                                                            <li style="float:left; margin-right:2px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_n">종료</a></li>
                                                         </ul>
                                                         <form class="form-inline" action="<?=$_SERVER['PHP_SELF']?>" method="POST">
                                                             <div class="form-group" >

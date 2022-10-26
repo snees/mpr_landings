@@ -68,8 +68,6 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="card card-primary" id="register_div">
-                                        <!-- /.card-header -->
-                                        <!-- form start -->
                                         <form method="POST" id="branch-form">
                                             <div class="card-body">
                                                 <!-- 업체 이름 -->
@@ -119,7 +117,6 @@
                                                     <input type="email" class="form-control" name="user_email" id="user_email" value="<?php echo $res['user_email']?>" placeholder="이메일을 입력하세요." autocomplete='off'>
                                                 </div>
                                             </div>
-                                        <!-- /.card-body -->
                                             <div class="card-footer d-flex" style="display:flex; justify-content:right;">
                                                 <a href="/admin/branch/" class="btn btn-default" style="margin-right: 5px;">취소</a>
                                                 <button type="button" class="btn btn-info" name="sign_in_btn" id="sign_in_btn">저장</button>
@@ -130,8 +127,6 @@
                                     </div>
 
                                     <div class="card card-primary" id="ev_stat_a" style="width:30%; display:none;">
-                                        <!-- /.card-header -->
-                                        <!-- form start -->
                                         <form method="POST" id="branch-form">
                                             <div class="card-body">
                                                 <div class="form-group">
@@ -225,10 +220,7 @@
     function address_search() {
         new daum.Postcode({
             oncomplete: function(data) {
-                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
-                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
-                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                
                 var addr = ''; // 주소 변수
                 var extraAddr = ''; // 참고항목 변수
                 
@@ -270,16 +262,14 @@
         }).open();
     }
 </script>
-
-<!-- autoHyphen -->
 <script>
+    
+    /* autoHyphen */
     const autoHyphen = (target) => {
         target.value = target.value.replace(/[^0-9]/g, '').replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
     }
-</script>  
 
-
-<script>
+    /* 모달 */
     function alertMsg(){
         $("#modal-default").modal("show");
         return false;
@@ -288,10 +278,7 @@
         $("#modal-default").modal("hide");
         return false;
     }
-</script>
-
-<script>
-
+    
     /* 정규식 */
     var local_tel = /^((0(2|3[1-3]|4[1-4]|5[1-5]|6[1-4])))-(\d{3,4})-(\d{4})$/;
     var Phone = /^(?:(010-\d{4})|(01[1|6|7|8|9]-\d{3,4}))-(\d{4})$/;

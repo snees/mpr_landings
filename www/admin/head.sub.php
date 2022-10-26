@@ -26,7 +26,6 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/config.php";
     <link rel="stylesheet" href="<?php echo INC_URL; ?>/summernote/summernote-lite.css">
     <!-- ColorPicker CSS -->
     <link rel="stylesheet" href="<?php echo INC_URL; ?>/spectrum/spectrum.css"/>
-
     <!-- TimePicker CSS -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
     <!-- Theme style -->
@@ -42,8 +41,7 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/config.php";
     <script src="<?php echo INC_URL; ?>/summernote/summernote-lite.js"></script>
     <script src="<?php echo INC_URL; ?>/summernote/summernote-ko-KR.js"></script>
     <!-- ColorPicker JS -->
-    <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/src/spectrum.js"></script>
-    <script src="<?php echo INC_URL; ?>/summernote/spectrum.js"></script>
+    <script src="<?php echo INC_URL; ?>/spectrum/spectrum.js"></script>
     <!-- TimePicker JS -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
     <!-- AdminLTE App -->
@@ -52,5 +50,6 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/config.php";
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<!-- High Chart labeling Module -->
 	<script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
