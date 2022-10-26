@@ -1,63 +1,29 @@
 <?php
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.php";
 
-    $strSearch = trim($_GET['search']);
-    
-
     $max_date = $DB -> row("SELECT MAX(ev_end) AS max_date FROM mpr_event");
     $min_date = $DB -> row("SELECT MIN(ev_start) AS min_date FROM mpr_event");
 
     /* 검색 정보 */
     if(count($_POST)>0){    // 검색했을 때
-        $regDateVal = $_POST['regDateInput'];
-        $startDate = explode(" ", $_POST['reservation'])[0];
-        $endDate = explode(" ", $_POST['reservation'])[2];
-        $keyword = $_POST['input_search'];
-        $strSearch = $_POST['search'];
+        $regDateVal = $_POST['regDateInput'];                   // 등록일 정렬
+        $startDate = explode(" ", $_POST['reservation'])[0];    // 검색 시작일
+        $endDate = explode(" ", $_POST['reservation'])[2];      // 검색 종료일
+        $keyword = $_POST['input_search'];                      // 검색어
+        $strSearch = $_POST['search'];                          // 검색 종류
+        $list = $_POST['lines'];                                // 페이지당 조회 건수
+        $stat = $_POST['stat'];                                 // stat
     }else{                  // 검색 안했을 때
         $regDateVal = "ORDER BY e.idx DESC";
         $startDate = $min_date['min_date'];
         $endDate = $max_date['max_date'];
+        $list = 10;
+        $stat = "total";
     }
     $oderBy = $regDateVal;
 
-    /* stat확인 */
-    if(!trim($_GET['stat'])){
-        $stat = "total";
-    }else{
-        $stat = $_GET['stat'];
-    }
-
-    /* 페이징 조회 개수 확인 */
-    if(!trim($_GET['lines']) || trim($_GET['lines']) == 10){
-        $list = 10;
-        $ten = "selected";
-        $twenty = "";
-        $thirty = "";
-    }else if(trim($_GET['lines']) == 20){
-        $list = 20;
-        $ten = "";
-        $twenty = "selected";
-        $thirty = "";
-    }else if(trim($_GET['lines']) == 30){
-        $list = 30;
-        $ten = "";
-        $twenty = "";
-        $thirty = "selected";
-    }
-
-    /* 검색 시 페이징 조회 개수 조절 기능 없앰 */
-    if(trim($_GET['reservation'])){
 ?>
-        <script>
-            $(document).ready(function(){
-                $("#page_Limit").hide();
-                $("#ev_reg").css("justify-content", "right");
-            });
-        </script>
-<?php
-    }
-?>
+
 <style>
     .input-group-append > .btn:first-child:hover{
         background-color : #dadfe4;
@@ -79,10 +45,9 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script>
     $( function() {
+
+        /* DatarangePicker */
         $( "#reservation" ).daterangepicker({
-            <?php 
-                
-            ?>
             locale:{ 
                 format:'YYYY-MM-DD', //일시노출포맷
                 applyLabel :"선택",
@@ -99,6 +64,7 @@
             console.log(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
         });
 
+        /* 등록일 정렬 */
         $("#regDateBtn").on("click", function(){
             var className = $("#regDateImg").attr("class");
             console.log(className);
@@ -122,6 +88,7 @@
         
     });
 
+    /* stat */
     var stat = '<?php echo $stat?>';
     switch(stat){
         case "total" :
@@ -147,7 +114,19 @@
     }
 
     $(document).ready(function(){
-        $(".a_link").hover(function(){
+
+        /* 등록일 정렬 */
+        var reg = $("#regDateInput").val();
+        if(reg == "ORDER BY e.reg_date DESC" || reg == "ORDER BY e.idx DESC"){
+            $("#regDateImg").removeClass("fa-caret-up");
+            $("#regDateImg").addClass("fa-caret-down");
+        }else{
+            $("#regDateImg").removeClass("fa-caret-down");
+            $("#regDateImg").addClass("fa-caret-up");
+        }
+
+        /* stat:hover */
+        $(".statBtn").hover(function(){
             $(this).css("color", "#6B66FF");
         }, function(){
             switch(stat){
@@ -174,14 +153,7 @@
             }
             $(this).css("color", "#BDBDBD");
         });
-        var reg = $("#regDateInput").val();
-        if(reg == "ORDER BY e.reg_date DESC" || reg == "ORDER BY e.idx DESC"){
-            $("#regDateImg").removeClass("fa-caret-up");
-            $("#regDateImg").addClass("fa-caret-down");
-        }else{
-            $("#regDateImg").removeClass("fa-caret-down");
-            $("#regDateImg").addClass("fa-caret-up");
-        }
+        
     });
 
 </script>
@@ -212,10 +184,10 @@
                                                 <th colspan="7" style="padding:0px;">
                                                     <div class="navbar navbar-expand navbar-white navbar-light d-flex justify-content-between" id="navbar-search2" >
                                                         <ul class="nav navbar-nav" style="list-style:none; margin:0px; padding:0 10px;">
-                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=total&lines=<?php echo $list?>" id="st_total" style="color:#BDBDBD;">전체</a></li>
-                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=W" id="st_w" style="color:#BDBDBD;">진행 예정</a></li>
-                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=Y" id="st_y" style="color:#BDBDBD;">진행중</a></li>
-                                                            <li style="float:left; margin-right:5px;"><a class="a_link" href="index.php?stat=N" id="st_n" style="color:#BDBDBD;">종료</a></li>
+                                                            <li style="float:left; margin-right:5px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_total">전체</button></a></li>
+                                                            <li style="float:left; margin-right:5px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_w">진행 예정</a></li>
+                                                            <li style="float:left; margin-right:5px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_y">진행중</a></li>
+                                                            <li style="float:left; margin-right:5px;"><button type="button" class="btn statBtn" style="padding:0px; color:#BDBDBD; font-weight:bold;" id="st_n">종료</a></li>
                                                         </ul>
                                                         <form class="form-inline" action="<?=$_SERVER['PHP_SELF']?>" method="POST">
                                                             <div class="form-group" >
@@ -233,9 +205,7 @@
                                                                         </button>
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.input group -->
                                                             </div>
-                                                            <input type="hidden" value="<?php echo $stat?>" name="stat">
                                                             <div class="form-group" style="width: 90px; justify-content:right;">
                                                                 <select class="form-control select2" name="search" style="width:100%; height:30px; font-size:small; margin-right: 5px;">
                                                                     <option value="br_name" <?php echo trim($strSearch)=='br_name'?' selected ':'';?>>업체</option>
@@ -255,6 +225,8 @@
                                                                 </div>
                                                             </div>
                                                             <input type="hidden" id="regDateInput" name="regDateInput" value="<?php echo $regDateVal ?>">
+                                                            <input type="hidden" id="lines" name="lines" value="<?php echo $list ?>">
+                                                            <input type="hidden" value="<?php echo $stat?>" name="stat" id="stat">
                                                         </form>
                                                     </div>
                                                 </th>
@@ -280,7 +252,7 @@
                                                     $strWhere = "b.user_id = '{$_SESSION['userId']}' AND ";
                                                 }
 
-                                                // 검색했을때 테이블 가져오기
+                                                /* 검색했을때 테이블 가져오기 */
                                                 if ( trim($_POST['search']) && trim($_POST['input_search']) ) {
                                                     $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}' AND ";
                                                     if( trim($_POST['stat']) != "total"){
@@ -291,7 +263,7 @@
                                                     $strWhere.= implode(' and ', $arryWhere);//---- 배열로 만든다. explode('@', '문자열@문자열@문자열')
                                                     
                                                 }else{
-                                                    // 검색 안했을때 테이블 가져오기
+                                                    /* 검색 안했을때 테이블 가져오기 */
                                                     if($stat =="total"){
                                                         $strWhere .= "e.del_yn='N' AND b.del_yn='N' AND ev_start >= '{$startDate}' AND ev_end <= '{$endDate}'";
                                                     }else{
@@ -300,8 +272,7 @@
                                                 }
 
 
-                                                
-                                                /* echo '<script>console.log("'.$strWhere.'");</script>'; */
+                                        
                                                 if(isset($_GET['page'])){
                                                     $page = $_GET['page'];
                                                 } else {
@@ -309,7 +280,6 @@
                                                 }
 
                                                 $row_num = $DB -> single("SELECT count(*) FROM mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE {$strWhere};");
-                                                // echo $row_num;
 
                                                 if($row_num == 0){
                                                     echo "<tr>
@@ -322,17 +292,17 @@
                                                     
                                                     $block_ct = 10;
                                                             
-                                                    $block_num = ceil($page/$block_ct); // 현재 페이지 블록 구하기
-                                                    $block_start = (($block_num - 1) * $block_ct) + 1; // 블록의 시작번호
-                                                    $block_end = $block_start + $block_ct - 1; //블록 마지막 번호
+                                                    $block_num = ceil($page/$block_ct);                 // 현재 페이지 블록 구하기
+                                                    $block_start = (($block_num - 1) * $block_ct) + 1;  // 블록의 시작번호
+                                                    $block_end = $block_start + $block_ct - 1;          //블록 마지막 번호
                                                     
                                                     
                                                     $total_page = ceil($row_num / $list);
                                                     if($block_end > $total_page) {
-                                                        $block_end = $total_page; //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
+                                                        $block_end = $total_page;                       //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
                                                     }
-                                                    $total_block = ceil($total_page/$block_ct); //블럭 총 개수
-                                                    $start_num = ($page-1) * $list; //시작번호 (page-1)에서 $list를 곱한다.
+                                                    $total_block = ceil($total_page/$block_ct);         //블럭 총 개수
+                                                    $start_num = ($page-1) * $list;                     //시작번호 (page-1)에서 $list를 곱한다.
                         
                                                     $first_num = $row_num-$list*($page-1);
 
@@ -352,8 +322,6 @@
                                             <tr>
                                                 <td><?php echo $count--;?></td>
                                                 <td><a href="form.php?mode=update&idx=<?php echo $row['idx']?>" style="color:black;"><?php echo $row['ev_subject']?></a></td>
-                                                
-                                                <!-- <?php $URL = "https://".$row['ev_url']; ?> -->
                                                 <td><a href="<?php echo $row['ev_url']?>" target="_blank">URL</a></td>
                                                 <td><?php echo $row['br_name']?></td>
                                                 <?php 
@@ -397,9 +365,9 @@
                                                         <div style="float:left;" id="page_Limit">
                                                             <label for="pageLimit" style="float:left; margin : 4px 10px 0 0;" >페이지당 조회 건수</label>
                                                             <select class="form-control select2" name="pageLimit" id="pageLimit" style="width:55px; height:30px; font-size:small; margin-right: 5px;">
-                                                                <option value="10" <?php echo $ten?>>10개</option>
-                                                                <option value="20" <?php echo $twenty?>>20개</option>
-                                                                <option value="30" <?php echo $thirty?>>30개</option>
+                                                                <option value="10" <?php echo trim($list)=='10'?' selected ':'';?>>10개</option>
+                                                                <option value="20" <?php echo trim($list)=='20'?' selected ':'';?>>20개</option>
+                                                                <option value="30" <?php echo trim($list)=='30'?' selected ':'';?>>30개</option>
                                                             </select>
                                                         </div>
                                                         <a class="btn btn-sm btn-primary" href="/admin/event/form.php">신규 등록</a>
@@ -459,19 +427,27 @@
     /* 페이지당 조회 건수 */
     $('#pageLimit').change(function(){
         var lines = $(this).val();
-        <?php
-            if(!trim($_GET['stat'])){
-        ?>
-            location.href="https://landings.mprkorea.com/admin/event/?lines="+lines;
-        <?php 
-            }else{
-        ?>
-            location.href="https://landings.mprkorea.com/admin/event/index.php?stat=<?php echo $stat?>&lines="+lines;
-        <?php
-            }
-        ?>
+        $("#lines").val(lines);
+        $("form").submit();
     });
 
+    /* stat */
+    $('#st_total').on("click", function(){
+        $("#stat").val("total");
+        $("form").submit();
+    });
+    $('#st_w').on("click", function(){
+        $("#stat").val("W");
+        $("form").submit();
+    });
+    $('#st_y').on("click", function(){
+        $("#stat").val("Y");
+        $("form").submit();
+    });
+    $('#st_n').on("click", function(){
+        $("#stat").val("N");
+        $("form").submit();
+    });
 </script>
 
 <?php
