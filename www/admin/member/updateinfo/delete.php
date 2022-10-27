@@ -30,11 +30,11 @@
     }
 
     /* 이미지 파일 삭제 */
-    $brSQL = "SELECT e.br_code as brCode, e.ev_key as evKey , e.idx as idx FROM mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE b.user_id = '{$id}'";
+    $brSQL = "SELECT e.br_code as brCode,  e.idx as idx FROM mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE b.user_id = '{$id}'";
     $res = $DB->query($brSQL);
 
     foreach($res as $row){
-        $delete_img_url = '/home/fs_landings/www/img_data/event/'.trim($row['brCode'])."/".trim($row['evKey']);
+        $delete_img_url = '/home/fs_landings/www/img_data/event/'.trim($row['brCode']);
         rmdirAll($delete_img_url);
         $fileDelSQL = "UPDATE mpr_files SET del_yn='Y' WHERE ev_idx={$row['idx']}";
         $statement = $DB->query($fileDelSQL);
