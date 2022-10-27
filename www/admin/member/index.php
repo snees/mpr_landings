@@ -15,6 +15,16 @@
     }
     $orderBy = $orderBy_val;
 ?>
+<style>
+    .btn:first-child:hover{
+        background-color : white;
+        border-color : white;
+    }
+    .btn:first-child:hover{
+        border-color : white;
+    }
+
+</style>
 
 <script>
     $(function(){
