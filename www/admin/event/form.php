@@ -24,13 +24,23 @@
     }
 </style>
 
-<?php     
+<?php    
+
+        $sessionID = $_SESSION['userId'];
+
+        $userLvSQL = "SELECT user_lv FROM mpr_member WHERE user_id='{$sessionID}'";
+        $res = $DB->row($userLvSQL);
+
+        if($res['user_lv']==100){
+            $company = "user_id='{$sessionID}' AND ";
+        }
+        
         //업체정보
-        $company = "del_yn='N' order by (CASE WHEN SUBSTRING(br_name,1,1) RLIKE '[ㄱ-ㅎ가-힣]' THEN 1 WHEN SUBSTRING(br_name,1,1) RLIKE '[a-zA-Z]' THEN 2 ELSE 3 END), br_name";
+        $company .= "del_yn='N' order by (CASE WHEN SUBSTRING(br_name,1,1) RLIKE '[ㄱ-ㅎ가-힣]' THEN 1 WHEN SUBSTRING(br_name,1,1) RLIKE '[a-zA-Z]' THEN 2 ELSE 3 END), br_name";
         $br_code_arr = array();
 
 
-        $S_SQL = "select * from mpr_branch where {$company} ";
+        $S_SQL = "select * from mpr_branch where {$company}";
         $res = $DB -> query($S_SQL);
         $options .= "<select class='custom-select form-control-border' id='br_code' name='br_code'>";
         $options .= "<option disabled selected>업체를 선택해 주세요.</option>";
@@ -296,7 +306,6 @@
                         if(isthere == false){
                             alert("등록되지 않은 업체입니다.");
                             $('#ev_subject').attr("disabled", true);
-                            $('#save_btn').attr("disabled", true);
                             $('#br_name').attr("placeholder", "업체를 등록해주세요.");
                         }else{
                             var evCode_cl = rs.event_cd;

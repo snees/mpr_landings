@@ -300,20 +300,17 @@
                                                     if($block_end > $total_page) {
                                                         $block_end = $total_page;                       //만약 블록의 마지박 번호가 페이지수보다 많다면 마지박번호는 페이지 수
                                                     }
-                                                    $total_block = ceil($total_page/$block_ct);         //블럭 총 개수
+                                                    
                                                     $start_num = ($page-1) * $list;                     //시작번호 (page-1)에서 $list를 곱한다.
-                        
-                                                    $first_num = $row_num-$list*($page-1);
-
                                                     $count = $row_num-$list*($page-1);
 
                                                     $S_SQL = 
-                                                    "SELECT 
-                                                        e.idx, e.ev_subject, e.ev_url, e.ev_start, e.ev_end, e.ev_stat, e.ev_always, e.reg_date , br_name
-                                                    FROM 
-                                                        mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE {$strWhere}
-                                                    {$oderBy}
-                                                    LIMIT {$start_num}, {$list}";
+                                                        "SELECT 
+                                                            e.idx, e.ev_subject, e.ev_url, e.ev_start, e.ev_end, e.ev_stat, e.ev_always, e.reg_date , br_name
+                                                        FROM 
+                                                            mpr_event e LEFT JOIN mpr_branch b ON e.br_code = b.br_code WHERE {$strWhere}
+                                                        {$oderBy}
+                                                        LIMIT {$start_num}, {$list}";
 
                                                     $res = $DB -> query($S_SQL);
                                                     foreach($res as $row){
