@@ -38,7 +38,7 @@
             $('#register_div').css("margin-right", "10px");
             $('#sign_in_btn').hide();
 
-            $(".userId_div").append("<label for='in_UserID'>업체 아이디 *</label>");
+            $(".userId_div").append("<label for='in_UserID'>회원 아이디 *</label>");
             $(".userId_div").append("<input type='text' class='form-control' id='in_UserID' value='<?php echo $userID?>' disabled>");
             $(".userId_div").css("margin-right", "10px")
         }
@@ -56,7 +56,7 @@
         if($userLv != 100){
             $userIdSQL = "SELECT user_id FROM mpr_member WHERE del_yn='N' AND user_lv = 100";
             $res = $DB->query($userIdSQL);   
-            $options .= "<label for='user_id'>업체 아이디 *</label>";
+            $options .= "<label for='user_id'>회원 아이디 *</label>";
             $options .= "<input type='text' list='user_id' class='form-control' id='in_UserID' autocomplete='off'>";
             $options .= "<datalist id='user_id'>";
             $options .= "<option disabled selected>업체 관리자 아이디를 선택해주세요.</option>";
@@ -340,14 +340,14 @@
         <?php 
             if($userLv != 100){
         ?>
-            /* 업체 아이디 입력 확인 */
+            /* 회원 아이디 입력 확인 */
             var userID = $("#in_UserID").val();
             if(!userID.trim()){
-                $("#alert_msg").text("업체 아이디를 입력해주세요.");
+                $("#alert_msg").text("회원 아이디를 입력해주세요.");
                 alertMsg();
                 isok=false;
             }else{
-                /* 업체 아이디 맞는지 확인 */
+                /* 회원 아이디 맞는지 확인 */
                 var IdOK = false;
                 <?php
                     $userSQL = "SELECT user_id FROM mpr_member WHERE del_yn='N' AND user_lv=100";
@@ -363,7 +363,7 @@
                 ?>
 
                 if(!IdOK){
-                    $("#alert_msg").text("등록되지 않은 업체 아이디입니다.");
+                    $("#alert_msg").text("등록되지 않은 회원 아이디입니다.");
                     alertMsg();
                     isok=false;
                 }

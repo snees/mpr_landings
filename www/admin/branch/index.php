@@ -59,7 +59,7 @@
                                                 <th class="sorting sorting_asc" aria-controls="client-list">번호</th>
                                                 <th class="sorting sorting_asc" aria-controls="client-list">업체</th>
                                                 <th class="sorting sorting_asc" aria-controls="client-list">업체 코드</th>
-                                                <th class="sorting sorting_asc" aria-controls="client-list">아이디</th>
+                                                <th class="sorting sorting_asc" aria-controls="client-list">회원 ID</th>
                                                 <th class="sorting sorting_asc" aria-controls="client-list">등록 이벤트</th>
                                             </tr>
                                         </thead>
