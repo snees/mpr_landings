@@ -21,6 +21,7 @@
         $S_SQL = "SELECT * FROM mpr_branch WHERE br_code = '{$_GET['code']}'; ";
         $res = $DB -> row($S_SQL);
         $code = $res['br_code'];
+        $userID = $res['user_id'];
 ?>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script>
@@ -36,13 +37,46 @@
             $('#register_div').css("float", "left");
             $('#register_div').css("margin-right", "10px");
             $('#sign_in_btn').hide();
+
+            $(".userId_div").append("<label for='in_UserID'>업체 아이디 *</label>");
+            $(".userId_div").append("<input type='text' class='form-control' id='in_UserID' value='<?php echo $userID?>' disabled>");
+            $(".userId_div").css("margin-right", "10px")
         }
 
 
     </script>
 <?php
     }else{
-        $code = $random_str;
+
+        $code = $random_str;    // 업체 코드
+
+        $userlvSQL = "SELECT user_lv FROM mpr_member WHERE user_id = '{$_SESSION['userId']}' AND del_yn='N'";
+        $res = $DB->row($userlvSQL);
+        $userLv = $res['user_lv'];
+        if($userLv != 100){
+            $userIdSQL = "SELECT user_id FROM mpr_member WHERE del_yn='N' AND user_lv = 100";
+            $res = $DB->query($userIdSQL);   
+            $options .= "<label for='user_id'>업체 아이디 *</label>";
+            $options .= "<input type='text' list='user_id' class='form-control' id='in_UserID' autocomplete='off'>";
+            $options .= "<datalist id='user_id'>";
+            $options .= "<option disabled selected>업체 관리자 아이디를 선택해주세요.</option>";
+
+            foreach($res as $row){
+                $options .= "<option value='".$row['user_id']."'></option>";
+            }
+            $options .= "</datalist>";
+?>
+            <script>
+                $(function(){
+                    $(".userId_div").css("width", "10%");
+                    $(".userId_div").css("margin-right", "10px");
+                    $(".brCode_div").css("width", "10%");
+                    $(".userId_div").append("<?php echo $options?>");
+                });
+            </script>
+<?php
+        }
+        
     }
 
 ?>
@@ -77,9 +111,13 @@
                                                     
                                                 </div>
                                                 <!-- 업체 코드 -->
-                                                <div class="form-group">
-                                                    <label for="br_code">업체 코드 *</label>
-                                                    <input type="text" class="form-control" id="br_code" name="br_code" value="<?php echo $code;?>" readonly>
+                                                <div class="form-group d-flex">
+                                                    <div class="userId_div">
+                                                    </div>
+                                                    <div class="brCode_div">
+                                                        <label for="br_code">업체 코드 *</label>
+                                                        <input type="text" class="form-control" id="br_code" name="br_code" value="<?php echo $code;?>" disabled>
+                                                    </div>
                                                 </div>
                                                 <!-- 주소 -->
                                                 <div class="form-group">
@@ -299,6 +337,44 @@
 
         var isok = true;
 
+        <?php 
+            if($userLv != 100){
+        ?>
+            /* 업체 아이디 입력 확인 */
+            var userID = $("#in_UserID").val();
+            if(!userID.trim()){
+                $("#alert_msg").text("업체 아이디를 입력해주세요.");
+                alertMsg();
+                isok=false;
+            }else{
+                /* 업체 아이디 맞는지 확인 */
+                var IdOK = false;
+                <?php
+                    $userSQL = "SELECT user_id FROM mpr_member WHERE del_yn='N' AND user_lv=100";
+                    $res = $DB->query($userSQL);
+
+                    foreach($res as $row){
+                ?>
+                        if(userID == "<?php echo $row['user_id']?>"){
+                            IdOK = true;
+                        }
+                <?php
+                    }
+                ?>
+
+                if(!IdOK){
+                    $("#alert_msg").text("등록되지 않은 업체 아이디입니다.");
+                    alertMsg();
+                    isok=false;
+                }
+            }
+        <?php 
+            }else{
+        ?>  
+                userID = "<?php echo $_SESSION['userId']?>";
+        <?php
+            }
+        ?>
 
         /* 업체명 입력 여부 확인 */
         if( brName.trim() ){
@@ -350,7 +426,7 @@
                 brRef : brRef, 
                 brTel : brTel, 
                 brMail : brMail,
-                regID : '<?php echo $_SESSION['userId']?>'
+                regID : userID
             }, function(data){
                 if ($.trim(data)=='OK') {
                     alert("저장 되었습니다.");

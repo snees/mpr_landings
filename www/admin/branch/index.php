@@ -35,7 +35,7 @@
                                     <table id="client-list" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th colspan="3" style="padding:0px;">
+                                                <th colspan="5" style="padding:0px;">
                                                     <div class="navbar navbar-expand navbar-white navbar-light" id="navbar-search2" style="justify-content: right;">
                                                         <form class="form-inline" action="<?=$_SERVER['PHP_SELF']?>" method="POST">
                                                             <div class="input-group input-group-sm" >
@@ -57,7 +57,9 @@
                                             </tr>
                                             <tr>
                                                 <th class="sorting sorting_asc" aria-controls="client-list">번호</th>
-                                                <th class="sorting sorting_asc" aria-controls="client-list">업체(이름/코드)</th>
+                                                <th class="sorting sorting_asc" aria-controls="client-list">업체</th>
+                                                <th class="sorting sorting_asc" aria-controls="client-list">업체 코드</th>
+                                                <th class="sorting sorting_asc" aria-controls="client-list">아이디</th>
                                                 <th class="sorting sorting_asc" aria-controls="client-list">등록 이벤트</th>
                                             </tr>
                                         </thead>
@@ -127,7 +129,9 @@
                                                         $e_res = $DB -> row($E_SQL);
                                                         echo "<tr>
                                                                     <td>".$count--."</td>
-                                                                    <td><a href='#' onclick='go(this)' style='color: black;'>".$row['br_name']." (".$row['br_code'].")</a></td>
+                                                                    <td><a href='/admin/branch/form.php?mode=update&code=".$row['br_code']."' style='color: black;'>".$row['br_name']."</a></td>
+                                                                    <td>".$row['br_code']."</td>
+                                                                    <td>".$row['user_id']."</td>
                                                                     <td style='color : #8C8C8C;'>진행예정:(".$e_res['W_count'].")&emsp;진행중:(".$e_res['Y_count'].")&emsp;종료:(".$e_res['N_count'].")</td>
                                                                 </tr>";
                                                     }
@@ -136,7 +140,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="3" style="text-align:right;">
+                                                <td colspan="5" style="text-align:right;">
                                                     <div style="float:left;" id="page_Limit">
                                                         <label for="pageLimit" style="float:left; margin : 4px 10px 0 0;" >페이지당 조회 건수</label>
                                                         <select class="form-control select2" name="pageLimit" id="pageLimit" style="width:55px; height:30px; font-size:small; margin-right: 5px;">
@@ -209,15 +213,6 @@
         $("#lines").val(lines);
         $("form").submit();
     });
-
-    /* 업체 정보 페이지 이동 */
-    function go(ths){
-        var code = $(ths).text();
-        console.log(code);
-        code = code.split('(');
-        code = code[1].split(')')[0];
-        location.href = "/admin/branch/form.php?mode=update&code="+code;
-    }
 
     /* 페이지 */
     $("#prevBtn").on("click", function(){
