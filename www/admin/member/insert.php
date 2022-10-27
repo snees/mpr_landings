@@ -1,7 +1,16 @@
 <?php
+    function getRandStr($length = 6) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    };
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/include/inc.common.php";
     $id = $_POST["id"];
-    $pw = base64_encode($_POST["pwd"]);
+    $pw = $DB->hexAesEncrypt($_POST["pwd"],getRandStr());
     $name = $_POST["name"];
     $nick = $_POST["nickName"];
     $email = $_POST["email"];

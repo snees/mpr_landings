@@ -271,6 +271,8 @@
       }
       $(document).ready(function(){
         $("#btn2").click(function(){
+          if(confirm("회원탈퇴 시 해당 업체 및 이벤트 등 모든 데이터가 삭제됩니다. 탈퇴를 진행하시겠습니까?"))
+          {
             $.ajax({
                 url:"/admin/member/updateinfo/delete.php",
                 type :"post",
@@ -281,6 +283,7 @@
                   location.replace('/admin/login/');
                 },
             }); 
+          }
         });
       });
 </script>

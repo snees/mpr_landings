@@ -84,7 +84,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between">
                                       <div class="d-flex ">
-                                        <button type="button" class="btn btn-danger" id="btn2">회원탈퇴</button>
+                                        <button type="button" class="btn btn-danger" id="btn2">회원삭제</button>
                                       </div>
                                       <div class="d-flex ">        
                                           <a href="/admin/member/" class="btn btn-default" style="margin-right:5px;">취소</a>
@@ -105,6 +105,47 @@
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/tail.php";
 ?>
 <script>
+  
+function callApi(type, ev_key){        
+        // console.log(type+" "+ ev_key+" "+ br_name+" "+ ev_subject+" "+ ev_code+" "+ start_Date+" "+ end_Date+" "+ is_always+" "+ br_code+" "+ url);
+        var command =''
+        if(type=='insert'){
+            command = "<?php echo $DB->hexAesEncrypt('INSERT_EVENT'); ?>";
+        }else if(type=='update'){
+            command = "<?php echo $DB->hexAesEncrypt('UPDATE_EVENT'); ?>";
+        }else{            
+            command = "<?php echo $DB->hexAesEncrypt('DELETE_EVENT'); ?>";
+        }
+        $.ajax({
+            url: "https://mprclients.mprkorea.com/event/api/apicall_event.php",
+            type : "POST",
+            dataType : "JSON",
+            data : {
+                type          : command,
+                event_key     : ev_key,      //이벤트키
+                // br_code       : br_code,    //업체코드
+                // cust_nm       : br_name,    //업체이름
+                // event_nm      : ev_subject, //이벤트제목
+                // event_cd      : ev_code,     //이벤트 코드
+                // expose_from   : start_Date,  //시작일
+                // expose_to     : end_Date,    //종료일
+                // expose_always : is_always,   //상시체크
+                // event_url     : url,         //이벤트키
+                // reg_id        : '<?php echo $_SESSION['userId']; ?>'
+            }
+        }).done(function(rs){	
+            if(rs.result){                
+                console.log(rs.result +' : '+rs.message);
+            }else{  
+                alert(rs.result +' : '+rs.message)
+            }
+        }).fail(function(rs){
+            alert(rs.message); 
+            return false;
+        }); 
+    }
+
+
   const autoHyphen2 = (target) => {
         target.value = target.value
         .replace(/[^0-9]/g, '')
@@ -318,16 +359,21 @@
     }
       $(document).ready(function(){
         $("#btn2").click(function(){
-            if(confirm("회원탈퇴를 진행하시겠습니까?"))
+            if(confirm("회원삭제 시 업체 및 이벤트 등 모든 데이터가 삭제됩니다. 삭제를 진행하시겠습니까?"))
             {
               $.ajax({
                 url:"/admin/member/updateinfo/delete.php",
                 type :"post",
                 data:{id:$("#id").val()},
-                dataType :'text',
+                dataType :'json',
                 success: function(data){
-                  alert('탈퇴완료');
-                  location.replace('/admin/login/');
+                  // console.log(data);
+                  for(var i =0; i<data.length;i++)
+                  {
+                    // console.log(data[i]['ev_key']);
+                    callApi("delete",data[i]['ev_key']);
+                  }
+                  
                 },
               }); 
             }
