@@ -4,6 +4,16 @@
     $max_date = $DB -> row("SELECT MAX(ev_end) AS max_date FROM mpr_event");
     $min_date = $DB -> row("SELECT MIN(ev_start) AS min_date FROM mpr_event");
 
+    if(!trim($max_date['max_date'])){
+        $min_date = date("Y-m-d");
+        $strtotime_Min = strtotime($min_date);
+        $max_date = strtotime("+7 day", $strtotime_Min);
+        $max_date = date("Y-m-d", $max_date);
+    }else{
+        $max_date = $min_date['min_date'];
+        $min_date = $max_date['max_date'];
+    }
+
     /* 검색 정보 */
     if(count($_POST)>0){    // 검색했을 때
         $regDateVal = $_POST['regDateInput'];                   // 등록일 정렬
@@ -15,8 +25,8 @@
         $stat = $_POST['stat'];                                 // stat
     }else{                  // 검색 안했을 때
         $regDateVal = "ORDER BY e.idx DESC";
-        $startDate = $min_date['min_date'];
-        $endDate = $max_date['max_date'];
+        $startDate = $min_date;
+        $endDate = $max_date;
         $list = 10;
         $stat = "total";
     }
