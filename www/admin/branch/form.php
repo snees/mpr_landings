@@ -26,9 +26,7 @@
         $code = $res['br_code'];
         $userID = $res['user_id'];
 ?>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script>
-       
         window.onload = function(){
             
             $('#update_btn').show();
@@ -38,8 +36,6 @@
             $('#up_map').show();
             $('#code_Addr').css("float","none")
             initMap("upMap", "<?php echo $res['br_name']?>");
-
-
 
             $('#register_div').css("width", "68%");
             $('#register_div').css("float", "left");
@@ -57,7 +53,7 @@
 <?php
     }else{
 
-        $code = $random_str;    // 업체 코드
+        $code = $random_str;    // 업체 코드 랜덤 생성
 
         $userlvSQL = "SELECT user_lv FROM mpr_member WHERE user_id = '{$_SESSION['userId']}' AND del_yn='N'";
         $res = $DB->row($userlvSQL);
@@ -305,9 +301,9 @@
             map.setCenter(results[0].geometry.location);
             marker = new google.maps.Marker({
                 map : map,
-                title : brName,                                             // 마커에 마우스 포인트를 갖다댔을 때 뜨는 타이틀                                
+                title : brName,                                             // 마커에 마우스 포인트를 갖다댔을 때 뜨는 타이틀 
                 position: results[0].geometry.location});
-                var content = brName;                                       // 말풍선 안에 들어갈 내용  // 마커를 클릭했을 때의 이벤트. 말풍선              
+                var content = "<a href='https://www.google.com/maps/search/?api=1&query="+results[0].geometry.location.lat()+","+results[0].geometry.location.lng()+"&z=19'>"+brName+"</a>";  // 말풍선 안에 들어갈 내용 클릭시 구글 길찾기로 이동          
                 var infowindow = new google.maps.InfoWindow({content: content});
                 infowindow.open(map,marker);
             } else {

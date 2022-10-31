@@ -95,7 +95,7 @@
                                                 if($row_num == 0){
                                                     echo "<tr>
                                                                 <td>&nbsp;</td>
-                                                                <td colspan='2'>검색결과가 없습니다.</td>
+                                                                <td colspan='4'>검색결과가 없습니다.</td>
                                                             </tr>";
                                                     $total_page=0;
                                                 }else{
