@@ -3,6 +3,26 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.sub.php";
 include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/session.php"
 // ↓ navbar 영역
 ?>
+<script>
+    var pageURL = window.location.href;
+    page = pageURL.split("/")[4];
+    $(function(){
+        switch(page){
+            case "" : 
+                $("#homePage").addClass("active");
+                break;
+            case "event" :
+                $("#eventPage").addClass("active");
+                break;
+            case "branch" :
+                $("#branchPage").addClass("active");
+                break;
+            case "member" :
+                $("#memberPage").addClass("active");
+                break;
+        }
+    });
+</script>
 
     <!-- top navbar -->
 	<nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -48,26 +68,26 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/session.php"
 				<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
                     <li class="nav-item">
-                        <a href="/admin/" class="nav-link">
+                        <a href="/admin/" class="nav-link" id="homePage">
                             <i class="fa-solid fa-house-chimney"></i>
                             <p>홈 화면</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/admin/event/" class="nav-link">
+                        <a href="/admin/event/" class="nav-link" id="eventPage">
                             <i class="fa-solid fa-list-ul"></i>
                             <p>이벤트 목록</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/admin/branch/" class="nav-link">
+                        <a href="/admin/branch/" class="nav-link" id="branchPage">
                             <i class="fa-solid fa-list-ul"></i>
                             <p>업체 목록</p>
                         </a>
                     </li>
                     <?php if($_SESSION['lvl']==300){?>
                     <li class="nav-item">
-                        <a href="/admin/member/" class="nav-link">
+                        <a href="/admin/member/" class="nav-link" id="memberPage">
                             <i class="fa-solid fa-list-ul"></i>
                             <p>회원 목록</p>
                         </a>
@@ -75,55 +95,6 @@ include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/session.php"
                     <?php }?>
 
                     <hr>
-
-                    <!-- 리스트 형식 견본 -->
-                    <li class="nav-item menu-open">
-                        <a href="#" class="nav-link active">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>
-                                견본 링크
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="/main/index.html" class="nav-link" target="_blank">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Dashboard</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/main/pages/charts/chartjs.html" class="nav-link" target="_blank">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Charts</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/main/pages/tables/simple.html" class="nav-link" target="_blank">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Tables</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/main/pages/examples/project-add.html" class="nav-link" target="_blank">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Project Add</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/main/pages/examples/login-v2.html" class="nav-link" target="_blank">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Login</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/main/pages/examples/register-v2.html" class="nav-link" target="_blank">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Register</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
 
 				</ul>
 			</nav>
