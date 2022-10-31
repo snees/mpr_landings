@@ -3,8 +3,8 @@
 
     /* 검색 정보 */
     if(count($_POST)>0){    // 검색했을 때
-        $keyword = $_POST['input_search'];                      // 검색어
-        $list = $_POST['lines'];                                // 페이지당 조회 건수
+        $keyword = $_POST['input_search'];  // 검색어
+        $list = $_POST['lines'];            // 페이지당 조회 건수
     }else{                  // 검색 안했을 때
         $list = 10;
     }

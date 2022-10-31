@@ -2,8 +2,11 @@
     include_once trim($_SERVER['DOCUMENT_ROOT'])."/admin/head.php";
 ?>
 
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<style>
+    :focus-visible{
+        outline: none;
+    }
+</style>
 <!-- 업체 코드 랜덤 발급 -->
 <?php
     $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
